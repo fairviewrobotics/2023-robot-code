@@ -24,8 +24,42 @@ class ExampleSubsystem
     return m_odometry.getPoseMeters()
   }
     }
+    
+function calculateRotateValue(targetAngle):
+    error = targetAngle - gyroAngle
+    if error > threshold
+        rotation =  error*kP
+        return False
+    else:
+        rotation = 0
+        return True
+        
+        function rotateToAngle(targetAngle):
+    error = targetAngle - gyroAngle # check out wpilib documentation for getting the angle from the gyro
+    if error > threshold
+        this.rotation =  error*kP
+        return False
+    else:
+        this.rotation = 0
+        return True
 
+function move(fwd, rotation):
+    // This function allows for joystick input
+    this.fwd = fwd
+    this.rotation = rotation
+
+function execute():
+    // Execute function that should be called every loop
+    this.robotdrive.drive(this.fwd, this.rotation)
+
+    this.fwd = 0
+    this.rotation = 0
+    
+    drive.rotateToAngle(90)
+        
     override fun simulationPeriodic() {
         // This method will be called once per scheduler run during simulation
     }
 }
+        
+        
