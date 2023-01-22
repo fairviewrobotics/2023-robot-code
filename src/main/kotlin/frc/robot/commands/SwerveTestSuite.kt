@@ -208,15 +208,6 @@ class PointInDirection(val swerveSubsystem: SwerveSubsystem,
             if (angle < 0){
                 angle = (2 * Math.PI) - angle
             }
-
-//            if (x > 0 && y > 0) {
-//            } else if (x < 0 && y > 0) {
-//                angle = Math.PI - abs(angle)
-//            } else if (x < 0 && y < 0) {
-//                angle = Math.PI + abs(angle)
-//            } else {
-//                angle = (2 * Math.PI) - abs(angle)
-//            }
         }
         return angle
     }
