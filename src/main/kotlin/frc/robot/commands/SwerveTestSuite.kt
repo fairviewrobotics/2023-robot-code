@@ -9,13 +9,11 @@ import edu.wpi.first.util.sendable.Sendable
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj2.command.CommandBase
 import frc.robot.DrivetrainConstants
+import frc.robot.Main
 import frc.robot.subsystems.SparkMaxSubsystem
 import frc.robot.controllers.SwerveModuleControlller
 import frc.robot.subsystems.SwerveSubsystem
-import kotlin.math.abs
-import kotlin.math.atan
-import kotlin.math.pow
-import kotlin.math.sqrt
+import kotlin.math.*
 
 class MotorTest(val subsystem: SparkMaxSubsystem) : CommandBase() {
     init {
@@ -206,15 +204,19 @@ class PointInDirection(val swerveSubsystem: SwerveSubsystem,
         var angle: Double = 0.0
         var dist = sqrt(x.pow(2) + y.pow(2))
         if (dist > 0.2) {
-            angle = atan(controller.leftY / controller.leftX)
-            if (x > 0 && y > 0) {
-            } else if (x < 0 && y > 0) {
-                angle = Math.PI - abs(angle)
-            } else if (x < 0 && y < 0) {
-                angle = Math.PI + abs(angle)
-            } else {
-                angle = (2 * Math.PI) - abs(angle)
+            angle = atan2(controller.leftY, controller.leftX) - Math.PI/2
+            if (angle < 0){
+                angle = (2 * Math.PI) - angle
             }
+
+//            if (x > 0 && y > 0) {
+//            } else if (x < 0 && y > 0) {
+//                angle = Math.PI - abs(angle)
+//            } else if (x < 0 && y < 0) {
+//                angle = Math.PI + abs(angle)
+//            } else {
+//                angle = (2 * Math.PI) - abs(angle)
+//            }
         }
         return angle
     }

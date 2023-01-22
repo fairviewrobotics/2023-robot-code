@@ -73,15 +73,15 @@ object DrivetrainConstants {
     const val drivingI = 0.0
     const val drivingD = 0.0
     const val drivingFF = 1.0 / driveWheelFreeSpeedRps
-    const val drivingMinOutput = -1.0
-    const val drivingMaxOutput = 1.0
+    const val drivingMinOutput = -3.0
+    const val drivingMaxOutput = 3.0
 
-    const val turningP = 1.0
+    const val turningP = 0.01
     const val turningI = 0.0
     const val turningD = 0.0
     const val turningFF = 0.0
-    const val turningMinOutput = -1.0
-    const val turningMaxOutput = 1.0
+    const val turningMinOutput = -3.0
+    const val turningMaxOutput = 3.0
 
     // Idle mode for driving and turning motor
     val drivingMotorIdleMode = CANSparkMax.IdleMode.kBrake

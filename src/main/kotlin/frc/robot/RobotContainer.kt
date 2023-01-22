@@ -26,15 +26,15 @@ class RobotContainer {
     val primaryController = XboxController(0)
     val secondaryController = XboxController(1)
 
-    val fl = SparkMaxSubsystem(CANSparkMax(2, CANSparkMaxLowLevel.MotorType.kBrushless))
-    val fr = SparkMaxSubsystem(CANSparkMax(4, CANSparkMaxLowLevel.MotorType.kBrushless))
-    val rl = SparkMaxSubsystem(CANSparkMax(6, CANSparkMaxLowLevel.MotorType.kBrushless))
-    val rr = SparkMaxSubsystem(CANSparkMax(8, CANSparkMaxLowLevel.MotorType.kBrushless))
-
-    val fll = SparkMaxSubsystem(CANSparkMax(1, CANSparkMaxLowLevel.MotorType.kBrushless))
-    val frr = SparkMaxSubsystem(CANSparkMax(3, CANSparkMaxLowLevel.MotorType.kBrushless))
-    val rll = SparkMaxSubsystem(CANSparkMax(5, CANSparkMaxLowLevel.MotorType.kBrushless))
-    val rrr = SparkMaxSubsystem(CANSparkMax(7, CANSparkMaxLowLevel.MotorType.kBrushless))
+//    val fl = SparkMaxSubsystem(CANSparkMax(2, CANSparkMaxLowLevel.MotorType.kBrushless))
+//    val fr = SparkMaxSubsystem(CANSparkMax(4, CANSparkMaxLowLevel.MotorType.kBrushless))
+//    val rl = SparkMaxSubsystem(CANSparkMax(6, CANSparkMaxLowLevel.MotorType.kBrushless))
+//    val rr = SparkMaxSubsystem(CANSparkMax(8, CANSparkMaxLowLevel.MotorType.kBrushless))
+//
+//    val fll = SparkMaxSubsystem(CANSparkMax(1, CANSparkMaxLowLevel.MotorType.kBrushless))
+//    val frr = SparkMaxSubsystem(CANSparkMax(3, CANSparkMaxLowLevel.MotorType.kBrushless))
+//    val rll = SparkMaxSubsystem(CANSparkMax(5, CANSparkMaxLowLevel.MotorType.kBrushless))
+//    val rrr = SparkMaxSubsystem(CANSparkMax(7, CANSparkMaxLowLevel.MotorType.kBrushless))
 
     val swerveSubsystem = SwerveSubsystem()
     /** The container for the robot. Contains subsystems, OI devices, and commands.  */
