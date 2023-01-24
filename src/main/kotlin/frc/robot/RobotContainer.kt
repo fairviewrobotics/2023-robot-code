@@ -18,6 +18,7 @@ import frc.robot.commands.PointInDirection
 import frc.robot.controllers.SwerveModuleControlller
 import frc.robot.subsystems.SparkMaxSubsystem
 import frc.robot.subsystems.SwerveSubsystem
+import com.kauailabs.navx.frc.AHRS
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -28,6 +29,9 @@ import frc.robot.subsystems.SwerveSubsystem
 class RobotContainer {
     val primaryController = XboxController(0)
     val secondaryController = XboxController(1)
+
+    val gyro = AHRS()
+
 
 //    val fl = SparkMaxSubsystem(CANSparkMax(2, CANSparkMaxLowLevel.MotorType.kBrushless))
 //    val fr = SparkMaxSubsystem(CANSparkMax(4, CANSparkMaxLowLevel.MotorType.kBrushless))
@@ -44,6 +48,8 @@ class RobotContainer {
     init {
         // Configure the button bindings
         configureButtonBindings()
+        gyro.reset()
+
     }
 
     /**
