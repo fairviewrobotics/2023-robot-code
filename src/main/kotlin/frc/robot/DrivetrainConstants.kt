@@ -25,10 +25,10 @@ object DrivetrainConstants {
 
     // FIXME: Right now 0degrees is in the Y-positive direction, when normally 0 rad is in the X-positive direction. Could this be an issue?
     // TUNED
-    const val frontLeftChassisAngularOffset = (Math.PI / 2) + 3.419
-    const val frontRightChassisAngularOffset = (0.0) + 1.991
-    const val rearLeftChassisAngularOffset = (Math.PI) + 5.412
-    const val rearRightChassisAngularOffset =  (3 * Math.PI / 2) + 4.211
+    const val frontLeftChassisAngularOffset = 2.862-(Math.PI/2)
+    const val frontRightChassisAngularOffset = 4.285+(0.0)
+    const val rearLeftChassisAngularOffset = 0.871+(Math.PI)
+    const val rearRightChassisAngularOffset =  2.090+(Math.PI/2)
 
     // SPARK MAX CAN IDs
     // TUNED
@@ -42,7 +42,7 @@ object DrivetrainConstants {
     const val frontRightTurningPort = 6
     const val rearRightTurningPort = 8
 
-    const val gyroReversed = false // TODO: Tune
+    const val gyroReversed = true // TODO: Tune
 
     // The MAXSwerve module can be configured with one of three pinion gears: 12T, 13T, or 14T.
     // This changes the drive speed of the module (a pinion gear with more teeth will result in a
@@ -69,19 +69,19 @@ object DrivetrainConstants {
     const val turningEncoderPositionPIDMaxInput = turningEncoderPositionFactor // radians
 
     // PIDs for driving and turning. minAndMaxOutputs are for SparkMax -1,1 setting, not voltage. TODO: These values must be tuned.
-    const val drivingP = 0.04
+    const val drivingP = 0.10
     const val drivingI = 0.0
     const val drivingD = 0.0
     const val drivingFF = 1.0 / driveWheelFreeSpeedRps
-    const val drivingMinOutput = -3.0
-    const val drivingMaxOutput = 3.0
+    const val drivingMinOutput = -1.0
+    const val drivingMaxOutput = 1.0
 
-    const val turningP = 0.01
+    const val turningP = 1.0
     const val turningI = 0.0
     const val turningD = 0.0
     const val turningFF = 0.0
-    const val turningMinOutput = -3.0
-    const val turningMaxOutput = 3.0
+    const val turningMinOutput = -1.0
+    const val turningMaxOutput = 1.0
 
     // Idle mode for driving and turning motor
     val drivingMotorIdleMode = CANSparkMax.IdleMode.kBrake
@@ -89,5 +89,5 @@ object DrivetrainConstants {
 
     // Current limits for motors, set using smartcurrentlimits in swervemodulecontroller
     const val drivingMotorCurrentLimit = 50 // amps
-    const val turningMotorCurrentLimit = 20 // amps
+    const val turningMotorCurrentLimit = 30 // amps
 }

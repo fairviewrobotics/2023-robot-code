@@ -5,9 +5,12 @@ package frc.robot
 
 import com.revrobotics.CANSparkMax
 import com.revrobotics.CANSparkMaxLowLevel
+import edu.wpi.first.math.MathUtil
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandBase
+import edu.wpi.first.wpilibj2.command.RunCommand
+import edu.wpi.first.wpilibj2.command.button.JoystickButton
 import frc.robot.commands.EncoderReadout
 import frc.robot.commands.MotorTest
 import frc.robot.commands.OpenLoopTest
@@ -48,11 +51,32 @@ class RobotContainer {
      * instantiating a [GenericHID] or one of its subclasses ([ ] or [XboxController]), and then passing it to a [ ].
      */
     private fun configureButtonBindings() {
-//        fl.defaultCommand = EncoderReadout("FrontLeft", fl, true, (Math.PI / 2) + 3.419)
-//        fr.defaultCommand = EncoderReadout("FrontRight", fr, true, (0.0) + 1.991)
-//        rl.defaultCommand = EncoderReadout("RearLeft", rl, true, (Math.PI) + 5.412)
-//        rr.defaultCommand = EncoderReadout("RearRight", rr, true, (3 * Math.PI / 2) + 4.211)
+//        fl.defaultCommand = EncoderReadout("FrontLeft", fl, true, 2.862-(Math.PI/2))
+//        fr.defaultCommand = EncoderReadout("FrontRight", fr, true, 4.285+(0.0))
+//        rl.defaultCommand = EncoderReadout("RearLeft", rl, true, 0.871+(Math.PI))
+//        rr.defaultCommand = EncoderReadout("RearRight", rr, true, 2.090+(Math.PI/2))
         swerveSubsystem.defaultCommand = PointInDirection(swerveSubsystem, primaryController)
+        swerveSubsystem.defaultCommand = RunCommand({
+            swerveSubsystem.drive(
+                MathUtil.applyDeadband(primaryController.leftY, 0.06),
+                MathUtil.applyDeadband(primaryController.leftX, 0.06),
+                MathUtil.applyDeadband(primaryController.rightX, 0.06),
+                false
+            )
+        }, swerveSubsystem)
+
+        JoystickButton(primaryController, XboxController.Button.kX.value).whileTrue(
+            RunCommand({
+                swerveSubsystem.setX()
+            }, swerveSubsystem)
+        )
+
+        JoystickButton(primaryController, XboxController.Button.kB.value).whileTrue(
+            RunCommand({
+                swerveSubsystem.setZero()
+            }, swerveSubsystem)
+        )
+
     }
 
 
