@@ -49,6 +49,7 @@ class SwerveSubsystem() : SubsystemBase() {
     val setpointsTelemetry = NetworkTableInstance.getDefault().getTable("Swerve").getDoubleArrayTopic("Setpoints").getEntry(doubleArrayOf(0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0))
     val actualTelemetry = NetworkTableInstance.getDefault().getTable("Swerve").getDoubleArrayTopic("Actual").getEntry(doubleArrayOf(0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0))
     val poseTelemetry = NetworkTableInstance.getDefault().getTable("Swerve").getDoubleArrayTopic("Pose").getEntry(doubleArrayOf(pose.x, pose.y, pose.rotation.radians))
+    val gyroTelemetry = NetworkTableInstance.getDefault().getTable("Swerve").getDoubleTopic("Gyro").getEntry(gyro.angle)
     override fun periodic() {
         odometry.update(
             Rotation2d.fromDegrees(gyro.angle),
@@ -69,6 +70,9 @@ class SwerveSubsystem() : SubsystemBase() {
             rearRight.m_desiredState.angle.radians, rearRight.m_desiredState.speedMetersPerSecond))
 
         poseTelemetry.set(doubleArrayOf(pose.x, pose.y, pose.rotation.radians))
+
+        gyroTelemetry.set(gyro.angle)
+
     }
 
     val pose: Pose2d get() = odometry.poseMeters

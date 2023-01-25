@@ -30,7 +30,7 @@ class RobotContainer {
     val primaryController = XboxController(0)
     val secondaryController = XboxController(1)
 
-    val gyro = AHRS()
+
 
 
 //    val fl = SparkMaxSubsystem(CANSparkMax(2, CANSparkMaxLowLevel.MotorType.kBrushless))
@@ -48,7 +48,7 @@ class RobotContainer {
     init {
         // Configure the button bindings
         configureButtonBindings()
-        gyro.reset()
+
 
     }
 
