@@ -9,8 +9,11 @@ import edu.wpi.first.math.util.Units
 
 object DrivetrainConstants {
 
-    const val maxSpeedMetersPerSecond = 1.0
+    const val maxSpeedMetersPerSecond = 2.0
     const val maxAngularSpeed = 2 * Math.PI
+
+    const val drivingSpeedScalar = 2
+    const val rotationSpeedScalar = 2
 
     // TUNED
     val trackWidth = Units.inchesToMeters(26.5)
@@ -42,7 +45,7 @@ object DrivetrainConstants {
     const val frontRightTurningPort = 4
     const val rearRightTurningPort = 8
 
-    const val gyroReversed = true // TODO: Tune
+    const val gyroReversed = true // TUNED
 
     // The MAXSwerve module can be configured with one of three pinion gears: 12T, 13T, or 14T.
     // This changes the drive speed of the module (a pinion gear with more teeth will result in a
@@ -69,14 +72,14 @@ object DrivetrainConstants {
     const val turningEncoderPositionPIDMaxInput = turningEncoderPositionFactor // radians
 
     // PIDs for driving and turning. minAndMaxOutputs are for SparkMax -1,1 setting, not voltage. TODO: These values must be tuned.
-    const val drivingP = 0.10
+    const val drivingP = 0.1
     const val drivingI = 0.0
     const val drivingD = 0.0
     const val drivingFF = 1.0 / driveWheelFreeSpeedRps
     const val drivingMinOutput = -1.0
     const val drivingMaxOutput = 1.0
 
-    const val turningP = 1.0
+    const val turningP = 0.6
     const val turningI = 0.0
     const val turningD = 0.0
     const val turningFF = 0.0

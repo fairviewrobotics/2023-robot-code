@@ -64,10 +64,10 @@ class RobotContainer {
         swerveSubsystem.defaultCommand = PointInDirection(swerveSubsystem, primaryController)
         swerveSubsystem.defaultCommand = RunCommand({
             swerveSubsystem.drive(
-                MathUtil.applyDeadband(primaryController.leftY, 0.06),
-                MathUtil.applyDeadband(primaryController.leftX, 0.06),
-                MathUtil.applyDeadband(primaryController.rightX, 0.06),
-                false
+                MathUtil.applyDeadband(primaryController.leftY * DrivetrainConstants.drivingSpeedScalar, 0.06),
+                MathUtil.applyDeadband(primaryController.leftX * DrivetrainConstants.drivingSpeedScalar, 0.06),
+                MathUtil.applyDeadband(primaryController.rightX  * DrivetrainConstants.rotationSpeedScalar, 0.06),
+                true
             )
         }, swerveSubsystem)
 

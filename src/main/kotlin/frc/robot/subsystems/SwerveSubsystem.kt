@@ -7,10 +7,12 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry
 import edu.wpi.first.math.kinematics.SwerveModuleState
+import edu.wpi.first.math.util.Units
 import edu.wpi.first.networktables.NetworkTableInstance
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.robot.DrivetrainConstants
 import frc.robot.controllers.SwerveModuleControlller
+import kotlin.math.IEEErem
 
 
 class SwerveSubsystem() : SubsystemBase() {
@@ -39,20 +41,24 @@ class SwerveSubsystem() : SubsystemBase() {
     )
 
     val gyro = AHRS()
+    val heading: Double get() = (Units.degreesToRadians(gyro.angle.IEEErem(360.0))) * -1
+
+
 
     val odometry = SwerveDriveOdometry(
         DrivetrainConstants.driveKinematics,
-        Rotation2d.fromDegrees(gyro.angle),
+        Rotation2d.fromDegrees(heading),
         arrayOf(frontLeft.position, frontRight.position, rearLeft.position, rearRight.position)
     )
 
     val setpointsTelemetry = NetworkTableInstance.getDefault().getTable("Swerve").getDoubleArrayTopic("Setpoints").getEntry(doubleArrayOf(0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0))
     val actualTelemetry = NetworkTableInstance.getDefault().getTable("Swerve").getDoubleArrayTopic("Actual").getEntry(doubleArrayOf(0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0))
     val poseTelemetry = NetworkTableInstance.getDefault().getTable("Swerve").getDoubleArrayTopic("Pose").getEntry(doubleArrayOf(pose.x, pose.y, pose.rotation.radians))
-    val gyroTelemetry = NetworkTableInstance.getDefault().getTable("Swerve").getDoubleTopic("Gyro").getEntry(gyro.angle)
+    val gyroHeading = NetworkTableInstance.getDefault().getTable("Swerve").getDoubleTopic("GyroHeading").getEntry((heading))
+
     override fun periodic() {
         odometry.update(
-            Rotation2d.fromDegrees(gyro.angle),
+            Rotation2d.fromDegrees(heading),
             arrayOf(frontLeft.position, frontRight.position, rearLeft.position, rearRight.position)
         )
 
@@ -71,14 +77,15 @@ class SwerveSubsystem() : SubsystemBase() {
 
         poseTelemetry.set(doubleArrayOf(pose.x, pose.y, pose.rotation.radians))
 
-        gyroTelemetry.set(gyro.angle)
+        gyroHeading.set(heading)
+
 
     }
 
     val pose: Pose2d get() = odometry.poseMeters
     fun resetOdometry(pose: Pose2d) {
         odometry.resetPosition(
-            Rotation2d.fromDegrees(gyro.angle),
+            Rotation2d.fromDegrees(heading),
             arrayOf(frontLeft.position, frontRight.position, rearLeft.position, rearRight.position),
             pose
         )
@@ -91,7 +98,7 @@ class SwerveSubsystem() : SubsystemBase() {
                     forwardMetersPerSecond,
                     sidewaysMetersPerSecond,
                     radiansPerSecond,
-                    Rotation2d.fromDegrees(gyro.angle)))
+                    Rotation2d.fromRadians(heading)))
         } else {
             DrivetrainConstants.driveKinematics.toSwerveModuleStates(
                 ChassisSpeeds(
@@ -99,6 +106,8 @@ class SwerveSubsystem() : SubsystemBase() {
                     sidewaysMetersPerSecond,
                     radiansPerSecond))
         }
+
+
 
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, DrivetrainConstants.maxSpeedMetersPerSecond)
 
@@ -109,10 +118,10 @@ class SwerveSubsystem() : SubsystemBase() {
     }
 
     fun setX() {
-        frontLeft.setDesiredState(SwerveModuleState(0.0, Rotation2d.fromDegrees(45.0)))
-        frontRight.setDesiredState(SwerveModuleState(0.0, Rotation2d.fromDegrees(-45.0)))
-        rearLeft.setDesiredState(SwerveModuleState(0.0, Rotation2d.fromDegrees(-45.0)))
-        rearRight.setDesiredState(SwerveModuleState(0.0, Rotation2d.fromDegrees(45.0)))
+        frontLeft.setDesiredState(SwerveModuleState(0.0, Rotation2d.fromDegrees(-45.0)))
+        frontRight.setDesiredState(SwerveModuleState(0.0, Rotation2d.fromDegrees(45.0)))
+        rearLeft.setDesiredState(SwerveModuleState(0.0, Rotation2d.fromDegrees(45.0)))
+        rearRight.setDesiredState(SwerveModuleState(0.0, Rotation2d.fromDegrees(-45.0)))
     }
 
     fun setZero() {
@@ -142,9 +151,9 @@ class SwerveSubsystem() : SubsystemBase() {
         gyro.reset()
     }
 
-    fun getHeading(): Double {
-        return Rotation2d.fromDegrees(gyro.angle).degrees
-    }
+//    fun getHeading(): Double {
+//        return Rotation2d.fromDegrees(heading).degrees
+//    }
 
     fun turnRate(): Double {
         val coefficient = if (DrivetrainConstants.gyroReversed) {
