@@ -83,6 +83,12 @@ class RobotContainer {
             }, swerveSubsystem)
         )
 
+        JoystickButton(primaryController, XboxController.Button.kY.value).whileTrue(
+            RunCommand({
+                swerveSubsystem.zeroGyro()
+            }, swerveSubsystem)
+        )
+
     }
 
 

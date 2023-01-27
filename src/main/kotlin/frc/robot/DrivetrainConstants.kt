@@ -12,8 +12,8 @@ object DrivetrainConstants {
     const val maxSpeedMetersPerSecond = 2.0
     const val maxAngularSpeed = 2 * Math.PI
 
-    const val drivingSpeedScalar = 2
-    const val rotationSpeedScalar = 2
+    const val drivingSpeedScalar = 1
+    const val rotationSpeedScalar = 1
 
     // TUNED
     val trackWidth = Units.inchesToMeters(26.5)

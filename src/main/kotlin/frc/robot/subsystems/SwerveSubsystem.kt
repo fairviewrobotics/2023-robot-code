@@ -131,6 +131,10 @@ class SwerveSubsystem() : SubsystemBase() {
         rearRight.setDesiredState(SwerveModuleState(0.0, Rotation2d.fromDegrees(0.0)))
     }
 
+    fun zeroGyro() {
+        gyro.reset()
+    }
+
     fun setModuleStates(desiredStates: Array<SwerveModuleState>) {
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, DrivetrainConstants.maxSpeedMetersPerSecond)
 
