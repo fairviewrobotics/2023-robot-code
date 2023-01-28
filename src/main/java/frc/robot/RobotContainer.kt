@@ -3,8 +3,11 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot
 
+import com.revrobotics.CANSparkMax
+import com.revrobotics.CANSparkMaxLowLevel
 import edu.wpi.first.wpilibj2.command.Command
 import frc.robot.commands.ExampleCommand
+import frc.robot.subsystems.ArmSubsystem
 import frc.robot.subsystems.ExampleSubsystem
 
 /**
@@ -17,6 +20,9 @@ class RobotContainer {
     // The robot's subsystems and commands are defined here...
     private val m_exampleSubsystem = ExampleSubsystem()
     private val m_autoCommand = ExampleCommand(m_exampleSubsystem)
+    val elbow_motor = CANSparkMax(Constants.elbowmotorID, CANSparkMaxLowLevel.MotorType.kBrushless)
+    val elevator_motor = CANSparkMax(Constants.elevatormotorID, CANSparkMaxLowLevel.MotorType.kBrushless)
+    val arm = ArmSubsystem(elbow_motor, elevator_motor)
 
     /** The container for the robot. Contains subsystems, OI devices, and commands.  */
     init {

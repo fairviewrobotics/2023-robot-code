@@ -12,4 +12,9 @@ package frc.robot
  * It is advised to statically import this class (or one of its inner classes) wherever the
  * constants are needed, to reduce verbosity.
  */
-class Constants 
+class Constants{
+    companion object{
+        val elbowmotorID = 9
+        val elevatormotorID = 10
+    }
+}
