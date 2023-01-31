@@ -151,13 +151,6 @@ class SwerveSubsystem() : SubsystemBase() {
         rearRight.resetEncoders()
     }
 
-    fun zeroHeading() {
-        gyro.reset()
-    }
-
-//    fun getHeading(): Double {
-//        return Rotation2d.fromDegrees(heading).degrees
-//    }
 
     fun turnRate(): Double {
         val coefficient = if (DrivetrainConstants.gyroReversed) {
@@ -167,10 +160,5 @@ class SwerveSubsystem() : SubsystemBase() {
         }
         return gyro.rate * coefficient
     }
-    fun directionDrive(swerveStates: SwerveModuleState) {
-        frontLeft.setDesiredState(swerveStates)
-        frontRight.setDesiredState(swerveStates)
-        rearLeft.setDesiredState(swerveStates)
-        rearRight.setDesiredState(swerveStates)
-    }
+
 }

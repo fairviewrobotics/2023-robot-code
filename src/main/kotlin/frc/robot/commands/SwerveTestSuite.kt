@@ -64,11 +64,7 @@ class EncoderReadout(name: String, val subsystem: SparkMaxSubsystem, absolute: B
 
         return 0.0
     }
-    /*fun getPosition(): Double {
-        if (absoluteEncoder != null) {
-            absoluteEncoder.position
-        }
-    }*/
+
 
 
     fun getVelocity(): Double {
@@ -218,9 +214,5 @@ class PointInDirection(val swerveSubsystem: SwerveSubsystem,
 
         var moduleState: SwerveModuleState = SwerveModuleState(speed, Rotation2d.fromRadians(angle))
 
-        swerveSubsystem.directionDrive(moduleState)
-
-//        angleEntry.set(angle)
-//        speedEntry.set(speed)
     }
 }
