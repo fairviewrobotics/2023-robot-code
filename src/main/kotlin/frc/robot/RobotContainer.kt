@@ -30,19 +30,6 @@ class RobotContainer {
     val primaryController = XboxController(0)
     val secondaryController = XboxController(1)
 
-
-
-
-//    val fl = SparkMaxSubsystem(CANSparkMax(2, CANSparkMaxLowLevel.MotorType.kBrushless))
-//    val fr = SparkMaxSubsystem(CANSparkMax(4, CANSparkMaxLowLevel.MotorType.kBrushless))
-//    val rl = SparkMaxSubsystem(CANSparkMax(6, CANSparkMaxLowLevel.MotorType.kBrushless))
-//    val rr = SparkMaxSubsystem(CANSparkMax(8, CANSparkMaxLowLevel.MotorType.kBrushless))
-//
-//    val fll = SparkMaxSubsystem(CANSparkMax(1, CANSparkMaxLowLevel.MotorType.kBrushless))
-//    val frr = SparkMaxSubsystem(CANSparkMax(3, CANSparkMaxLowLevel.MotorType.kBrushless))
-//    val rll = SparkMaxSubsystem(CANSparkMax(5, CANSparkMaxLowLevel.MotorType.kBrushless))
-//    val rrr = SparkMaxSubsystem(CANSparkMax(7, CANSparkMaxLowLevel.MotorType.kBrushless))
-
     val swerveSubsystem = SwerveSubsystem()
     /** The container for the robot. Contains subsystems, OI devices, and commands.  */
     init {
@@ -57,11 +44,6 @@ class RobotContainer {
      * instantiating a [GenericHID] or one of its subclasses ([ ] or [XboxController]), and then passing it to a [ ].
      */
     private fun configureButtonBindings() {
-//        fl.defaultCommand = EncoderReadout("FrontLeft", fl, true, 2.862-(Math.PI/2))
-//        fr.defaultCommand = EncoderReadout("FrontRight", fr, true, 4.285+(0.0))
-//        rl.defaultCommand = EncoderReadout("RearLeft", rl, true, 0.871+(Math.PI))
-//        rr.defaultCommand = EncoderReadout("RearRight", rr, true, 2.090+(Math.PI/2))
-        swerveSubsystem.defaultCommand = PointInDirection(swerveSubsystem, primaryController)
         swerveSubsystem.defaultCommand = RunCommand({
             swerveSubsystem.drive(
                 MathUtil.applyDeadband(primaryController.leftY * DrivetrainConstants.drivingSpeedScalar, 0.06),

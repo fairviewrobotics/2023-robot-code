@@ -137,10 +137,8 @@ class ClosedLoopTest(val controller: XboxController, val subsystem: SparkMaxSubs
     init {
         addRequirements(subsystem)
 
-        // todo: Convert these and shit
         pid.enableContinuousInput(0.0, DrivetrainConstants.turningEncoderPositionPIDMaxInput)
 
-        // todo: convert these into what we actually find.
         encoder.velocityConversionFactor = 1.0
         encoder.positionConversionFactor = 1.0
 
