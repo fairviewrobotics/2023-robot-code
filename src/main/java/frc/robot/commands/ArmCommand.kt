@@ -4,18 +4,50 @@ import edu.wpi.first.wpilibj2.command.CommandBase
 import frc.robot.ArmConstants
 import frc.robot.subsystems.ArmSubsystem
 
-class armSetPosition(val armsubsystem: ArmSubsystem, val elbowPosition: Double, val elevatorPosition: Double) :CommandBase()
+class armSetPosition(val armSubsystem: ArmSubsystem, val elbowPosition: Double, val elevatorPosition: Double) :CommandBase()
 {
+    //These values are for the commands
+    //knowing the mechanism, these will end up being really strange values for all the way down.
+    //bottom
+    val elevatorBottomPos = 0.0
+    val elbowBottomPos = 0.0
+
+    //top peg
+    val elevatorTopPegPos = 3.0
+    val elbowTopPegPos = 3.0
+
+    //middle peg
+    val elevatorMidPegPos = 2.0
+    val elbowMidPegPos = 2.0
+
+    //ground
+    val elevatorGroundPos = 2.0
+    val elbowGroundPos = 1.0
+
+    //middle shelf
+    val elevatorMidShelfPos = 2.0
+    val elbowMidShelfPos = 2.0
+
+    //top shelf
+    val elevatorTopShelfPos = 3.0
+    val elbowTopShelfPos = 3.0
+
+    //pickup shelf position
+    val elevatorPickupPos = 3.0
+    val elbowPickupPos = 3.0
+
+
     init {
-        armsubsystem.setDesired(elbowPosition, elevatorPosition)
+        armSubsystem.setDesired(elbowPosition, elevatorPosition)
     }
 
     override fun execute() {
 
     }
 
+
     override fun isFinished(): Boolean {
-        return (ArmConstants.elevatorPid.atSetpoint() && ArmConstants.elbowPid.atSetpoint())
+        return (armSubsystem.elevatorPid.atSetpoint() && armSubsystem.elbowPid.atSetpoint())
     //if both parts have reached their desired
     }
 
@@ -23,79 +55,45 @@ class armSetPosition(val armsubsystem: ArmSubsystem, val elbowPosition: Double, 
     }
 }
 
-class gotoHome(val armsubsystem: ArmSubsystem) :CommandBase() //this one goes into the folded-up possition (all the way down for both)
+fun gotoHome()
 {
+    return desired(ArmSubsystem, 1.0, 2.0)}
 
-
-    override fun execute() {
-        armSetPosition(armsubsystem, ArmConstants.elbowBottomPos, ArmConstants.elevatorBottomPos)
-    }
-
-
+fun gotoTopPeg()
+{
+    gotoAnyPos(elbowTopPegPos, elevatorTopPegPos)
 }
 
-class gotoTopPeg(val armsubsystem: ArmSubsystem) :CommandBase() //This one goes to the top peg
+fun gotoMiddlePeg()
 {
-
-
-    override fun execute() {
-        armSetPosition(armsubsystem, ArmConstants.elbowTopPegPos, ArmConstants.elevatorTopPegPos)
-    }
-
-
+    gotoAnyPos(elbowMidPegPos, elevatorMidPegPos)
 }
 
-class gotoMiddlePeg(val armsubsystem: ArmSubsystem) :CommandBase() //This one goes to the middle peg
+fun gotoGround()
 {
-
-
-    override fun execute() {
-        armSetPosition(armsubsystem, ArmConstants.elbowMidPegPos, ArmConstants.elevatorMidPegPos)
-    }
-
-
+    gotoAnyPos(elbowGroundPos, elevatorGroundPos)
 }
 
-class gotoGround(val armsubsystem: ArmSubsystem) :CommandBase() //This one goes to the ground.
-{ //This can be used to pick up cones from the ground and put them on the bottom shelf, at least for now...
-
-
-    override fun execute() {
-        armSetPosition(armsubsystem, ArmConstants.elbowGroundPos, ArmConstants.elevatorGroundPos)
-    }
-
-
+fun gotoMiddleShelf()
+{
+    gotoAnyPos(elbowMidShelfPos, elevatorMidShelfPos)
 }
 
-class gotoMiddleShelf(val armsubsystem: ArmSubsystem) :CommandBase() //This one goes to the middle shelf
+fun gotoTopShelf()
 {
-
-
-    override fun execute() {
-        armSetPosition(armsubsystem, ArmConstants.elbowMidShelfPos, ArmConstants.elevatorMidShelfPos)
-    }
-
-
+    gotoAnyPos(elbowTopShelfPos, elevatorTopShelfPos)
 }
 
-class gotoTopShelf(val armsubsystem: ArmSubsystem) :CommandBase() //This one goes to the top shelf
+fun gotoPickup()
 {
-
-
-    override fun execute() {
-        armSetPosition(armsubsystem, ArmConstants.elbowTopShelfPos, ArmConstants.elevatorTopShelfPos)
-    }
-
-
+    gotoAnyPos(elbowPickupPos, elevatorPickupPos)
+}
+class desired(arm, elbowpos, elevatorpos) {
+    execute()
+    isFinished()
 }
 
-class gotoPickup(val armsubsystem: ArmSubsystem) :CommandBase() //This one goes to the pickup shelf
-{
 
-
-    override fun execute() {
-        armSetPosition(armsubsystem, ArmConstants.elbowPickupPos, ArmConstants.elevatorPickupPos)
-    }
-
-
+fun gotoPickup() {
+    return desired(arm, 1.0, 2.0)
 }

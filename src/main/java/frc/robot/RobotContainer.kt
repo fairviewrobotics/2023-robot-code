@@ -20,8 +20,8 @@ class RobotContainer {
     // The robot's subsystems and commands are defined here...
     private val m_exampleSubsystem = ExampleSubsystem()
     private val m_autoCommand = ExampleCommand(m_exampleSubsystem)
-    val elbow_motor = CANSparkMax(Constants.elbowmotorID, CANSparkMaxLowLevel.MotorType.kBrushless)
-    val elevator_motor = CANSparkMax(Constants.elevatormotorID, CANSparkMaxLowLevel.MotorType.kBrushless)
+    val elbow_motor = CANSparkMax(ArmConstants.elbowmotorID, CANSparkMaxLowLevel.MotorType.kBrushless)
+    val elevator_motor = CANSparkMax(ArmConstants.elevatormotorID, CANSparkMaxLowLevel.MotorType.kBrushless)
     val arm = ArmSubsystem(elbow_motor, elevator_motor)
 
     /** The container for the robot. Contains subsystems, OI devices, and commands.  */

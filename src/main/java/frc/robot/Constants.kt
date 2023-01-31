@@ -14,7 +14,6 @@ package frc.robot
  */
 class Constants{
     companion object{
-        val elbowmotorID = 9
-        val elevatormotorID = 10
+
     }
 }
