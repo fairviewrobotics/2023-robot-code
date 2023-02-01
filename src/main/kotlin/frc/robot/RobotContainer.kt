@@ -11,14 +11,12 @@ import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandBase
 import edu.wpi.first.wpilibj2.command.RunCommand
 import edu.wpi.first.wpilibj2.command.button.JoystickButton
-import frc.robot.commands.EncoderReadout
-import frc.robot.commands.MotorTest
-import frc.robot.commands.OpenLoopTest
-import frc.robot.commands.PointInDirection
 import frc.robot.controllers.SwerveModuleControlller
-import frc.robot.subsystems.SparkMaxSubsystem
+
+
 import frc.robot.subsystems.SwerveSubsystem
 import com.kauailabs.navx.frc.AHRS
+import frc.robot.commands.*
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -44,14 +42,7 @@ class RobotContainer {
      * instantiating a [GenericHID] or one of its subclasses ([ ] or [XboxController]), and then passing it to a [ ].
      */
     private fun configureButtonBindings() {
-        swerveSubsystem.defaultCommand = RunCommand({
-            swerveSubsystem.drive(
-                MathUtil.applyDeadband(primaryController.leftY * DrivetrainConstants.drivingSpeedScalar, 0.06),
-                MathUtil.applyDeadband(primaryController.leftX * DrivetrainConstants.drivingSpeedScalar, 0.06),
-                MathUtil.applyDeadband(primaryController.rightX  * DrivetrainConstants.rotationSpeedScalar, 0.06),
-                true
-            )
-        }, swerveSubsystem)
+        swerveSubsystem.defaultCommand = StandardDrive(swerveSubsystem, { primaryController.leftY }, { primaryController.leftX }, { primaryController.rightTriggerAxis }, true)
 
         JoystickButton(primaryController, XboxController.Button.kX.value).whileTrue(
             RunCommand({
