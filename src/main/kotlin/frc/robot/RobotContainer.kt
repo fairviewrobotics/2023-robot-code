@@ -3,19 +3,14 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot
 
-import com.revrobotics.CANSparkMax
-import com.revrobotics.CANSparkMaxLowLevel
-import edu.wpi.first.math.MathUtil
 import edu.wpi.first.wpilibj.XboxController
-import edu.wpi.first.wpilibj2.command.Command
-import edu.wpi.first.wpilibj2.command.CommandBase
 import edu.wpi.first.wpilibj2.command.RunCommand
 import edu.wpi.first.wpilibj2.command.button.JoystickButton
-import frc.robot.controllers.SwerveModuleControlller
 
 
 import frc.robot.subsystems.SwerveSubsystem
 import com.kauailabs.navx.frc.AHRS
+import edu.wpi.first.wpilibj.I2C
 import frc.robot.commands.*
 
 /**
@@ -29,6 +24,8 @@ class RobotContainer {
     val secondaryController = XboxController(1)
 
     val swerveSubsystem = SwerveSubsystem()
+
+
     /** The container for the robot. Contains subsystems, OI devices, and commands.  */
     init {
         // Configure the button bindings

@@ -3,6 +3,7 @@ package frc.robot
 import com.revrobotics.CANSparkMax
 import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry
 import edu.wpi.first.math.trajectory.TrapezoidProfile
 import edu.wpi.first.math.util.Units
 
@@ -33,7 +34,7 @@ object DrivetrainConstants {
     const val rearLeftChassisAngularOffset = 0.871+(Math.PI)+(Math.PI)
     const val rearRightChassisAngularOffset =  2.090+(Math.PI/2)+(Math.PI)
 
-    // SPARK MAX CAN IDs
+    // SPARK MAX CAN ID
     // TUNED
     const val frontLeftDrivingPort = 1
     const val rearLeftDrivingPort = 5
