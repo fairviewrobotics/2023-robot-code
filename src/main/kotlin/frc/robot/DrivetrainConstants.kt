@@ -13,7 +13,7 @@ object DrivetrainConstants {
     const val maxAngularSpeed = 2 * Math.PI
 
     const val drivingSpeedScalar = -1
-    const val rotationSpeedScalar = 1
+    const val rotationSpeedScalar = 1.5
 
     // TUNED
     val trackWidth = Units.inchesToMeters(26.5)
@@ -93,4 +93,6 @@ object DrivetrainConstants {
     // Current limits for motors, set using smartcurrentlimits in swervemodulecontroller
     const val drivingMotorCurrentLimit = 50 // amps
     const val turningMotorCurrentLimit = 30 // amps
+
+
 }

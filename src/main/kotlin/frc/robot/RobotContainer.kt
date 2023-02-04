@@ -42,7 +42,12 @@ class RobotContainer {
      * instantiating a [GenericHID] or one of its subclasses ([ ] or [XboxController]), and then passing it to a [ ].
      */
     private fun configureButtonBindings() {
-        swerveSubsystem.defaultCommand = StandardDrive(swerveSubsystem, { primaryController.leftY }, { primaryController.leftX }, { primaryController.rightTriggerAxis }, true)
+        swerveSubsystem.defaultCommand = StandardDrive(swerveSubsystem,
+            { primaryController.leftY * DrivetrainConstants.drivingSpeedScalar },
+            { primaryController.leftX * DrivetrainConstants.drivingSpeedScalar },
+            { primaryController.rightX * DrivetrainConstants.rotationSpeedScalar },
+            true
+        )
 
         JoystickButton(primaryController, XboxController.Button.kX.value).whileTrue(
             RunCommand({
