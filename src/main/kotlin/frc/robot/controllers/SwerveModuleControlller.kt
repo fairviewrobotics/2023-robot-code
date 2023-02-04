@@ -39,7 +39,7 @@ class SwerveModuleControlller(val drivingPort: Int, val turningPort: Int, val ch
         turningEncoder.velocityConversionFactor = DrivetrainConstants.turningEncoderVelocityFactor
 
         // Output shaft rotates in the opposite direction of the steering motor in the module, this we need to invert.
-        turningEncoder.inverted = DrivetrainConstants.gyroReversed
+        turningEncoder.inverted = DrivetrainConstants.turningEncoderReversed
 
         // Enable PID wrap around - going through 0 to get to the setpoint. Going from 350 degrees to 10 degrees will only
         // take 20 degrees of movement as opposed to 340.
