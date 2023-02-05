@@ -3,19 +3,14 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot
 
-import com.revrobotics.CANSparkMax
-import com.revrobotics.CANSparkMaxLowLevel
-import edu.wpi.first.math.MathUtil
 import edu.wpi.first.wpilibj.XboxController
-import edu.wpi.first.wpilibj2.command.Command
-import edu.wpi.first.wpilibj2.command.CommandBase
 import edu.wpi.first.wpilibj2.command.RunCommand
 import edu.wpi.first.wpilibj2.command.button.JoystickButton
-import frc.robot.controllers.SwerveModuleControlller
 
 
 import frc.robot.subsystems.SwerveSubsystem
 import com.kauailabs.navx.frc.AHRS
+
 import edu.wpi.first.math.controller.ElevatorFeedforward
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.controller.ProfiledPIDController
@@ -28,6 +23,7 @@ import edu.wpi.first.networktables.NetworkTableInstance
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand
+
 import frc.robot.commands.*
 
 /**
