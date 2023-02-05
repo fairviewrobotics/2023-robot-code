@@ -1,68 +1,82 @@
 package frc.robot
 
-import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.math.controller.ArmFeedforward
-import edu.wpi.first.math.controller.ElevatorFeedforward
-import edu.wpi.first.math.controller.PIDController
-import edu.wpi.first.networktables.NetworkTableInstance
-import edu.wpi.first.networktables.DoublePublisher
+import edu.wpi.first.math.trajectory.TrapezoidProfile
 
 
 object ArmConstants {
     /** make a network table value in table Arm and value ElbowPosition**/
-    val ElbowmotorID = 9
-    val ElevatormotorID = 10
+    val elbowmotorID = 9
+    val elevatormotorID = 10
 
 
-    //arbitrary values that need tuning
-    val ElevatorSpeedMultiplier = 1.0 //these two vals for controlling speed
-    val ElbowSpeedMultiplier = 1.0
+    //FF vals
+    val elbowkA = 0.0
+    val elbowkG = 0.0
+    val elbowkS = 0.0
+    val eElbowkV = 0.0
+
+    var elbowFeedForward = ArmFeedforward(elbowkS, elbowkG, eElbowkV, elbowkA)
+
+    //PID vals
+    //PID stuff
+    //also needs tuning
+    val elevatorP = 0.1
+    val elevatorI = 0.1
+    val elevatorD = 0.1
+    val elevatorTrapezoidConstraints = TrapezoidProfile.Constraints(3.0, 1.0)
+
+    val elbowP = 0.1
+    val elbowI = 0.1
+    val elbowD = 0.1
 
     //these two vals are how far it's allowed to go.
-    val ElevatorThreshold = 1.0
-    val ElbowThreshold = 1.0
+    val elevatorThreshold = 1.0
+    val elbowThreshold = 1.0
 
-    var ElbowDesiredPos = 1.0 //position wanted for elbow
-    var ElevatorDesiredPos = 1.0 //Position wanted for elevator
+    val elevatorBottomPosEnocder = 0.0 //the value when it's at the bottom for the encoder
+    val elevatorTopPosEnocder = 3.0 //the value when it's at the top for the encoder
 
-    val ElevatorBottomPosEnocder = 0.0 //the value when it's at the bottom for the encoder
-    val ElevatorTopPosEnocder = 3.0 //the value when it's at the top for the encoder
 
     //multipliers for unit conversion and stuff
-    val ElevatorEncoderVelocityMultiplier = 2.0 //this should turn revs/min to meters/sec
-    val ElevatorEncoderPosMultiplier = 2.0 //this should turn revs to meters
-    val ElbowEncoderVelocityMultiplier = 2.0 //this should turn revs/min to radians/sec (Yay!)
-    val ElbowEncoderPosMultiplier = 2.0 //this should turn revs to radians (Yay again!)
+    // these values obtained from tuning
+    val elevatorEncoderVelocityMultiplier = 0.003010870139 / 60.0 //this should turn revs/min to meters/sec
+    val elevatorEncoderPositionConversionFactor = 0.003010870139 //this should turn revs to meters
+
+    val elevatorMotorInverted = false
+
+    val elbowEncoderVelocityMultiplier = 2.0 //this should turn revs/min to radians/sec (Yay!)
+    val elbowEncoderPosMultiplier = 2.0 //this should turn revs to radians (Yay again!)
 
     //all those random command values
     //knowing the mechanism, these will end up being really strange values for all the way down.
 //bottom
-    val ElevatorBottomPos = 0.0
-    val ElbowBottomPos = 0.0
+    val elevatorBottomPos = 0.0
+    val elbowBottomPos = 0.0
 
     //top peg
-    val ElevatorTopPegPos = 3.0
-    val ElbowTopPegPos = 3.0
+    val elevatorTopPegPos = 3.0
+    val elbowTopPegPos = 3.0
 
     //middle peg
-    val ElevatorMidPegPos = 2.0
-    val ElbowMidPegPos = 2.0
+    val elevatorMidPegPos = 2.0
+    val elbowMidPegPos = 2.0
 
     //ground
-    val ElevatorGroundPos = 2.0
-    val ElbowGroundPos = 1.0
+    val elevatorGroundPos = 2.0
+    val elbowGroundPos = 1.0
 
     //middle shelf
-    val ElevatorMidShelfPos = 2.0
-    val ElbowMidShelfPos = 2.0
+    val elevatorMidShelfPos = 2.0
+    val elbowMidShelfPos = 2.0
 
     //top shelf
-    val ElevatorTopShelfPos = 3.0
-    val ElbowTopShelfPos = 3.0
+    val elevatorTopShelfPos = 3.0
+    val elbowTopShelfPos = 3.0
 
     //pickup shelf position
-    val ElevatorPickupPos = 3.0
-    val ElbowPickupPos = 3.0
+    val elevatorPickupPos = 3.0
+    val elbowPickupPos = 3.0
 
 
 

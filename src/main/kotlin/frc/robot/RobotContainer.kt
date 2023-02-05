@@ -16,7 +16,10 @@ import frc.robot.controllers.SwerveModuleControlller
 
 import frc.robot.subsystems.SwerveSubsystem
 import com.kauailabs.navx.frc.AHRS
+import edu.wpi.first.wpilibj.motorcontrol.Spark
 import frc.robot.commands.*
+import frc.robot.controllers.DigitalInputSubsystem
+import frc.robot.controllers.SparkMaxSubsystem
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -28,7 +31,11 @@ class RobotContainer {
     val primaryController = XboxController(0)
     val secondaryController = XboxController(1)
 
-    val swerveSubsystem = SwerveSubsystem()
+    //val swerveSubsystem = SwerveSubsystem()
+    //val simpleTest = SparkMaxSubsystem(2)
+    val motor = SparkMaxSubsystem(2)
+    val topLimit = DigitalInputSubsystem(0)
+    val bottomLimit = DigitalInputSubsystem(1)
     /** The container for the robot. Contains subsystems, OI devices, and commands.  */
     init {
         // Configure the button bindings
@@ -42,7 +49,9 @@ class RobotContainer {
      * instantiating a [GenericHID] or one of its subclasses ([ ] or [XboxController]), and then passing it to a [ ].
      */
     private fun configureButtonBindings() {
-        swerveSubsystem.defaultCommand = StandardDrive(swerveSubsystem, { primaryController.leftY }, { primaryController.leftX }, { primaryController.rightTriggerAxis }, true)
+        motor.defaultCommand = EncoderAndLinebreakerTest(bottomLimit, topLimit, motor, primaryController)
+
+        /*swerveSubsystem.defaultCommand = StandardDrive(swerveSubsystem, { primaryController.leftY }, { primaryController.leftX }, { primaryController.rightTriggerAxis }, true)
 
         JoystickButton(primaryController, XboxController.Button.kX.value).whileTrue(
             RunCommand({
@@ -61,7 +70,7 @@ class RobotContainer {
                 swerveSubsystem.zeroGyro()
             }, swerveSubsystem)
         )
-
+*/
     }
 
 

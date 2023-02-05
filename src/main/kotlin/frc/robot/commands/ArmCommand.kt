@@ -6,13 +6,13 @@ import frc.robot.subsystems.ArmSubsystem
 
 
 
-class ArmSetPosition(val ArmSubsystem: ArmSubsystem, val ElbowPosition: Double, val ElevatorPosition: Double) :CommandBase()
+class ArmSetPosition(val armSubsystem: ArmSubsystem, val elbowPosition: Double, val elevatorPosition: Double) :CommandBase()
 {
 
 
 
     init {
-        ArmSubsystem.SetDesired(ElbowPosition, ElevatorPosition)
+        armSubsystem.SetDesired(elbowPosition, elevatorPosition)
     }
 
     override fun execute() {
@@ -22,7 +22,7 @@ class ArmSetPosition(val ArmSubsystem: ArmSubsystem, val ElbowPosition: Double, 
 
     
     override fun isFinished(): Boolean {
-        return (ArmSubsystem.ElevatorPid.atSetpoint() && ArmSubsystem.ElbowPid.atSetpoint())
+        return (armSubsystem.elevatorPid.atSetpoint() && armSubsystem.elbowPid.atSetpoint())
     //if both parts have reached their desired
     }
 
@@ -30,36 +30,36 @@ class ArmSetPosition(val ArmSubsystem: ArmSubsystem, val ElbowPosition: Double, 
     }
 }
 
-fun GotoHome(ArmSubsystem: ArmSubsystem) {
-    ArmSetPosition(ArmSubsystem, ArmConstants.ElbowBottomPos, ArmConstants.ElevatorBottomPos)
+fun GotoHome(armSubsystem: ArmSubsystem) {
+    ArmSetPosition(armSubsystem, ArmConstants.elbowBottomPos, ArmConstants.elevatorBottomPos)
 }
 
-fun GotoTopPeg(ArmSubsystem: ArmSubsystem)
+fun gotoTopPeg(armSubsystem: ArmSubsystem)
 {
-    ArmSetPosition(ArmSubsystem, ArmConstants.ElbowTopPegPos, ArmConstants.ElevatorTopPegPos)
+    ArmSetPosition(armSubsystem, ArmConstants.elbowTopPegPos, ArmConstants.elevatorTopPegPos)
 }
 
-fun GotoMiddlePeg(ArmSubsystem: ArmSubsystem)
+fun gotoMiddlePeg(armSubsystem: ArmSubsystem)
 {
-    ArmSetPosition(ArmSubsystem, ArmConstants.ElbowMidPegPos, ArmConstants.ElevatorMidPegPos)
+    ArmSetPosition(armSubsystem, ArmConstants.elbowMidPegPos, ArmConstants.elevatorMidPegPos)
 }
 
-fun GotoGround(ArmSubsystem: ArmSubsystem)
+fun gotoGround(armSubsystem: ArmSubsystem)
 {
-    ArmSetPosition(ArmSubsystem, ArmConstants.ElbowGroundPos, ArmConstants.ElevatorGroundPos)
+    ArmSetPosition(armSubsystem, ArmConstants.elbowGroundPos, ArmConstants.elevatorGroundPos)
 }
 
-fun GotoMiddleShelf(ArmSubsystem: ArmSubsystem)
+fun gotoMiddleShelf(armSubsystem: ArmSubsystem)
 {
-    ArmSetPosition(ArmSubsystem, ArmConstants.ElbowMidShelfPos, ArmConstants.ElevatorMidShelfPos)
+    ArmSetPosition(armSubsystem, ArmConstants.elbowMidShelfPos, ArmConstants.elevatorMidShelfPos)
 }
 
-fun GotoTopShelf(ArmSubsystem: ArmSubsystem)
+fun gotoTopShelf(armSubsystem: ArmSubsystem)
 {
-    ArmSetPosition(ArmSubsystem, ArmConstants.ElbowTopShelfPos, ArmConstants.ElevatorTopShelfPos)
+    ArmSetPosition(armSubsystem, ArmConstants.elbowTopShelfPos, ArmConstants.elevatorTopShelfPos)
 }
 
-fun gotoPickup(ArmSubsystem: ArmSubsystem)
+fun gotoPickup(armSubsystem: ArmSubsystem)
 {
-    ArmSetPosition(ArmSubsystem, ArmConstants.ElbowPickupPos, ArmConstants.ElevatorPickupPos)
+    ArmSetPosition(armSubsystem, ArmConstants.elbowPickupPos, ArmConstants.elevatorPickupPos)
 }
