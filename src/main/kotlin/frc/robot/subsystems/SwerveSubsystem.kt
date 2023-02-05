@@ -1,6 +1,7 @@
 package frc.robot.subsystems
 
 import com.kauailabs.navx.frc.AHRS
+import edu.wpi.first.math.filter.SlewRateLimiter
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
@@ -11,6 +12,7 @@ import edu.wpi.first.math.util.Units
 import edu.wpi.first.networktables.NetworkTableInstance
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.robot.DrivetrainConstants
+import frc.robot.RobotContainer
 import frc.robot.controllers.SwerveModuleControlller
 import kotlin.math.IEEErem
 
@@ -41,13 +43,16 @@ class SwerveSubsystem() : SubsystemBase() {
     )
 
     val gyro = AHRS()
+
     val heading: Double get() = (Units.degreesToRadians(gyro.angle.IEEErem(360.0))) * -1
+
+    //val headingInDegrees = Units.radiansToDegrees(heading)
 
 
 
     val odometry = SwerveDriveOdometry(
         DrivetrainConstants.driveKinematics,
-        Rotation2d.fromDegrees(heading),
+        Rotation2d.fromRadians(heading),
         arrayOf(frontLeft.position, frontRight.position, rearLeft.position, rearRight.position)
     )
 
@@ -58,7 +63,7 @@ class SwerveSubsystem() : SubsystemBase() {
 
     override fun periodic() {
         odometry.update(
-            Rotation2d.fromDegrees(heading),
+            Rotation2d.fromRadians(heading),
             arrayOf(frontLeft.position, frontRight.position, rearLeft.position, rearRight.position)
         )
 
@@ -80,18 +85,21 @@ class SwerveSubsystem() : SubsystemBase() {
         gyroHeading.set(heading)
 
 
+
     }
 
     val pose: Pose2d get() = odometry.poseMeters
     fun resetOdometry(pose: Pose2d) {
         odometry.resetPosition(
-            Rotation2d.fromDegrees(heading),
+            Rotation2d.fromRadians(heading),
             arrayOf(frontLeft.position, frontRight.position, rearLeft.position, rearRight.position),
             pose
         )
     }
 
     fun drive(forwardMetersPerSecond: Double, sidewaysMetersPerSecond: Double, radiansPerSecond: Double, fieldRelative: Boolean) {
+
+        val radiansDesired = NetworkTableInstance.getDefault()
         val swerveModuleStates = if (fieldRelative) {
             DrivetrainConstants.driveKinematics.toSwerveModuleStates(
                 ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -117,6 +125,8 @@ class SwerveSubsystem() : SubsystemBase() {
         rearRight.setDesiredState(swerveModuleStates[3])
     }
 
+
+
     fun setX() {
         frontLeft.setDesiredState(SwerveModuleState(0.0, Rotation2d.fromDegrees(-45.0)))
         frontRight.setDesiredState(SwerveModuleState(0.0, Rotation2d.fromDegrees(45.0)))
@@ -133,6 +143,7 @@ class SwerveSubsystem() : SubsystemBase() {
 
     fun zeroGyro() {
         gyro.reset()
+        resetOdometry(Pose2d(0.0, 0.0, Rotation2d(0.0)))
     }
 
     fun setModuleStates(desiredStates: Array<SwerveModuleState>) {
