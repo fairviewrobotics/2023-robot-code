@@ -13,8 +13,8 @@ object DrivetrainConstants {
     const val maxSpeedMetersPerSecond = 2.0
     const val maxAngularSpeed = 2 * Math.PI
 
-    const val drivingSpeedScalar = -1
-    const val rotationSpeedScalar = 1
+    const val drivingSpeedScalar = -1.2
+    const val rotationSpeedScalar = -1.7
 
     // TUNED
     val trackWidth = Units.inchesToMeters(26.5)
@@ -46,7 +46,8 @@ object DrivetrainConstants {
     const val frontRightTurningPort = 4
     const val rearRightTurningPort = 8
 
-    const val gyroReversed = true // TUNED
+    const val gyroReversed = false // TUNED
+    const val turningEncoderReversed = true
 
     // The MAXSwerve module can be configured with one of three pinion gears: 12T, 13T, or 14T.
     // This changes the drive speed of the module (a pinion gear with more teeth will result in a
@@ -73,7 +74,7 @@ object DrivetrainConstants {
     const val turningEncoderPositionPIDMaxInput = turningEncoderPositionFactor // radians
 
     // PIDs for driving and turning. minAndMaxOutputs are for SparkMax -1,1 setting, not voltage. TODO: These values must be tuned.
-    const val drivingP = 0.1
+    const val drivingP = 0.06
     const val drivingI = 0.0
     const val drivingD = 0.0
     const val drivingFF = 1.0 / driveWheelFreeSpeedRps
@@ -94,4 +95,6 @@ object DrivetrainConstants {
     // Current limits for motors, set using smartcurrentlimits in swervemodulecontroller
     const val drivingMotorCurrentLimit = 50 // amps
     const val turningMotorCurrentLimit = 30 // amps
+
+
 }
