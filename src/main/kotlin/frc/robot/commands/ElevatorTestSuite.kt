@@ -4,9 +4,9 @@ import edu.wpi.first.math.util.Units
 import edu.wpi.first.networktables.NetworkTableInstance
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj2.command.CommandBase
-import frc.robot.ArmConstants
-import frc.robot.controllers.DigitalInputSubsystem
-import frc.robot.controllers.SparkMaxSubsystem
+import frc.robot.constants.ArmConstants
+import frc.robot.subsystems.DigitalInputSubsystem
+import frc.robot.subsystems.SparkMaxSubsystem
 
 class EncoderConversion(val controller: XboxController, val motor: SparkMaxSubsystem) : CommandBase() {
     val rawPosition = NetworkTableInstance.getDefault().getTable("ElevatorTestSuite").getDoubleTopic("RawPosition").getEntry(0.0)

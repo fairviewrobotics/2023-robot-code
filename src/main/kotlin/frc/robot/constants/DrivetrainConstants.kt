@@ -1,10 +1,8 @@
-package frc.robot
+package frc.robot.constants
 
 import com.revrobotics.CANSparkMax
 import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry
-import edu.wpi.first.math.trajectory.TrapezoidProfile
 import edu.wpi.first.math.util.Units
 
 
@@ -12,6 +10,11 @@ object DrivetrainConstants {
 
     const val maxSpeedMetersPerSecond = 2.0
     const val maxAngularSpeed = 2 * Math.PI
+
+    const val dircetionSlewRate = 1.2 // rads/sec
+    const val magnitudeSlewRate = 1.8 // percent/second (1 = 100%)
+    const val rotationalSlewRate = 2.0 // percent/second (1 = 100%)
+
 
     const val drivingSpeedScalar = -1.2
     const val rotationSpeedScalar = -1.7

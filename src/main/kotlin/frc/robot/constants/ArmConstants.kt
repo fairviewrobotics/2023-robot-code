@@ -1,4 +1,4 @@
-package frc.robot
+package frc.robot.constants
 
 import edu.wpi.first.math.controller.ArmFeedforward
 import edu.wpi.first.math.trajectory.TrapezoidProfile

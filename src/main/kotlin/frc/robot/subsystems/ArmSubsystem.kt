@@ -8,7 +8,7 @@ import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.controller.ProfiledPIDController
 import edu.wpi.first.networktables.NetworkTableInstance
 import edu.wpi.first.wpilibj2.command.SubsystemBase
-import frc.robot.ArmConstants
+import frc.robot.constants.ArmConstants
 
 class ArmSubsystem(val elbowMotorID: Int, val elevatorMotorID: Int) :SubsystemBase() {
     val elevatorMotor = CANSparkMax(elevatorMotorID, CANSparkMaxLowLevel.MotorType.kBrushless)
@@ -33,7 +33,10 @@ class ArmSubsystem(val elbowMotorID: Int, val elevatorMotorID: Int) :SubsystemBa
     var table = inst.getTable("Arm")
 
     val elbowPid = PIDController(ArmConstants.elbowP, ArmConstants.elbowI, ArmConstants.elbowD)
-    val elevatorPid = ProfiledPIDController(ArmConstants.elevatorP,ArmConstants.elevatorI,ArmConstants.elevatorD, ArmConstants.elevatorTrapezoidConstraints, 0.02)
+    val elevatorPid = ProfiledPIDController(
+        ArmConstants.elevatorP,
+        ArmConstants.elevatorI,
+        ArmConstants.elevatorD, ArmConstants.elevatorTrapezoidConstraints, 0.02)
 
 
 
@@ -55,7 +58,7 @@ class ArmSubsystem(val elbowMotorID: Int, val elevatorMotorID: Int) :SubsystemBa
         super.periodic()
         /** be setting the ntvalue for elbow position **/
         elevatorMotor.setVoltage((elevatorPid.calculate(elevatorEncoder.position, desiredElevatorState)))
-        elbowMotor.setVoltage((elbowPid.calculate(elevatorEncoder.position, desiredElbowState))+ArmConstants.elbowFeedForward.calculate(desiredElbowState,2.5))
+        elbowMotor.setVoltage((elbowPid.calculate(elevatorEncoder.position, desiredElbowState))+ ArmConstants.elbowFeedForward.calculate(desiredElbowState,2.5))
 
         //This part is the network table bit
         elbowPos.set(elbowEncoder.position)
