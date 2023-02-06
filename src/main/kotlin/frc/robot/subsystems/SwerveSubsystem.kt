@@ -1,8 +1,8 @@
 package frc.robot.subsystems
 
 import com.kauailabs.navx.frc.AHRS
-import edu.wpi.first.math.filter.SlewRateLimiter
 import edu.wpi.first.math.geometry.Pose2d
+import edu.wpi.first.math.filter.SlewRateLimiter
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
@@ -11,11 +11,12 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry
 import edu.wpi.first.math.kinematics.SwerveModuleState
 import edu.wpi.first.math.util.Units
 import edu.wpi.first.networktables.NetworkTableInstance
+import edu.wpi.first.util.WPIUtilJNI
 import edu.wpi.first.wpilibj2.command.SubsystemBase
-import frc.robot.DrivetrainConstants
-import frc.robot.RobotContainer
+import frc.robot.constants.DrivetrainConstants
 import frc.robot.controllers.SwerveModuleControlller
 import frc.robot.utils.NetworkTableUtils
+import frc.robot.utils.SwerveUtils
 import kotlin.math.IEEErem
 
 
@@ -45,6 +46,16 @@ class SwerveSubsystem() : SubsystemBase() {
     )
 
     val gyro = AHRS()
+
+    var currentRotation = 0.0
+    var currentTranslationDirection = 0.0
+    var currentTranslationMagnitude = 0.0
+
+    val magnitudeLimiter = SlewRateLimiter(DrivetrainConstants.magnitudeSlewRate)
+    val rotationLimiter = SlewRateLimiter(DrivetrainConstants.rotationalSlewRate)
+    var previousTime = WPIUtilJNI.now() * 1e-6
+
+
     val limelightTable = NetworkTableUtils("limelight")
 
     val heading: Double get() = (Units.degreesToRadians(gyro.angle.IEEErem(360.0))) * -1
@@ -108,22 +119,70 @@ class SwerveSubsystem() : SubsystemBase() {
         )
     }
 
-    fun drive(forwardMetersPerSecond: Double, sidewaysMetersPerSecond: Double, radiansPerSecond: Double, fieldRelative: Boolean) {
+    fun drive(forwardMetersPerSecond: Double, sidewaysMetersPerSecond: Double, radiansPerSecond: Double, fieldRelative: Boolean, rateLimit: Boolean) {
 
-        val radiansDesired = NetworkTableInstance.getDefault()
+        // forward is xspeed, sideays is yspeed
+        var xSpeedCommanded: Double
+        var ySpeedCommanded: Double
+
+        if (rateLimit) {
+            val inputTranslationDirection = Math.atan2(sidewaysMetersPerSecond, forwardMetersPerSecond)
+            val inputTranslationMagnitude = Math.sqrt(Math.pow(forwardMetersPerSecond, 2.0) + Math.pow(sidewaysMetersPerSecond, 2.0))
+
+            var directionSlewRate: Double
+            if (currentTranslationMagnitude != 0.0) {
+                directionSlewRate = Math.abs(DrivetrainConstants.dircetionSlewRate / currentTranslationMagnitude)
+            } else {
+                directionSlewRate = 500.0; // super high number means slew is instantaneous
+            }
+
+            val currentTime = WPIUtilJNI.now() * 1e-6
+            val elapsedTime = currentTime - previousTime
+
+            val angleDifference = SwerveUtils.AngleDifference(inputTranslationDirection, currentTranslationDirection)
+            if (angleDifference < 0.45 * Math.PI) {
+                currentTranslationDirection = SwerveUtils.StepTowardsCircular(currentTranslationDirection, inputTranslationDirection, directionSlewRate * elapsedTime)
+                currentTranslationMagnitude = magnitudeLimiter.calculate(inputTranslationMagnitude)
+            } else if (angleDifference > 0.85 * Math.PI) {
+                if (currentTranslationMagnitude > 1e-4) { // small number avoids floating-point errors
+                    currentTranslationMagnitude = magnitudeLimiter.calculate(0.0)
+                } else {
+                    currentTranslationDirection = SwerveUtils.WrapAngle(currentTranslationDirection + Math.PI)
+                    currentTranslationMagnitude = magnitudeLimiter.calculate(inputTranslationMagnitude)
+                }
+            } else {
+                currentTranslationDirection = SwerveUtils.StepTowardsCircular(currentTranslationDirection, inputTranslationDirection, directionSlewRate * elapsedTime)
+                currentTranslationMagnitude = magnitudeLimiter.calculate(inputTranslationMagnitude)
+            }
+
+            previousTime = currentTime
+
+            xSpeedCommanded = currentTranslationMagnitude * Math.cos(currentTranslationDirection)
+            ySpeedCommanded = currentTranslationMagnitude * Math.cos(currentTranslationDirection)
+            currentRotation = rotationLimiter.calculate(radiansPerSecond)
+        } else {
+            xSpeedCommanded = forwardMetersPerSecond
+            ySpeedCommanded = sidewaysMetersPerSecond
+            currentRotation = radiansPerSecond
+        }
+
+        val xSpeedDelivered = xSpeedCommanded * DrivetrainConstants.maxSpeedMetersPerSecond
+        val ySpeedDelivered = ySpeedCommanded * DrivetrainConstants.maxSpeedMetersPerSecond
+        val rotationDelievered = currentRotation * DrivetrainConstants.maxAngularSpeed
+
         val swerveModuleStates = if (fieldRelative) {
             DrivetrainConstants.driveKinematics.toSwerveModuleStates(
                 ChassisSpeeds.fromFieldRelativeSpeeds(
-                    forwardMetersPerSecond,
-                    sidewaysMetersPerSecond,
-                    radiansPerSecond,
+                    xSpeedDelivered,
+                    ySpeedDelivered,
+                    rotationDelievered,
                     Rotation2d.fromRadians(heading)))
         } else {
             DrivetrainConstants.driveKinematics.toSwerveModuleStates(
                 ChassisSpeeds(
-                    forwardMetersPerSecond,
-                    sidewaysMetersPerSecond,
-                    radiansPerSecond))
+                    xSpeedDelivered,
+                    ySpeedDelivered,
+                    rotationDelievered))
         }
 
 

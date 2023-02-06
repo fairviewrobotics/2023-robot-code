@@ -6,7 +6,7 @@ import com.revrobotics.SparkMaxAbsoluteEncoder
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.kinematics.SwerveModulePosition
 import edu.wpi.first.math.kinematics.SwerveModuleState
-import frc.robot.DrivetrainConstants
+import frc.robot.constants.DrivetrainConstants
 
 // NOTE: use encoders from cansparkmax or specify port?
 // TODO: convert encoder rpm/rev counts to meters per second, degree, etc.
