@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.*
 import frc.robot.constants.DrivetrainConstants
 import frc.robot.constants.TrajectoryConstants
 import frc.robot.subsystems.SwerveSubsystem
-class UnlimitedDrive(val swerveSubsystem: SwerveSubsystem, val forward: () -> Double, val sideways: () -> Double, val radians: () -> Double, val fieldRelative: Boolean) : CommandBase() {
+class LimitedDrive(val swerveSubsystem: SwerveSubsystem, val forward: () -> Double, val sideways: () -> Double, val radians: () -> Double, val fieldRelative: Boolean) : CommandBase() {
 
     init {
         addRequirements(swerveSubsystem)
@@ -27,9 +27,28 @@ class UnlimitedDrive(val swerveSubsystem: SwerveSubsystem, val forward: () -> Do
     }
 
     override fun end(interrupted: Boolean) {
+        swerveSubsystem.drive(0.0,0.0,0.0,true, true)
+    }
+}
+class UnlimitedDrive(val swerveSubsystem: SwerveSubsystem, val forward: () -> Double, val sideways: () -> Double, val radians: () -> Double, val fieldRelative: Boolean) : CommandBase() {
+
+    init {
+        addRequirements(swerveSubsystem)
+    }
+
+    override fun execute() {
+        val forwardDesired = MathUtil.applyDeadband(forward(), 0.06)
+        val sidewaysDesired = MathUtil.applyDeadband(sideways(), 0.06)
+        val radiansDesired = MathUtil.applyDeadband(radians(), 0.06)
+
+        swerveSubsystem.drive(forwardDesired, sidewaysDesired, -1 * radiansDesired, fieldRelative, false)
+    }
+
+    override fun end(interrupted: Boolean) {
         swerveSubsystem.drive(0.0,0.0,0.0,true, false)
     }
 }
+
 
 fun TrajectoryDrive(swerveSubsystem: SwerveSubsystem, trajectory: Trajectory) : Command {
     var thetaController = ProfiledPIDController(
@@ -90,9 +109,9 @@ fun TrajectoryDrivePathPlanner(swerveSubsystem: SwerveSubsystem, trajectory: Pat
     )
     thetaController.enableContinuousInput(-Math.PI, Math.PI)
 
-    var thetaControllerError = NetworkTableInstance.getDefault().getTable("Swerve").getDoubleTopic("TurningError").getEntry(0.0)
+    var thetaControllerError = NetworkTableInstance.getDefault().getTable("Swerve").getDoubleTopic("TurningError2").getEntry(0.0)
 
-    thetaControllerError.set(thetaController.positionError)
+
 
     var swerveControllerCommand = PPSwerveControllerCommand(
         trajectory,
@@ -104,7 +123,7 @@ fun TrajectoryDrivePathPlanner(swerveSubsystem: SwerveSubsystem, trajectory: Pat
         PIDController(TrajectoryConstants.kPYController, 0.0, 0.0),
         thetaController,
         swerveSubsystem::setModuleStates,
-        true,
+        false,
         swerveSubsystem
     )
 
@@ -115,12 +134,13 @@ fun TrajectoryDrivePathPlanner(swerveSubsystem: SwerveSubsystem, trajectory: Pat
         InstantCommand({
             // Reset odometry for the first path you run during auto
             if(isFirstPath){
-                swerveSubsystem.resetOdometry(trajectory.getInitialHolonomicPose());
+                swerveSubsystem.resetOdometry(trajectory.initialHolonomicPose);
             }
         }),
         swerveControllerCommand,
+        RunCommand({thetaControllerError.set(thetaController.positionError)}),
         RunCommand({
-            swerveSubsystem.drive(0.0,0.0,0.0,false, false)
+            swerveSubsystem.drive(0.0,0.0,0.0,true, false)
         })
     )
 }

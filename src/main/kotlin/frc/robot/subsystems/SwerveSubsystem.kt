@@ -18,6 +18,9 @@ import frc.robot.controllers.SwerveModuleControlller
 import frc.robot.utils.NetworkTableUtils
 import frc.robot.utils.SwerveUtils
 import kotlin.math.IEEErem
+import kotlin.math.atan2
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 
 class SwerveSubsystem() : SubsystemBase() {
@@ -82,11 +85,11 @@ class SwerveSubsystem() : SubsystemBase() {
         )
 
         // find the botpose network table id thingy, construct a pose2d, feed it into resetodometry
-        val botpose: DoubleArray = limelightTable.getDoubleArray("botpose", DoubleArray(0))
-        if (!botpose.contentEquals(DoubleArray(0))) {
-            val pose = Pose2d(Translation2d(botpose[0], botpose[2]), Rotation2d(botpose[3], botpose[5]))
-            resetOdometry(pose)
-        }
+//        val botpose: DoubleArray = limelightTable.getDoubleArray("botpose", DoubleArray(0))
+//        if (!botpose.contentEquals(DoubleArray(0))) {
+//            val pose = Pose2d(Translation2d(botpose[0], botpose[2]), Rotation2d(botpose[3], botpose[5]))
+//            resetOdometry(pose)
+//        }
 
 
         actualTelemetry.set(doubleArrayOf(
@@ -121,13 +124,13 @@ class SwerveSubsystem() : SubsystemBase() {
 
     fun drive(forwardMetersPerSecond: Double, sidewaysMetersPerSecond: Double, radiansPerSecond: Double, fieldRelative: Boolean, rateLimit: Boolean) {
 
-        // forward is xspeed, sideays is yspeed
+        // forward is xspeed, sideways is yspeed
         var xSpeedCommanded: Double
         var ySpeedCommanded: Double
 
         if (rateLimit) {
-            val inputTranslationDirection = Math.atan2(sidewaysMetersPerSecond, forwardMetersPerSecond)
-            val inputTranslationMagnitude = Math.sqrt(Math.pow(forwardMetersPerSecond, 2.0) + Math.pow(sidewaysMetersPerSecond, 2.0))
+            val inputTranslationDirection = atan2(sidewaysMetersPerSecond, forwardMetersPerSecond)
+            val inputTranslationMagnitude = sqrt(forwardMetersPerSecond.pow(2.0) + sidewaysMetersPerSecond.pow(2.0))
 
             var directionSlewRate: Double
             if (currentTranslationMagnitude != 0.0) {

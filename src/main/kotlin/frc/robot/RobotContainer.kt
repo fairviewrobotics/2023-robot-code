@@ -3,6 +3,10 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot
 
+import com.pathplanner.lib.PathConstraints
+import com.pathplanner.lib.PathPlanner
+import com.pathplanner.lib.PathPlannerTrajectory
+import com.pathplanner.lib.PathPoint
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj2.command.RunCommand
 import edu.wpi.first.wpilibj2.command.button.JoystickButton
@@ -31,6 +35,15 @@ class RobotContainer {
 
     val swerveSubsystem = SwerveSubsystem()
 
+    val traj: PathPlannerTrajectory = PathPlanner.generatePath(
+        PathConstraints(2.0, 2.0),
+        PathPoint(Translation2d(0.0, 0.0), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(0.0), 0.0),
+        PathPoint(Translation2d(1.0, 0.0), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(0.0)), // position, heading(direction of travel), holonomic rotation, velocity override
+        PathPoint(Translation2d(1.0, -1.0), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(0.0)), // position, heading(direction of travel), holonomic rotation
+        PathPoint(Translation2d(0.0, -1.0), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(0.0)),
+        PathPoint(Translation2d(0.0, 0.0), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(0.0))// position, heading(direction of travel), holonomic rotation
+    )
+
 
     /** The container for the robot. Contains subsystems, OI devices, and commands.  */
     init {
@@ -52,11 +65,11 @@ class RobotContainer {
             true
         )
 
-//        JoystickButton(primaryController, XboxController.Button.kX.value).whileTrue(
-//            RunCommand({
-//                swerveSubsystem.setX()
-//            }, swerveSubsystem)
-//        )
+        JoystickButton(primaryController, XboxController.Button.kX.value).whileTrue(
+            RunCommand({
+                swerveSubsystem.setX()
+            }, swerveSubsystem)
+        )
 
         JoystickButton(primaryController, XboxController.Button.kB.value).whileTrue(
             RunCommand({
@@ -70,12 +83,18 @@ class RobotContainer {
             }, swerveSubsystem)
         )
 
-        JoystickButton(primaryController, XboxController.Button.kA.value).whileTrue(TrajectoryDrive(swerveSubsystem, TrajectoryGenerator.generateTrajectory(
+        JoystickButton(primaryController, XboxController.Button.kA.value).whileTrue(
+            TrajectoryDrive(swerveSubsystem, TrajectoryGenerator.generateTrajectory(
                 swerveSubsystem.pose,
-            listOf(Translation2d(0.5,0.0),Translation2d(0.5, 1.0), Translation2d(1.5,1.0), Translation2d(1.5,0.0)),
-            Pose2d(0.2, 0.05, Rotation2d.fromRadians(Math.PI/2)),
-            TrajectoryConstants.config
-        )))
+                listOf(Translation2d(0.5,0.0),Translation2d(0.5, 1.0), Translation2d(1.5,1.0), Translation2d(1.5,0.0)),
+                Pose2d(0.2, 0.05, Rotation2d.fromRadians(Math.PI/2)),
+                TrajectoryConstants.config
+            ))
+        )
+
+        JoystickButton(primaryController, XboxController.Button.kRightBumper.value).whileTrue(
+            TrajectoryDrivePathPlanner(swerveSubsystem, traj, false)
+        )
 
     }
 }
