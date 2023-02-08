@@ -35,13 +35,20 @@ class RobotContainer {
 
     val swerveSubsystem = SwerveSubsystem()
 
+    //Right = pos y
+    //Backward = pos x
+    //Original Position Offsets: x = 0.19, y = -0.01
     val traj: PathPlannerTrajectory = PathPlanner.generatePath(
-        PathConstraints(2.0, 2.0),
+        PathConstraints(12.0, 3.5),
         PathPoint(Translation2d(0.0, 0.0), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(0.0), 0.0),
-        PathPoint(Translation2d(1.0, 0.0), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(0.0)), // position, heading(direction of travel), holonomic rotation, velocity override
-        PathPoint(Translation2d(1.0, -1.0), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(0.0)), // position, heading(direction of travel), holonomic rotation
-        PathPoint(Translation2d(0.0, -1.0), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(0.0)),
-        PathPoint(Translation2d(0.0, 0.0), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(0.0))// position, heading(direction of travel), holonomic rotation
+        PathPoint(Translation2d(-5.0, 0.0), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(0.0)), // position, heading(direction of travel), holonomic rotation, velocity override
+        PathPoint(Translation2d(-5.0, 0.5), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(0.0)), // position, heading(direction of travel), holonomic rotation
+        PathPoint(Translation2d(0.0, 0.5), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(90.0)),
+        PathPoint(Translation2d(0.0, 1.0), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(90.0)),
+        PathPoint(Translation2d(-5.0, 1.0), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(180.0)),
+        PathPoint(Translation2d(-5.0, 1.5), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(180.0)),
+        PathPoint(Translation2d(0.0, 1.5), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(180.0)),
+        PathPoint(Translation2d(0.0, 0.0), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(180.0))// position, heading(direction of travel), holonomic rotation
     )
 
 

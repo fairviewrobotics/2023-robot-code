@@ -36,12 +36,13 @@ class UnlimitedDrive(val swerveSubsystem: SwerveSubsystem, val forward: () -> Do
         addRequirements(swerveSubsystem)
     }
 
+
     override fun execute() {
         val forwardDesired = MathUtil.applyDeadband(forward(), 0.06)
         val sidewaysDesired = MathUtil.applyDeadband(sideways(), 0.06)
         val radiansDesired = MathUtil.applyDeadband(radians(), 0.06)
 
-        swerveSubsystem.drive(forwardDesired, sidewaysDesired, -1 * radiansDesired, fieldRelative, false)
+        swerveSubsystem.drive(forwardDesired, sidewaysDesired, radiansDesired, fieldRelative, false)
     }
 
     override fun end(interrupted: Boolean) {

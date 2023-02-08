@@ -173,6 +173,8 @@ class SwerveSubsystem() : SubsystemBase() {
         val ySpeedDelivered = ySpeedCommanded * DrivetrainConstants.maxSpeedMetersPerSecond
         val rotationDelievered = currentRotation * DrivetrainConstants.maxAngularSpeed
 
+
+
         val swerveModuleStates = if (fieldRelative) {
             DrivetrainConstants.driveKinematics.toSwerveModuleStates(
                 ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -196,6 +198,7 @@ class SwerveSubsystem() : SubsystemBase() {
         frontRight.setDesiredState(swerveModuleStates[1])
         rearLeft.setDesiredState(swerveModuleStates[2])
         rearRight.setDesiredState(swerveModuleStates[3])
+
     }
 
 
