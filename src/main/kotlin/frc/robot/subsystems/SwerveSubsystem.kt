@@ -17,10 +17,7 @@ import frc.robot.constants.DrivetrainConstants
 import frc.robot.controllers.SwerveModuleControlller
 import frc.robot.utils.NetworkTableUtils
 import frc.robot.utils.SwerveUtils
-import kotlin.math.IEEErem
-import kotlin.math.atan2
-import kotlin.math.pow
-import kotlin.math.sqrt
+import kotlin.math.*
 
 
 class SwerveSubsystem() : SubsystemBase() {
@@ -160,8 +157,8 @@ class SwerveSubsystem() : SubsystemBase() {
 
             previousTime = currentTime
 
-            xSpeedCommanded = currentTranslationMagnitude * Math.cos(currentTranslationDirection)
-            ySpeedCommanded = currentTranslationMagnitude * Math.cos(currentTranslationDirection)
+            xSpeedCommanded = currentTranslationMagnitude * cos(currentTranslationDirection)
+            ySpeedCommanded = currentTranslationMagnitude * cos(currentTranslationDirection)
             currentRotation = rotationLimiter.calculate(radiansPerSecond)
         } else {
             xSpeedCommanded = forwardMetersPerSecond

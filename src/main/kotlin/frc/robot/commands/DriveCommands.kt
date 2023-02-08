@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.*
 import frc.robot.constants.DrivetrainConstants
 import frc.robot.constants.TrajectoryConstants
 import frc.robot.subsystems.SwerveSubsystem
-class LimitedDrive(val swerveSubsystem: SwerveSubsystem, val forward: () -> Double, val sideways: () -> Double, val radians: () -> Double, val fieldRelative: Boolean) : CommandBase() {
+class StandardDrive(val swerveSubsystem: SwerveSubsystem, val forward: () -> Double, val sideways: () -> Double, val radians: () -> Double, val fieldRelative: Boolean, val limited: Boolean) : CommandBase() {
 
     init {
         addRequirements(swerveSubsystem)
@@ -23,33 +23,13 @@ class LimitedDrive(val swerveSubsystem: SwerveSubsystem, val forward: () -> Doub
         val sidewaysDesired = MathUtil.applyDeadband(sideways(), 0.06)
         val radiansDesired = MathUtil.applyDeadband(radians(), 0.06)
 
-        swerveSubsystem.drive(forwardDesired, sidewaysDesired, -1 * radiansDesired, fieldRelative, true)
+        swerveSubsystem.drive(forwardDesired, sidewaysDesired, -1 * radiansDesired, fieldRelative, limited)
     }
 
     override fun end(interrupted: Boolean) {
         swerveSubsystem.drive(0.0,0.0,0.0,true, true)
     }
 }
-class UnlimitedDrive(val swerveSubsystem: SwerveSubsystem, val forward: () -> Double, val sideways: () -> Double, val radians: () -> Double, val fieldRelative: Boolean) : CommandBase() {
-
-    init {
-        addRequirements(swerveSubsystem)
-    }
-
-
-    override fun execute() {
-        val forwardDesired = MathUtil.applyDeadband(forward(), 0.06)
-        val sidewaysDesired = MathUtil.applyDeadband(sideways(), 0.06)
-        val radiansDesired = MathUtil.applyDeadband(radians(), 0.06)
-
-        swerveSubsystem.drive(forwardDesired, sidewaysDesired, radiansDesired, fieldRelative, false)
-    }
-
-    override fun end(interrupted: Boolean) {
-        swerveSubsystem.drive(0.0,0.0,0.0,true, false)
-    }
-}
-
 
 fun TrajectoryDrive(swerveSubsystem: SwerveSubsystem, trajectory: Trajectory) : Command {
     var thetaController = ProfiledPIDController(
