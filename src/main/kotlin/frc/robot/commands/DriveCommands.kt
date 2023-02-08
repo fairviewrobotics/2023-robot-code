@@ -23,7 +23,7 @@ class StandardDrive(val swerveSubsystem: SwerveSubsystem, val forward: () -> Dou
         val sidewaysDesired = MathUtil.applyDeadband(sideways(), 0.06)
         val radiansDesired = MathUtil.applyDeadband(radians(), 0.06)
 
-        swerveSubsystem.drive(forwardDesired, sidewaysDesired, -1 * radiansDesired, fieldRelative, limited)
+        swerveSubsystem.drive(forwardDesired, sidewaysDesired, radiansDesired, fieldRelative, limited)
     }
 
     override fun end(interrupted: Boolean) {
