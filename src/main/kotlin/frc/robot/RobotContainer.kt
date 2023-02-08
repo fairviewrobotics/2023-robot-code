@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton
 
 
 import frc.robot.subsystems.SwerveSubsystem
+import frc.robot.subsystems.LEDSubsystem
 
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
@@ -28,6 +29,7 @@ import frc.robot.constants.TrajectoryConstants
 class RobotContainer {
     val primaryController = XboxController(0)
     val secondaryController = XboxController(1)
+    val leds = LEDSubsystem()
 
     val swerveSubsystem = SwerveSubsystem()
 
