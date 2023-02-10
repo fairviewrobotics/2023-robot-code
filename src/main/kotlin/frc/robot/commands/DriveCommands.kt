@@ -115,7 +115,7 @@ fun TrajectoryDrivePathPlanner(swerveSubsystem: SwerveSubsystem, trajectory: Pat
         InstantCommand({
             // Reset odometry for the first path you run during auto
             if(isFirstPath){
-                swerveSubsystem.resetOdometry(trajectory.initialHolonomicPose);
+                swerveSubsystem.resetOdometry(trajectory.initialHolonomicPose)
             }
         }),
         swerveControllerCommand,

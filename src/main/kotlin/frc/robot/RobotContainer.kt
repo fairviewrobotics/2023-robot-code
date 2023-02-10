@@ -58,10 +58,10 @@ class RobotContainer {
 
 
 
-    val topBreaker = DigitalInputSubsystem(0)
-    val bottomBreaker = DigitalInputSubsystem(1)
+    //val topBreaker = DigitalInputSubsystem(0)
+    //val bottomBreaker = DigitalInputSubsystem(1)
 
-    val elevatorMotor = SparkMaxSubsystem(2)
+    //val elevatorMotor = SparkMaxSubsystem(2)
 
 
     /** The container for the robot. Contains subsystems, OI devices, and commands.  */
@@ -124,7 +124,7 @@ class RobotContainer {
             TrajectoryDrivePathPlanner(swerveSubsystem, traj, false)
         )
 
-        elevatorMotor.defaultCommand = PIDElevatorTuning(bottomBreaker, topBreaker, elevatorMotor, primaryController)
+        //elevatorMotor.defaultCommand = PIDElevatorTuning(bottomBreaker, topBreaker, elevatorMotor, primaryController)
 
     }
 }
