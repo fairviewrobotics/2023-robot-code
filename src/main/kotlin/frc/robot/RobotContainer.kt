@@ -3,6 +3,10 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot
 
+import com.pathplanner.lib.PathConstraints
+import com.pathplanner.lib.PathPlanner
+import com.pathplanner.lib.PathPlannerTrajectory
+import com.pathplanner.lib.PathPoint
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj2.command.RunCommand
 import edu.wpi.first.wpilibj2.command.button.JoystickButton
@@ -32,8 +36,21 @@ class RobotContainer {
     val top = DigitalInputSubsystem(1)
     val bottom = DigitalInputSubsystem(0)
 
-    val motor = SparkMaxSubsystem(2)
-    val controller = XboxController(0)
+    //Right = pos y
+    //Backward = pos x
+    //Original Position Offsets: x = 0.19, y = -0.01
+    val traj: PathPlannerTrajectory = PathPlanner.generatePath(
+        PathConstraints(12.0, 3.5),
+        PathPoint(Translation2d(0.0, 0.0), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(0.0), 0.0),
+        PathPoint(Translation2d(-5.0, 0.0), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(0.0)), // position, heading(direction of travel), holonomic rotation, velocity override
+        PathPoint(Translation2d(-5.0, 0.5), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(0.0)), // position, heading(direction of travel), holonomic rotation
+        PathPoint(Translation2d(0.0, 0.5), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(90.0)),
+        PathPoint(Translation2d(0.0, 1.0), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(90.0)),
+        PathPoint(Translation2d(-5.0, 1.0), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(180.0)),
+        PathPoint(Translation2d(-5.0, 1.5), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(180.0)),
+        PathPoint(Translation2d(0.0, 1.5), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(180.0)),
+        PathPoint(Translation2d(0.0, 0.0), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(180.0))// position, heading(direction of travel), holonomic rotation
+    )
 
     /** The container for the robot. Contains subsystems, OI devices, and commands.  */
     init {
@@ -48,6 +65,43 @@ class RobotContainer {
      * instantiating a [GenericHID] or one of its subclasses ([ ] or [XboxController]), and then passing it to a [ ].
      */
     private fun configureButtonBindings() {
-        motor.defaultCommand = PIDElevatorTuning(bottom, top, motor, controller)
+        swerveSubsystem.defaultCommand = StandardDrive(swerveSubsystem,
+            { primaryController.leftY * DrivetrainConstants.drivingSpeedScalar },
+            { primaryController.leftX * DrivetrainConstants.drivingSpeedScalar },
+            { primaryController.rightX * DrivetrainConstants.rotationSpeedScalar },
+            true,
+            false
+        )
+
+        JoystickButton(primaryController, XboxController.Button.kX.value).whileTrue(
+            RunCommand({
+                swerveSubsystem.setX()
+            }, swerveSubsystem)
+        )
+
+        JoystickButton(primaryController, XboxController.Button.kB.value).whileTrue(
+            RunCommand({
+                swerveSubsystem.setZero()
+            }, swerveSubsystem)
+        )
+
+        JoystickButton(primaryController, XboxController.Button.kY.value).whileTrue(
+            RunCommand({
+                swerveSubsystem.zeroGyro()
+            }, swerveSubsystem)
+        )
+
+        JoystickButton(primaryController, XboxController.Button.kA.value).whileTrue(
+            TrajectoryDrive(swerveSubsystem, TrajectoryGenerator.generateTrajectory(
+                swerveSubsystem.pose,
+                listOf(Translation2d(0.5,0.0),Translation2d(0.5, 1.0), Translation2d(1.5,1.0), Translation2d(1.5,0.0)),
+                Pose2d(0.2, 0.05, Rotation2d.fromRadians(Math.PI/2)),
+                TrajectoryConstants.config
+            ))
+        )
+
+        JoystickButton(primaryController, XboxController.Button.kRightBumper.value).whileTrue(
+            TrajectoryDrivePathPlanner(swerveSubsystem, traj, false)
+        )
     }
 }

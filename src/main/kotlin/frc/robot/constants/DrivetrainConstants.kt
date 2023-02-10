@@ -16,7 +16,7 @@ object DrivetrainConstants {
     const val rotationalSlewRate = 2.0 // percent/second (1 = 100%)
 
 
-    const val drivingSpeedScalar = -1.2
+    const val drivingSpeedScalar = 1.2
     const val rotationSpeedScalar = -1.7
 
     // TUNED
@@ -32,10 +32,10 @@ object DrivetrainConstants {
 
     // FIXME: Right now 0degrees is in the Y-positive direction, when normally 0 rad is in the X-positive direction. Could this be an issue?
     // TUNED
-    const val frontLeftChassisAngularOffset = 2.862-(Math.PI/2)+(Math.PI)
-    const val frontRightChassisAngularOffset = 4.285+(0.0)+(Math.PI)
-    const val rearLeftChassisAngularOffset = 0.871+(Math.PI)+(Math.PI)
-    const val rearRightChassisAngularOffset =  2.090+(Math.PI/2)+(Math.PI)
+    const val frontLeftChassisAngularOffset = 2.862-(Math.PI/2)
+    const val frontRightChassisAngularOffset = 4.285+(0.0)
+    const val rearLeftChassisAngularOffset = 0.871+(Math.PI)
+    const val rearRightChassisAngularOffset =  2.090+(Math.PI/2)
 
     // SPARK MAX CAN ID
     // TUNED
