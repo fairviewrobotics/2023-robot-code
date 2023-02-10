@@ -37,7 +37,6 @@ class RobotContainer {
 
     //Right = pos y
     //Backward = pos x
-    //Original Position Offsets: x = 0.19, y = -0.01
     val traj: PathPlannerTrajectory = PathPlanner.generatePath(
         PathConstraints(12.0, 3.5),
         PathPoint(Translation2d(0.0, 0.0), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(0.0), 0.0),
@@ -65,13 +64,23 @@ class RobotContainer {
      * instantiating a [GenericHID] or one of its subclasses ([ ] or [XboxController]), and then passing it to a [ ].
      */
     private fun configureButtonBindings() {
+        // Current Button Bindings:
+        //
+        // Primary Controller:
+        // Swerve default = drive
+        // X = set the wheels in an X configuration
+        // B = zero the gyro
+        // Y = zero the gyro and the pose
+        // A = run trajectory
+        // Right Bumper = Emergency Stop(driving)
         swerveSubsystem.defaultCommand = StandardDrive(swerveSubsystem,
             { primaryController.leftY * DrivetrainConstants.drivingSpeedScalar },
             { primaryController.leftX * DrivetrainConstants.drivingSpeedScalar },
             { primaryController.rightX * DrivetrainConstants.rotationSpeedScalar },
             true,
-            false
+            true
         )
+
 
         JoystickButton(primaryController, XboxController.Button.kX.value).whileTrue(
             RunCommand({
@@ -81,26 +90,24 @@ class RobotContainer {
 
         JoystickButton(primaryController, XboxController.Button.kB.value).whileTrue(
             RunCommand({
-                swerveSubsystem.setZero()
+                swerveSubsystem.zeroGyro()
             }, swerveSubsystem)
         )
 
         JoystickButton(primaryController, XboxController.Button.kY.value).whileTrue(
             RunCommand({
-                swerveSubsystem.zeroGyro()
+                swerveSubsystem.zeroGyroAndOdometry()
             }, swerveSubsystem)
         )
 
-        JoystickButton(primaryController, XboxController.Button.kA.value).whileTrue(
-            TrajectoryDrive(swerveSubsystem, TrajectoryGenerator.generateTrajectory(
-                swerveSubsystem.pose,
-                listOf(Translation2d(0.5,0.0),Translation2d(0.5, 1.0), Translation2d(1.5,1.0), Translation2d(1.5,0.0)),
-                Pose2d(0.2, 0.05, Rotation2d.fromRadians(Math.PI/2)),
-                TrajectoryConstants.config
-            ))
+        JoystickButton(primaryController, XboxController.Button.kRightBumper.value).whileTrue(
+            RunCommand({
+                swerveSubsystem.drive(0.0,0.0,0.0,true,false)
+            }, swerveSubsystem)
         )
 
-        JoystickButton(primaryController, XboxController.Button.kRightBumper.value).whileTrue(
+
+        JoystickButton(primaryController, XboxController.Button.kA.value).whileTrue(
             TrajectoryDrivePathPlanner(swerveSubsystem, traj, false)
         )
 
