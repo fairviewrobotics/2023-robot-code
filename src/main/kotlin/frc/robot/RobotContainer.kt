@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton
 
 
 import frc.robot.subsystems.SwerveSubsystem
+import frc.robot.subsystems.LEDSubsystem
 
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
@@ -33,24 +34,11 @@ import frc.robot.subsystems.SparkMaxSubsystem
  * subsystems, commands, and button mappings) should be declared here.
  */
 class RobotContainer {
-    val top = DigitalInputSubsystem(1)
-    val bottom = DigitalInputSubsystem(0)
+    val primaryController = XboxController(0)
+    val secondaryController = XboxController(1)
+    val leds = LEDSubsystem()
 
-    //Right = pos y
-    //Backward = pos x
-    //Original Position Offsets: x = 0.19, y = -0.01
-    val traj: PathPlannerTrajectory = PathPlanner.generatePath(
-        PathConstraints(12.0, 3.5),
-        PathPoint(Translation2d(0.0, 0.0), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(0.0), 0.0),
-        PathPoint(Translation2d(-5.0, 0.0), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(0.0)), // position, heading(direction of travel), holonomic rotation, velocity override
-        PathPoint(Translation2d(-5.0, 0.5), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(0.0)), // position, heading(direction of travel), holonomic rotation
-        PathPoint(Translation2d(0.0, 0.5), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(90.0)),
-        PathPoint(Translation2d(0.0, 1.0), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(90.0)),
-        PathPoint(Translation2d(-5.0, 1.0), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(180.0)),
-        PathPoint(Translation2d(-5.0, 1.5), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(180.0)),
-        PathPoint(Translation2d(0.0, 1.5), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(180.0)),
-        PathPoint(Translation2d(0.0, 0.0), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(180.0))// position, heading(direction of travel), holonomic rotation
-    )
+    val swerveSubsystem = SwerveSubsystem()
 
     /** The container for the robot. Contains subsystems, OI devices, and commands.  */
     init {
