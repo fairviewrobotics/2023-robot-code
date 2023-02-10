@@ -34,12 +34,12 @@ import frc.robot.subsystems.SparkMaxSubsystem
  * subsystems, commands, and button mappings) should be declared here.
  */
 class RobotContainer {
-    val top = DigitalInputSubsystem(1)
-    val bottom = DigitalInputSubsystem(0)
     val primaryController = XboxController(0)
     val secondaryController = XboxController(1)
-
+//    val topBreaker = DigitalInputSubsystem(0)
+//    val bottomBreaker = DigitalInputSubsystem(1)
     val swerveSubsystem = SwerveSubsystem()
+//    val elevatorMotor = SparkMaxSubsystem(9)
 
     //Right = pos y
     //Backward = pos x
@@ -58,10 +58,9 @@ class RobotContainer {
 
 
 
-    //val topBreaker = DigitalInputSubsystem(0)
-    //val bottomBreaker = DigitalInputSubsystem(1)
 
-    //val elevatorMotor = SparkMaxSubsystem(2)
+
+
 
 
     /** The container for the robot. Contains subsystems, OI devices, and commands.  */
