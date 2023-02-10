@@ -30,12 +30,8 @@ object ArmConstants {
     val elbowI = 0.1
     val elbowD = 0.1
 
-    //these two vals are how far it's allowed to go.
-    val elevatorThreshold = 1.0
-    val elbowThreshold = 1.0
-
-    val elevatorBottomPosEnocder = 0.0 //the value when it's at the bottom for the encoder
-    val elevatorTopPosEnocder = 3.0 //the value when it's at the top for the encoder
+    val elevatorMinHeight = 0.0
+    val elevatorMaxHeight = 0.972
 
 
     //multipliers for unit conversion and stuff
@@ -44,6 +40,7 @@ object ArmConstants {
     val elevatorEncoderPositionConversionFactor = 0.003010870139 //this should turn revs to meters
 
     val elevatorMotorInverted = false
+    val intakeMotorInverted = false
 
     val elbowEncoderVelocityMultiplier = 2.0 //this should turn revs/min to radians/sec (Yay!)
     val elbowEncoderPosMultiplier = 2.0 //this should turn revs to radians (Yay again!)
