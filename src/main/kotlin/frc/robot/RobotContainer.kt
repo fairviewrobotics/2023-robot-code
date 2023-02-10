@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton
 
 
 import frc.robot.subsystems.SwerveSubsystem
+import frc.robot.subsystems.LEDSubsystem
 
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
@@ -54,6 +55,14 @@ class RobotContainer {
         PathPoint(Translation2d(0.0, 1.5), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(180.0)),
         PathPoint(Translation2d(0.0, 0.0), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(180.0))// position, heading(direction of travel), holonomic rotation
     )
+
+
+
+    val topBreaker = DigitalInputSubsystem(0)
+    val bottomBreaker = DigitalInputSubsystem(1)
+
+    val elevatorMotor = SparkMaxSubsystem(2)
+
 
     /** The container for the robot. Contains subsystems, OI devices, and commands.  */
     init {
@@ -114,5 +123,8 @@ class RobotContainer {
         JoystickButton(primaryController, XboxController.Button.kA.value).whileTrue(
             TrajectoryDrivePathPlanner(swerveSubsystem, traj, false)
         )
+
+        elevatorMotor.defaultCommand = PIDElevatorTuning(bottomBreaker, topBreaker, elevatorMotor, primaryController)
+
     }
 }
