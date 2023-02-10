@@ -35,10 +35,11 @@ import frc.robot.subsystems.SparkMaxSubsystem
  */
 class RobotContainer {
     val primaryController = XboxController(0)
-    val secondaryController = XboxController(1)
-    val leds = LEDSubsystem()
 
-    val swerveSubsystem = SwerveSubsystem()
+    val topBreaker = DigitalInputSubsystem(0)
+    val bottomBreaker = DigitalInputSubsystem(1)
+
+    val elevatorMotor = SparkMaxSubsystem(2)
 
     /** The container for the robot. Contains subsystems, OI devices, and commands.  */
     init {
@@ -53,43 +54,6 @@ class RobotContainer {
      * instantiating a [GenericHID] or one of its subclasses ([ ] or [XboxController]), and then passing it to a [ ].
      */
     private fun configureButtonBindings() {
-        swerveSubsystem.defaultCommand = StandardDrive(swerveSubsystem,
-            { primaryController.leftY * DrivetrainConstants.drivingSpeedScalar },
-            { primaryController.leftX * DrivetrainConstants.drivingSpeedScalar },
-            { primaryController.rightX * DrivetrainConstants.rotationSpeedScalar },
-            true,
-            false
-        )
-
-        JoystickButton(primaryController, XboxController.Button.kX.value).whileTrue(
-            RunCommand({
-                swerveSubsystem.setX()
-            }, swerveSubsystem)
-        )
-
-        JoystickButton(primaryController, XboxController.Button.kB.value).whileTrue(
-            RunCommand({
-                swerveSubsystem.setZero()
-            }, swerveSubsystem)
-        )
-
-        JoystickButton(primaryController, XboxController.Button.kY.value).whileTrue(
-            RunCommand({
-                swerveSubsystem.zeroGyro()
-            }, swerveSubsystem)
-        )
-
-        JoystickButton(primaryController, XboxController.Button.kA.value).whileTrue(
-            TrajectoryDrive(swerveSubsystem, TrajectoryGenerator.generateTrajectory(
-                swerveSubsystem.pose,
-                listOf(Translation2d(0.5,0.0),Translation2d(0.5, 1.0), Translation2d(1.5,1.0), Translation2d(1.5,0.0)),
-                Pose2d(0.2, 0.05, Rotation2d.fromRadians(Math.PI/2)),
-                TrajectoryConstants.config
-            ))
-        )
-
-        JoystickButton(primaryController, XboxController.Button.kRightBumper.value).whileTrue(
-            TrajectoryDrivePathPlanner(swerveSubsystem, traj, false)
-        )
+        elevatorMotor.defaultCommand = PIDElevatorTuning(bottomBreaker, topBreaker, elevatorMotor, primaryController)
     }
 }
