@@ -18,10 +18,13 @@ import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.math.trajectory.TrajectoryGenerator
+import edu.wpi.first.wpilibj.motorcontrol.Spark
 
 import frc.robot.commands.*
 import frc.robot.constants.DrivetrainConstants
 import frc.robot.constants.TrajectoryConstants
+import frc.robot.subsystems.DigitalInputSubsystem
+import frc.robot.subsystems.SparkMaxSubsystem
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -30,10 +33,8 @@ import frc.robot.constants.TrajectoryConstants
  * subsystems, commands, and button mappings) should be declared here.
  */
 class RobotContainer {
-    val primaryController = XboxController(0)
-    val secondaryController = XboxController(1)
-
-    val swerveSubsystem = SwerveSubsystem()
+    val top = DigitalInputSubsystem(1)
+    val bottom = DigitalInputSubsystem(0)
 
     //Right = pos y
     //Backward = pos x
@@ -50,7 +51,6 @@ class RobotContainer {
         PathPoint(Translation2d(0.0, 1.5), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(180.0)),
         PathPoint(Translation2d(0.0, 0.0), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(180.0))// position, heading(direction of travel), holonomic rotation
     )
-
 
     /** The container for the robot. Contains subsystems, OI devices, and commands.  */
     init {
@@ -103,6 +103,5 @@ class RobotContainer {
         JoystickButton(primaryController, XboxController.Button.kRightBumper.value).whileTrue(
             TrajectoryDrivePathPlanner(swerveSubsystem, traj, false)
         )
-
     }
 }

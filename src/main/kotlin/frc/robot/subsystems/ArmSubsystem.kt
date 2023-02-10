@@ -74,12 +74,12 @@ class ArmSubsystem(val elbowMotorID: Int, val elevatorMotorID: Int) :SubsystemBa
 
         if(reverseLimit.isPressed)
         {
-            elevatorEncoder.position = ArmConstants.elevatorBottomPosEnocder
+            elevatorEncoder.position = ArmConstants.elevatorMinHeight
         }
 
         if(forwardLimit.isPressed)
         {
-            elevatorEncoder.position = ArmConstants.elevatorTopPosEnocder
+            elevatorEncoder.position = ArmConstants.elevatorMaxHeight
         }
     }
 }
