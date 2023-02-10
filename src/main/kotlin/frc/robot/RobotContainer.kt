@@ -35,6 +35,10 @@ import frc.robot.subsystems.SparkMaxSubsystem
 class RobotContainer {
     val top = DigitalInputSubsystem(1)
     val bottom = DigitalInputSubsystem(0)
+    val primaryController = XboxController(0)
+    val secondaryController = XboxController(1)
+
+    val swerveSubsystem = SwerveSubsystem()
 
     //Right = pos y
     //Backward = pos x
