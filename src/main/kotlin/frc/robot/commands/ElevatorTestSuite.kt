@@ -128,7 +128,7 @@ class PIDElevatorTuning(val bottomBreaker: DigitalInputSubsystem, val topBreaker
         }
 
         if (controller.xButtonPressed) {
-            position = 1.0
+            position = ArmConstants.elevatorMaxHeight
         }
 
         val top = !topBreaker.x.get()
