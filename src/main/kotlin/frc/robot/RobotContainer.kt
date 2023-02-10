@@ -14,10 +14,13 @@ import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.math.trajectory.TrajectoryGenerator
+import edu.wpi.first.wpilibj.motorcontrol.Spark
 
 import frc.robot.commands.*
 import frc.robot.constants.DrivetrainConstants
 import frc.robot.constants.TrajectoryConstants
+import frc.robot.subsystems.DigitalInputSubsystem
+import frc.robot.subsystems.SparkMaxSubsystem
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -26,11 +29,11 @@ import frc.robot.constants.TrajectoryConstants
  * subsystems, commands, and button mappings) should be declared here.
  */
 class RobotContainer {
-    val primaryController = XboxController(0)
-    val secondaryController = XboxController(1)
+    val top = DigitalInputSubsystem(1)
+    val bottom = DigitalInputSubsystem(0)
 
-    val swerveSubsystem = SwerveSubsystem()
-
+    val motor = SparkMaxSubsystem(2)
+    val controller = XboxController(0)
 
     /** The container for the robot. Contains subsystems, OI devices, and commands.  */
     init {
@@ -45,37 +48,6 @@ class RobotContainer {
      * instantiating a [GenericHID] or one of its subclasses ([ ] or [XboxController]), and then passing it to a [ ].
      */
     private fun configureButtonBindings() {
-        swerveSubsystem.defaultCommand = UnlimitedDrive(swerveSubsystem,
-            { primaryController.leftY * DrivetrainConstants.drivingSpeedScalar },
-            { primaryController.leftX * DrivetrainConstants.drivingSpeedScalar },
-            { primaryController.rightX * DrivetrainConstants.rotationSpeedScalar },
-            true
-        )
-
-//        JoystickButton(primaryController, XboxController.Button.kX.value).whileTrue(
-//            RunCommand({
-//                swerveSubsystem.setX()
-//            }, swerveSubsystem)
-//        )
-
-        JoystickButton(primaryController, XboxController.Button.kB.value).whileTrue(
-            RunCommand({
-                swerveSubsystem.setZero()
-            }, swerveSubsystem)
-        )
-
-        JoystickButton(primaryController, XboxController.Button.kY.value).whileTrue(
-            RunCommand({
-                swerveSubsystem.zeroGyro()
-            }, swerveSubsystem)
-        )
-
-        JoystickButton(primaryController, XboxController.Button.kA.value).whileTrue(TrajectoryDrive(swerveSubsystem, TrajectoryGenerator.generateTrajectory(
-                swerveSubsystem.pose,
-            listOf(Translation2d(0.5,0.0),Translation2d(0.5, 1.0), Translation2d(1.5,1.0), Translation2d(1.5,0.0)),
-            Pose2d(0.2, 0.05, Rotation2d.fromRadians(Math.PI/2)),
-            TrajectoryConstants.config
-        )))
-
+        motor.defaultCommand = PIDElevatorTuning(bottom, top, motor, controller)
     }
 }
