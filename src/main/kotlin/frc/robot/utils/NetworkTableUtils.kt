@@ -2,6 +2,7 @@ package frc.robot.utils
 
 import edu.wpi.first.networktables.NetworkTable
 import edu.wpi.first.networktables.NetworkTableInstance
+import java.io.Serializable
 
 class NetworkTableUtils(table: String) {
 
@@ -17,11 +18,14 @@ class NetworkTableUtils(table: String) {
         return this.table
     }
 
-    fun getDouble(key: String, defaultValue: Double) : Double {
+    private fun getInt(key: String, value: Int): Serializable {
+        return this.table.getEntry(key).getInteger(value.toLong())
+    }
+    private fun getDouble(key: String, defaultValue: Double) : Serializable {
         return this.table.getEntry(key).getDouble(defaultValue)
     }
 
-    fun getString(key: String, defaultValue: String) : String {
+    private fun getString(key: String, defaultValue: String) : Serializable {
         return this.table.getEntry(key).getString(defaultValue)
     }
 
@@ -29,11 +33,15 @@ class NetworkTableUtils(table: String) {
         return this.table.getEntry(key).getDoubleArray(doubles)
     }
 
-    fun setDouble(key: String, value: Double) {
+    fun setInt(key: String, value: Int) {
+        this.table.getEntry(key).setInteger(value.toLong())
+    }
+
+    private fun setDouble(key: String, value: Double) {
         this.table.getEntry(key).setDouble(value)
     }
 
-    fun setString(key: String, value: String) {
+    private fun setString(key: String, value: String) {
         this.table.getEntry(key).setString(value)
     }
 
@@ -43,6 +51,7 @@ class NetworkTableUtils(table: String) {
             when(value) {
                 Double -> getDouble(key, value as Double)
                 String -> getString(key, value as String)
+                Int -> getInt(key, value as Int)
                 else -> {
                     IllegalArgumentException("Invalid value type")
                 }
@@ -59,6 +68,7 @@ class NetworkTableUtils(table: String) {
             when(value) {
                 Double -> setDouble(key, value as Double)
                 String -> setString(key, value as String)
+                Int -> setInt(key, value as Int)
                 else -> {
                     throw IllegalArgumentException("Invalid value type")
                 }

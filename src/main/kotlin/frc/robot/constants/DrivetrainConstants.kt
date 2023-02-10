@@ -8,6 +8,11 @@ import edu.wpi.first.math.util.Units
 
 object DrivetrainConstants {
 
+    const val lineupP = 0.2
+    const val lineupI = 0.0
+    const val lineupD = 0.0
+
+
     const val maxSpeedMetersPerSecond = 2.0
     const val maxAngularSpeed = 2 * Math.PI
 

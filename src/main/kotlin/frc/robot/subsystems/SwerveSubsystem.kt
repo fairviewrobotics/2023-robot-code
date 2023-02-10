@@ -21,6 +21,7 @@ import kotlin.math.IEEErem
 
 
 class SwerveSubsystem() : SubsystemBase() {
+    var reset = true
     val frontLeft = SwerveModuleControlller(
         DrivetrainConstants.frontLeftDrivingPort,
         DrivetrainConstants.frontLeftTurningPort,
@@ -84,8 +85,19 @@ class SwerveSubsystem() : SubsystemBase() {
         // find the botpose network table id thingy, construct a pose2d, feed it into resetodometry
         val botpose: DoubleArray = limelightTable.getDoubleArray("botpose", DoubleArray(0))
         if (!botpose.contentEquals(DoubleArray(0))) {
-            val pose = Pose2d(Translation2d(botpose[0], botpose[2]), Rotation2d(botpose[3], botpose[5]))
-            resetOdometry(pose)
+            val pose = Pose2d(Translation2d(botpose[0], botpose[1]), Rotation2d(botpose[3], botpose[4]))
+            if (reset) {
+                resetOdometry(pose)
+                reset = false
+            } else {
+                println("----Value difference----")
+                println("X: ${odometry.poseMeters.x - botpose[0]}")
+                println("Y: ${odometry.poseMeters.y - botpose[1]}")
+//                NetworkTableUtils("Debug").setEntry("X", odometry.poseMeters.x - botpose[0])
+//                NetworkTableUtils("Debug").setEntry("Y", odometry.poseMeters.y - botpose[1])
+
+                println("-----------------------------")
+            }
         }
 
 
@@ -213,6 +225,13 @@ class SwerveSubsystem() : SubsystemBase() {
 
     fun zeroGyro() {
         gyro.reset()
+    }
+
+    fun resetReset() {
+        reset = true
+    }
+
+    fun zeroOdometry() {
         resetOdometry(Pose2d(0.0, 0.0, Rotation2d(0.0)))
     }
 

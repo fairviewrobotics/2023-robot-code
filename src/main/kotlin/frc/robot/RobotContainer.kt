@@ -18,6 +18,8 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator
 import frc.robot.commands.*
 import frc.robot.constants.DrivetrainConstants
 import frc.robot.constants.TrajectoryConstants
+import frc.robot.subsystems.LimelightSubsystem
+import frc.robot.utils.DriveUtils
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -26,10 +28,13 @@ import frc.robot.constants.TrajectoryConstants
  * subsystems, commands, and button mappings) should be declared here.
  */
 class RobotContainer {
-    val primaryController = XboxController(0)
-    val secondaryController = XboxController(1)
+    private val primaryController = XboxController(0)
+    private val secondaryController = XboxController(1)
 
-    val swerveSubsystem = SwerveSubsystem()
+    private val swerveSubsystem = SwerveSubsystem()
+    private val limelightSubsystem = LimelightSubsystem()
+
+    private val driveUtils = DriveUtils(swerveSubsystem)
 
 
     /** The container for the robot. Contains subsystems, OI devices, and commands.  */
@@ -64,13 +69,32 @@ class RobotContainer {
             }, swerveSubsystem)
         )
 
+        JoystickButton(primaryController, XboxController.Button.kRightBumper.value).whileTrue(
+            RunCommand({
+                LineUp(swerveSubsystem, limelightSubsystem)
+            }, swerveSubsystem)
+        )
+
         JoystickButton(primaryController, XboxController.Button.kY.value).whileTrue(
             RunCommand({
                 swerveSubsystem.zeroGyro()
             }, swerveSubsystem)
         )
 
-        JoystickButton(primaryController, XboxController.Button.kA.value).whileTrue(TrajectoryDrive(swerveSubsystem, TrajectoryGenerator.generateTrajectory(
+        JoystickButton(primaryController, XboxController.Button.kLeftBumper.value).whileTrue(
+            RunCommand({
+                swerveSubsystem.zeroOdometry()
+            }, swerveSubsystem)
+        )
+//        JoystickButton(primaryController, XboxController.Button.kRightBumper.value).whileTrue(
+//            RunCommand({
+//                swerveSubsystem.resetReset()
+//            }, swerveSubsystem)
+//        )
+
+
+
+        JoystickButton(primaryController, XboxController.Button.kA.value).whileTrue(driveUtils.trajectoryDrive(TrajectoryGenerator.generateTrajectory(
                 swerveSubsystem.pose,
             listOf(Translation2d(0.5,0.0),Translation2d(0.5, 1.0), Translation2d(1.5,1.0), Translation2d(1.5,0.0)),
             Pose2d(0.2, 0.05, Rotation2d.fromRadians(Math.PI/2)),
