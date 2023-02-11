@@ -10,7 +10,7 @@ import edu.wpi.first.networktables.NetworkTableInstance
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.robot.constants.ArmConstants
 
-class ArmSubsystem(val elbowMotorID: Int, val elevatorMotorID: Int) :SubsystemBase() {
+class ArmSubsystem(val topBreakerID: Int, val bottomBreakerID: Int, val elbowMotorID: Int, val elevatorMotorID: Int) :SubsystemBase() {
     val elevatorMotor = CANSparkMax(elevatorMotorID, CANSparkMaxLowLevel.MotorType.kBrushless)
     val elbowMotor = CANSparkMax(elbowMotorID, CANSparkMaxLowLevel.MotorType.kBrushless)
 
@@ -74,12 +74,12 @@ class ArmSubsystem(val elbowMotorID: Int, val elevatorMotorID: Int) :SubsystemBa
 
         if(reverseLimit.isPressed)
         {
-            elevatorEncoder.position = ArmConstants.elevatorBottomPosEnocder
+            elevatorEncoder.position = ArmConstants.elevatorMinHeight
         }
 
         if(forwardLimit.isPressed)
         {
-            elevatorEncoder.position = ArmConstants.elevatorTopPosEnocder
+            elevatorEncoder.position = ArmConstants.elevatorMaxHeight
         }
     }
 }
