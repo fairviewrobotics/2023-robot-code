@@ -1,6 +1,9 @@
 package frc.robot.subsystems
 
 import com.kauailabs.navx.frc.AHRS
+import edu.wpi.first.math.Matrix
+import edu.wpi.first.math.Nat
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.filter.SlewRateLimiter
 import edu.wpi.first.math.geometry.Rotation2d
@@ -17,11 +20,11 @@ import frc.robot.constants.DrivetrainConstants
 import frc.robot.controllers.SwerveModuleControlller
 import frc.robot.utils.NetworkTableUtils
 import frc.robot.utils.SwerveUtils
+import java.util.Timer
 import kotlin.math.IEEErem
 
 
 class SwerveSubsystem() : SubsystemBase() {
-    var reset = true
     val frontLeft = SwerveModuleControlller(
         DrivetrainConstants.frontLeftDrivingPort,
         DrivetrainConstants.frontLeftTurningPort,
@@ -65,16 +68,22 @@ class SwerveSubsystem() : SubsystemBase() {
 
 
 
-    val odometry = SwerveDriveOdometry(
+    val odometry = SwerveDrivePoseEstimator(
         DrivetrainConstants.driveKinematics,
         Rotation2d.fromRadians(heading),
-        arrayOf(frontLeft.position, frontRight.position, rearLeft.position, rearRight.position)
+        arrayOf(frontLeft.position, frontRight.position, rearLeft.position, rearRight.position),
+        Pose2d(3.0, 3.0, Rotation2d(0.0))
     )
+
 
     val setpointsTelemetry = NetworkTableInstance.getDefault().getTable("Swerve").getDoubleArrayTopic("Setpoints").getEntry(doubleArrayOf(0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0))
     val actualTelemetry = NetworkTableInstance.getDefault().getTable("Swerve").getDoubleArrayTopic("Actual").getEntry(doubleArrayOf(0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0))
     val poseTelemetry = NetworkTableInstance.getDefault().getTable("Swerve").getDoubleArrayTopic("Pose").getEntry(doubleArrayOf(pose.x, pose.y, pose.rotation.radians))
     val gyroHeading = NetworkTableInstance.getDefault().getTable("Swerve").getDoubleTopic("GyroHeading").getEntry((heading))
+
+    init {
+        odometry.setVisionMeasurementStdDevs(Matrix({ 1 }, { 2 }))
+    }
 
     override fun periodic() {
         odometry.update(
@@ -84,22 +93,11 @@ class SwerveSubsystem() : SubsystemBase() {
 
         // find the botpose network table id thingy, construct a pose2d, feed it into resetodometry
         val botpose: DoubleArray = limelightTable.getDoubleArray("botpose", DoubleArray(0))
-        if (!botpose.contentEquals(DoubleArray(0))) {
+        if (limelightTable.getEntry("tv", 0) == 1) {
             val pose = Pose2d(Translation2d(botpose[0], botpose[1]), Rotation2d(botpose[3], botpose[4]))
-            if (reset) {
-                resetOdometry(pose)
-                reset = false
-            } else {
-                println("----Value difference----")
-                println("X: ${odometry.poseMeters.x - botpose[0]}")
-                println("Y: ${odometry.poseMeters.y - botpose[1]}")
-//                NetworkTableUtils("Debug").setEntry("X", odometry.poseMeters.x - botpose[0])
-//                NetworkTableUtils("Debug").setEntry("Y", odometry.poseMeters.y - botpose[1])
+            odometry.addVisionMeasurement(pose, edu.wpi.first.wpilibj.Timer.getFPGATimestamp())
 
-                println("-----------------------------")
             }
-        }
-
 
         actualTelemetry.set(doubleArrayOf(
             frontLeft.position.angle.radians, frontLeft.state.speedMetersPerSecond,
@@ -122,7 +120,7 @@ class SwerveSubsystem() : SubsystemBase() {
 
     }
 
-    val pose: Pose2d get() = odometry.poseMeters
+    val pose: Pose2d get() = odometry.estimatedPosition
     fun resetOdometry(pose: Pose2d) {
         odometry.resetPosition(
             Rotation2d.fromRadians(heading),
@@ -225,10 +223,6 @@ class SwerveSubsystem() : SubsystemBase() {
 
     fun zeroGyro() {
         gyro.reset()
-    }
-
-    fun resetReset() {
-        reset = true
     }
 
     fun zeroOdometry() {
