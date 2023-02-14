@@ -20,7 +20,7 @@ jobs:
           filters: |
             source_changed:
               - 'src/main/kotlin/**'
-      - uses: actions/setup-java@v3
+      - uses: actions/setup-java@v3.10.0
         with:
           distribution: 'zulu'
           java-version: 16
