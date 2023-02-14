@@ -53,9 +53,7 @@ class LEDSubsystem : SubsystemBase() {
         }
 
     }
-    fun setState(sstate: LEDSubsystemState) {
-        state = sstate
-    }
+
     fun offLeds() {
         for (i in 0..ledBuffer.length-1) {
             ledBuffer.setRGB(i, 179, 20, 20)

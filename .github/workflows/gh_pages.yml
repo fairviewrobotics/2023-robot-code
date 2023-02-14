@@ -1,0 +1,52 @@
+name: Build and deploy examples to GitHub Pages
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build-examples:
+    runs-on: ubuntu-latest
+    if: github.repository == 'fairviewrobotics/2023-robot-code'
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            source_changed:
+              - 'src/main/kotlin/**'
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: 16
+          cache: 'maven'
+      - uses: gradle/gradle-build-action@v2
+      - name: Build html
+        run: ./gradlew dokkaHtml --no-daemon --stacktrace
+        working-directory: .
+        if: steps.filter.outputs.source_changed == 'true'
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        if: steps.filter.outputs.source_changed == 'true'
+        with:
+          name: source
+          path: build/dokka
+  deploy-examples:
+    runs-on: ubuntu-latest
+    needs: [ build-examples ]
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          path: public/examples
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          keep_files: true
+          publish_dir: ./public
+          full_commit_message: Publish examples
