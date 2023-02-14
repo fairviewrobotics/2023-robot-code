@@ -53,7 +53,7 @@ class LEDSubsystem : SubsystemBase() {
         }
 
     }
-    fun setState(sstate: LEDSubsystemState) {
+    fun setLEDState(sstate: LEDSubsystemState) {
         state = sstate
     }
     fun offLeds() {
@@ -93,6 +93,7 @@ class LEDSubsystem : SubsystemBase() {
             led.setData(ledBuffer)
             ledBuffer.setHSV((i+1+time) % 23, 166, 255, 255)
         }
+
         led.setData(ledBuffer)
         ledBuffer.setHSV(23, 26, 255, 255)
     }

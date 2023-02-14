@@ -2,38 +2,40 @@ package frc.robot.subsystems
 
 import com.revrobotics.CANSparkMax
 import com.revrobotics.CANSparkMaxLowLevel
-import com.revrobotics.SparkMaxAbsoluteEncoder
-import com.revrobotics.SparkMaxLimitSwitch
-import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.controller.ProfiledPIDController
 import edu.wpi.first.networktables.NetworkTableInstance
+import edu.wpi.first.wpilibj.DigitalInput
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.robot.constants.ArmConstants
 
-class ArmSubsystem(val topBreakerID: Int, val bottomBreakerID: Int, val elbowMotorID: Int, val elevatorMotorID: Int) :SubsystemBase() {
+class ArmSubsystem(val topBreakerID: Int, val bottomBreakerID: Int, /*val elbowMotorID: Int,*/ val elevatorMotorID: Int) :SubsystemBase() {
     val elevatorMotor = CANSparkMax(elevatorMotorID, CANSparkMaxLowLevel.MotorType.kBrushless)
-    val elbowMotor = CANSparkMax(elbowMotorID, CANSparkMaxLowLevel.MotorType.kBrushless)
+    var elevatorZeroed = false
+    //val elbowMotor = CANSparkMax(elbowMotorID, CANSparkMaxLowLevel.MotorType.kBrushless)
 
 
     val elevatorEncoder = elevatorMotor.getEncoder()
-    val elbowEncoder = elbowMotor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle)
-    val forwardLimit = elevatorMotor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed);
-    val reverseLimit = elbowMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed);
-    var elbowPos = NetworkTableInstance.getDefault().getTable("Arm").getDoubleTopic("ElbowPosition").publish()
-    var elbowVelocity = NetworkTableInstance.getDefault().getTable("Arm").getDoubleTopic("ElbowPosition").publish()
-    var elevatorPos = NetworkTableInstance.getDefault().getTable("Arm").getDoubleTopic("ElbowPosition").publish()
-    var elevatorVelocity = NetworkTableInstance.getDefault().getTable("Arm").getDoubleTopic("ElbowPosition").publish()
-    var ntDesiredElevator = NetworkTableInstance.getDefault().getTable("Arm").getDoubleTopic("ElbowPosition").publish()
-    var ntDesiredElbow = NetworkTableInstance.getDefault().getTable("Arm").getDoubleTopic("ElbowPosition").publish()
+    //val elbowEncoder = elbowMotor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle)
+    //val forwardLimit = elevatorMotor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed);
+    val reverseLimit = DigitalInput(bottomBreakerID);
+
+    val forwardLimit = DigitalInput(topBreakerID)
+   // var elbowPos = NetworkTableInstance.getDefault().getTable("Arm").getDoubleTopic("ElbowPosition").publish()
+   // var elbowVelocity = NetworkTableInstance.getDefault().getTable("Arm").getDoubleTopic("ElbowVelocity").publish()
+    var elevatorPos = NetworkTableInstance.getDefault().getTable("Arm").getDoubleTopic("ElevatorPosition").publish()
+    var elevatorVelocity = NetworkTableInstance.getDefault().getTable("Arm").getDoubleTopic("ElevatorVelocity").publish()
+    var rpmElevatorVelocity = NetworkTableInstance.getDefault().getTable("Arm").getDoubleTopic("rpmElevatorVelocity").publish()
+    var ntDesiredElevator = NetworkTableInstance.getDefault().getTable("Arm").getDoubleTopic("DesiredElevator").publish()
+    //var ntDesiredElbow = NetworkTableInstance.getDefault().getTable("Arm").getDoubleTopic("DesiredElbow").publish()
 
     var desiredElevatorState = 0.0
-    var desiredElbowState = 0.0
+    //var desiredElbowState = 0.0
 
     var inst = NetworkTableInstance.getDefault()
     var table = inst.getTable("Arm")
 
-    val elbowPid = PIDController(ArmConstants.elbowP, ArmConstants.elbowI, ArmConstants.elbowD)
-    val elevatorPid = ProfiledPIDController(
+   /// val elbowPid = PIDController(ArmConstants.elbowP, ArmConstants.elbowI, ArmConstants.elbowD)
+    var elevatorPid = ProfiledPIDController(
         ArmConstants.elevatorP,
         ArmConstants.elevatorI,
         ArmConstants.elevatorD, ArmConstants.elevatorTrapezoidConstraints, 0.02)
@@ -42,44 +44,64 @@ class ArmSubsystem(val topBreakerID: Int, val bottomBreakerID: Int, val elbowMot
 
 
     init {
-        elbowEncoder.setPositionConversionFactor(ArmConstants.elbowEncoderPosMultiplier)
-        elbowEncoder.setVelocityConversionFactor(ArmConstants.elbowEncoderVelocityMultiplier)
-        elevatorEncoder.setPositionConversionFactor(ArmConstants.elevatorEncoderPositionConversionFactor)
-        elevatorEncoder.setVelocityConversionFactor(ArmConstants.elevatorEncoderVelocityMultiplier)
+       // elbowEncoder.setPositionConversionFactor(ArmConstants.elbowEncoderPosMultiplier)
+       // elbowEncoder.setVelocityConversionFactor(ArmConstants.elbowEncoderVelocityMultiplier)
+        elevatorEncoder.positionConversionFactor = ArmConstants.elevatorEncoderPositionConversionFactor
+        elevatorEncoder.velocityConversionFactor = ArmConstants.elevatorEncoderVelocityMultiplier
     }
-    fun SetDesired(ElbowPos: Double, ElevatorPos: Double)
+    fun SetDesired(/*ElbowPos: Double,*/ ElevatorPos: Double)
     {
-        desiredElbowState = ElbowPos
+      //  desiredElbowState = ElbowPos
 
-        desiredElevatorState = ElevatorPos
+       // elevatorPid.reset(elevatorEncoder.position)
+        elevatorPid.setConstraints(ArmConstants.elevatorTrapezoidConstraints)
+        elevatorPid.setGoal(ElevatorPos)
     }
 
     override fun periodic() {
         super.periodic()
         /** be setting the ntvalue for elbow position **/
-        elevatorMotor.setVoltage((elevatorPid.calculate(elevatorEncoder.position, desiredElevatorState)))
-        elbowMotor.setVoltage((elbowPid.calculate(elevatorEncoder.position, desiredElbowState))+ ArmConstants.elbowFeedForward.calculate(desiredElbowState,2.5))
+        if (elevatorZeroed == true) {
+            if(elevatorEncoder.position >= 0 || elevatorEncoder.position <= 0.85) {
+                elevatorMotor.setVoltage(elevatorPid.calculate(elevatorEncoder.position))
+            }
+            else
+            {
+                elevatorMotor.set(0.0)
+            }
+           // elevatorPid.setpoint.position = desiredElevatorState
+            // elbowPos.set(elbowEncoder.position)
+            // ntDesiredElbow.set(desiredElbowState)
+           // ntDesiredElevator.set(desiredElevatorState)
+            //  println(elevatorEncoder.position)
+            elevatorPos.set(elevatorEncoder.position)
+            elevatorVelocity.set(elevatorEncoder.velocity)
+            rpmElevatorVelocity.set(elevatorEncoder.velocity / ArmConstants.elevatorEncoderVelocityMultiplier)
+            //these two ifs set the encoder when it hits a limit switch
 
-        //This part is the network table bit
-        elbowPos.set(elbowEncoder.position)
-        elevatorVelocity.set(elbowEncoder.velocity)
-        elevatorPos.set(elevatorEncoder.position)
-        elevatorVelocity.set(elevatorEncoder.velocity)
-        elbowPos.set(elbowEncoder.position)
-        ntDesiredElbow.set(desiredElbowState)
-        ntDesiredElevator.set(desiredElevatorState)
+            if (!reverseLimit.get()) //Line break false = it has been hit
+            {
+                // elevatorEncoder.position = ArmConstants.elevatorMinHeight
+            } else {
+            }
 
-
-        //these two ifs set the encoder when it hits a limit switch
-
-        if(reverseLimit.isPressed)
-        {
-            elevatorEncoder.position = ArmConstants.elevatorMinHeight
+            if (forwardLimit.get()) {
+                //elevatorEncoder.position = ArmConstants.elevatorMaxHeight
+            }
         }
 
-        if(forwardLimit.isPressed)
-        {
-            elevatorEncoder.position = ArmConstants.elevatorMaxHeight
+        fun bottomAligned(): Boolean {
+            if (!reverseLimit.get()) {
+                return true
+            } else {
+                return false
+            }
         }
     }
+
+    fun moveVoltage(volts: Double) {
+        println("voltage")
+        elevatorMotor.setVoltage(volts)
+    }
+
 }

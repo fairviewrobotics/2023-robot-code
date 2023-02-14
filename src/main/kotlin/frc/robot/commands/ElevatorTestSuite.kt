@@ -1,6 +1,8 @@
 package frc.robot.commands
 
 import edu.wpi.first.math.controller.PIDController
+import edu.wpi.first.math.controller.ProfiledPIDController
+import edu.wpi.first.math.trajectory.TrapezoidProfile
 import edu.wpi.first.math.util.Units
 import edu.wpi.first.networktables.NetworkTableInstance
 import edu.wpi.first.wpilibj.XboxController
@@ -97,11 +99,11 @@ class PIDElevatorTuning(val bottomBreaker: DigitalInputSubsystem, val topBreaker
     val convertedPosition = NetworkTableInstance.getDefault().getTable("ElevatorTestSuite").getDoubleTopic("Position").getEntry(0.0)
     val bottomHit = NetworkTableInstance.getDefault().getTable("ElevatorTestSuite").getBooleanTopic("BottomHit").getEntry(false)
     val topHit = NetworkTableInstance.getDefault().getTable("ElevatorTestSuite").getBooleanTopic("TopHit").getEntry(false)
-
+    val motorVelocity = NetworkTableInstance.getDefault().getTable("ElevatorTestSuite").getDoubleTopic("motorVelocity").getEntry(0.0)
     val outputNT = NetworkTableInstance.getDefault().getTable("ElevatorTestSuite").getDoubleTopic("Output").getEntry(0.0)
     val errorNT = NetworkTableInstance.getDefault().getTable("ElevatorTestSuite").getDoubleTopic("Error").getEntry(0.0)
 
-    val pid = PIDController(3.0,0.01,0.05)
+    val pid = ProfiledPIDController(3.0,0.01,0.05, TrapezoidProfile.Constraints(5.5,100.0))
     var position = motor.x.encoder.position
     init {
         addRequirements(bottomBreaker)
@@ -110,7 +112,6 @@ class PIDElevatorTuning(val bottomBreaker: DigitalInputSubsystem, val topBreaker
 
         motor.x.encoder.positionConversionFactor = ArmConstants.elevatorEncoderPositionConversionFactor
         motor.x.inverted = ArmConstants.elevatorMotorInverted
-
         pid.setTolerance(0.025)
     }
 
@@ -160,6 +161,7 @@ class PIDElevatorTuning(val bottomBreaker: DigitalInputSubsystem, val topBreaker
         topHit.set(top)
         bottomHit.set(bottom)
         outputNT.set(output)
+        motorVelocity.set(motor.x.encoder.velocity)
         errorNT.set(pid.positionError)
     }
 }
