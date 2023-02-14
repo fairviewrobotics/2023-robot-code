@@ -107,7 +107,7 @@ class LEDSubsystem : SubsystemBase() {
             led.setData(ledBuffer)
             ledBuffer.setHSV((i+1+time) % 23, 157, 255, 255)
         }
-        //set the one obnoxious non-even one33
+        //set the one obnoxious non-even one
         led.setData(ledBuffer)
         ledBuffer.setHSV(23, 143, 255, 255)
     }
