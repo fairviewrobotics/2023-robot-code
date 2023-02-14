@@ -3,10 +3,10 @@ name: Build and deploy examples to GitHub Pages
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
     branches:
-      - master
+      - main
 
 jobs:
   build-examples:
