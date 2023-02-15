@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandBase
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
 import frc.robot.LimelightHelpers
 import frc.robot.constants.DrivetrainConstants
 import frc.robot.subsystems.LimelightSubsystem
@@ -35,7 +36,6 @@ class GoToAprilTag(driveSubsystem: SwerveSubsystem, limelight: LimelightSubsyste
     return driveUtils.trajectoryDrivePathPlanner(trajectory, false)*/
 
 }
-
 class LineUpHorizontal(val driveSubsystem: SwerveSubsystem, val limelight: LimelightSubsystem) : CommandBase() {
     val lineupPID = PIDController(DrivetrainConstants.lineupP, DrivetrainConstants.lineupI, DrivetrainConstants.lineupD)
 
@@ -44,14 +44,21 @@ class LineUpHorizontal(val driveSubsystem: SwerveSubsystem, val limelight: Limel
     }
 
     override fun execute() {
-        val out = lineupPID.calculate(limelight.getAprilTagOffset())
+        val out = lineupPID.calculate(limelight.getAprilTagOffset(), 0.0)
 
-        driveSubsystem.drive(0.0, out, 0.0, true, false)
+        driveSubsystem.drive(0.0, out, 0.0, false, false)
     }
 
     override fun isFinished(): Boolean {
         return lineupPID.atSetpoint()
     }
+}
+
+fun AligntoApriltag() {
+    return SequentialCommandGroup(
+        VisionOrRumble(),
+        LineUpHorizontal
+    )
 }
 
 
