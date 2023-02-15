@@ -6,25 +6,31 @@ import frc.robot.utils.NetworkTableUtils
 class LimelightSubsystem : SubsystemBase() {
 
     private val limelightNetworkTable = NetworkTableUtils("limelight")
+
+    fun aprilTagGuard() {
+        if (pipeline != Pipelines.APRILTAG) {
+            pipeline = Pipelines.APRILTAG
+        }
+    }
+
     fun getPose() : DoubleArray {
+        aprilTagGuard()
         return limelightNetworkTable.getDoubleArray("botpose", DoubleArray(0))
     }
+
     fun getTargetPose(): DoubleArray {
+        aprilTagGuard()
         return limelightNetworkTable.getDoubleArray("targetpose_robotspace", DoubleArray(0))
     }
 
-    fun getAprilTagOffseta() : Double {
-        setPipeline(Pipelines.APRILTAG)
+    fun getAprilTagOffset() : Double {
+        aprilTagGuard()
         return limelightNetworkTable.getEntry("tx", 0.0) as Double
     }
 
-    fun setPipeline(pipeline: Pipelines) {
-        limelightNetworkTable.setEntry("pipeline", pipeline)
-    }
-
-    fun getPipeline(): Int {
-        return limelightNetworkTable.getEntry("pipeline", 0) as Int
-    }
+    var pipeline
+        get() = limelightNetworkTable.getEntry("pipeline", 0) as Pipelines
+        set(x: Pipelines) = limelightNetworkTable.setEntry("pipeline", x as Int)
 
     fun canSeeTarget(): Boolean {
         return limelightNetworkTable.getEntry("tv", 0) == 1

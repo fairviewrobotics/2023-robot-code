@@ -8,15 +8,20 @@ import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandBase
+import frc.robot.LimelightHelpers
 import frc.robot.constants.DrivetrainConstants
 import frc.robot.subsystems.LimelightSubsystem
 import frc.robot.subsystems.SwerveSubsystem
 
 class GoToAprilTag(driveSubsystem: SwerveSubsystem, limelight: LimelightSubsystem): CommandBase() {
-    val targetpose = limelight.getTargetPose()
-
-
+/*    val targetpose = limelight.getTargetPose()
     val trajectory: PathPlannerTrajectory
+
+    override fun execute() {
+        super.execute()
+    }
+
+
 
     println("Hi")
 
@@ -27,20 +32,25 @@ class GoToAprilTag(driveSubsystem: SwerveSubsystem, limelight: LimelightSubsyste
 
     trajectory = PathPlanner.generatePath(PathConstraints(5.0, 1.0), current, target)
 
-    return driveUtils.trajectoryDrivePathPlanner(trajectory, false)
+    return driveUtils.trajectoryDrivePathPlanner(trajectory, false)*/
 
 }
 
-fun LineUpHorizontal(driveSubsystem: SwerveSubsystem, limelight: LimelightSubsystem) : Command {
+class LineUpHorizontal(val driveSubsystem: SwerveSubsystem, val limelight: LimelightSubsystem) : CommandBase() {
     val lineupPID = PIDController(DrivetrainConstants.lineupP, DrivetrainConstants.lineupI, DrivetrainConstants.lineupD)
-    lineupPID.setTolerance(1.4)
 
-    if (limelight.canSeeTarget()) {
-        val out = lineupPID.calculate(limelight.getAprilTagOffseta(), 0.0) * 10
-        val mps = clamp(out, -5.0, 5.0)
+    init {
+        lineupPID.setTolerance(1.0)
+    }
 
-        return UnlimitedDrive(driveSubsystem, { 0.0 }, { mps }, { 0.0 }, false)
+    override fun execute() {
+        val out = lineupPID.calculate(limelight.getAprilTagOffset())
 
+        driveSubsystem.drive(0.0, out, 0.0, true, false)
+    }
+
+    override fun isFinished(): Boolean {
+        return lineupPID.atSetpoint()
     }
 }
 
