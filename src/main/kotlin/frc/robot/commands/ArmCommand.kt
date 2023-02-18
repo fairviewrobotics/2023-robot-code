@@ -7,6 +7,15 @@ import frc.robot.subsystems.ArmSubsystem
 
 
 
+/**
+ * Sets the position the arm should go to
+ *
+ * This calls the armSubsystem's SetDesired to the entered value
+ *
+ * @param[armSubsystem: ArmSubsystem] the subsystem which controls the arm motors and stuff
+ * @param[elevatorPosition : Double] the position you want the elevator to go to
+ * @param[elbowPosition: Double] the position you want the elbow to go to
+ */
 class ArmSetPosition(val armSubsystem: ArmSubsystem, /*val elbowPosition: Double,*/ val elevatorPosition: Double) : CommandBase() {
 
     init{
@@ -42,8 +51,16 @@ class ArmSetPosition(val armSubsystem: ArmSubsystem, /*val elbowPosition: Double
     }
 }
 
+/**
+ * A class for setting the elevator encoder to zero using the linebreaks
+ *
+ * The elevator is slowly moved down until it hits the linebreak, after that it stops
+ *
+ * @param[armSubsystem: ArmSubsystem] the subsystem containing the arm
+ */
 class ZeroElevator(val armSubsystem : ArmSubsystem): CommandBase()
 {
+
     init{
     addRequirements(armSubsystem)
     }
@@ -82,8 +99,16 @@ class ZeroElevator(val armSubsystem : ArmSubsystem): CommandBase()
     }
 }
 
+/**
+ * slowly moves the elevator up forever
+ *
+ * this class exists purely for debugging convenience and is dangerous because of its lack of safety.
+ *
+ * @param[armSubsystem: ArmSubsystem] the subsystem containing the arm
+ */
 class slowlyToTop(val armSubsystem: ArmSubsystem) :CommandBase()
 {
+
     init{
         addRequirements(armSubsystem)
     }
@@ -117,7 +142,17 @@ class slowlyToTop(val armSubsystem: ArmSubsystem) :CommandBase()
     }
 }
 
+/**
+ * Moves elevator to a series of positions
+ *
+ * zeroes elevator then moves it to elevatorPosition then elevatorSecondPos
+ *
+ * @param[armSubsystem: ArmSubsystem] the subsystem containing the arm
+ * @param[elevatorPosition: Double] the first position the elevator should go to
+ * @param[elevatorSecondPos : Double] the second position the elevator should go to
+ */
 fun gotoPos(armSubsystem: ArmSubsystem, elevatorPosition: Double, elevatorSecondPos: Double) : Command{
+
     return SequentialCommandGroup(
         ZeroElevator(armSubsystem),
         ArmSetPosition(armSubsystem,elevatorPosition),
@@ -127,37 +162,102 @@ fun gotoPos(armSubsystem: ArmSubsystem, elevatorPosition: Double, elevatorSecond
        )
 }
 
+/**
+ * Not sure what this is here for, but probably goes up
+ *
+ * Looks like it zeroes the elevator then slowly moves up forever.
+ *
+ * @param[armSubsystem: ArmSubsystem] the subsystem containing the arm
+ */
 fun gotoTop(armSubsystem: ArmSubsystem): Command
 {
+
     return SequentialCommandGroup(
         ZeroElevator(armSubsystem),
         slowlyToTop(armSubsystem)
     )
 }
+
+/**
+ * Goes to the home position, also known as all the way down
+ *
+ * just calls ArmSetPosition to go to predetermined positions
+ *
+ * @param[armSubsystem: ArmSubsystem] the subsystem containing the arm
+ */
 fun GotoHome(armSubsystem: ArmSubsystem): Command {
+
     return ArmSetPosition(armSubsystem, ArmConstants.elbowBottomPos /*,ArmConstants.elevatorBottomPos*/)
 }
 
+/**
+ * Goes into the top peg position
+ *
+ * same process as GotoHome
+ *
+ * @param[armSubsystem: ArmSubsystem] the subsystem containing the arm
+ */
 fun GotoTopPeg(armSubsystem: ArmSubsystem): Command {
+
     return ArmSetPosition(armSubsystem, ArmConstants.elbowTopPegPos/*, ArmConstants.elevatorTopPegPos*/)
 }
 
+/**
+ * Goes into the middle peg position
+ *
+ * same process as GotoHome
+ *
+ * @param[armSubsystem: ArmSubsystem] the subsystem containing the arm
+ */
 fun GotoMiddlePeg(armSubsystem: ArmSubsystem): Command {
+
     return ArmSetPosition(armSubsystem, ArmConstants.elbowMidPegPos/*, ArmConstants.elevatorMidPegPos*/)
 }
 
+/**
+ * Goes to the ground
+ *
+ * same process as GotoHome
+ *
+ * @param[armSubsystem: ArmSubsystem] the subsystem containing the arm
+ */
 fun GotoGround(armSubsystem: ArmSubsystem): Command {
+
     return ArmSetPosition(armSubsystem, ArmConstants.elbowGroundPos/*, ArmConstants.elevatorGroundPos*/)
 }
 
+/**
+ * Goes into the middle shelf position
+ *
+ * same process as GotoHome
+ *
+ * @param[armSubsystem: ArmSubsystem] the subsystem containing the arm
+ */
 fun GotoMiddleShelf(armSubsystem: ArmSubsystem): Command {
+
     return ArmSetPosition(armSubsystem, ArmConstants.elbowMidShelfPos/*, ArmConstants.elevatorMidShelfPos*/)
 }
 
+/**
+ * Goes into the top shelf position
+ *
+ * same process as GotoHome
+ *
+ * @param[armSubsystem: ArmSubsystem] the subsystem containing the arm
+ */
 fun GotoTopShelf(armSubsystem: ArmSubsystem): Command {
+
     return ArmSetPosition(armSubsystem, ArmConstants.elbowTopShelfPos/*, ArmConstants.elevatorTopShelfPos*/)
 }
 
+/**
+ * Goes into the position for picking stuff up
+ *
+ * same process as GotoHome
+ *
+ * @param[armSubsystem: ArmSubsystem] the subsystem containing the arm
+ */
 fun GotoPickup(armSubsystem: ArmSubsystem): Command {
+
     return ArmSetPosition(armSubsystem, ArmConstants.elbowPickupPos/*, ArmConstants.elevatorPickupPos*/)
 }

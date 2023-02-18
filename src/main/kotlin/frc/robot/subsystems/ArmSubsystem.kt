@@ -15,7 +15,7 @@ class ArmSubsystem(val topBreakerID: Int, val bottomBreakerID: Int, /*val elbowM
 
 
     val elevatorEncoder = elevatorMotor.getEncoder()
-    //val elbowEncoder = elbowMotor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle)
+   // val elbowEncoder = elbowMotor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle)
     //val forwardLimit = elevatorMotor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed);
     val reverseLimit = DigitalInput(bottomBreakerID);
 
@@ -49,16 +49,31 @@ class ArmSubsystem(val topBreakerID: Int, val bottomBreakerID: Int, /*val elbowM
         elevatorEncoder.positionConversionFactor = ArmConstants.elevatorEncoderPositionConversionFactor
         elevatorEncoder.velocityConversionFactor = ArmConstants.elevatorEncoderVelocityMultiplier
     }
+    /**
+     * Sets the desired position
+     *
+     * The periodic function moves forever towards the position, so this is how you make it do something favorable. This basically tells the PID that it needs to go to elevatorPos
+     *
+     * @param[ElbowPos: Double] the new desired position for the elbow
+     * @param[ElevatorPos: Double] the new desired position for the elevator
+     */
     fun SetDesired(/*ElbowPos: Double,*/ ElevatorPos: Double)
     {
+
       //  desiredElbowState = ElbowPos
 
        // elevatorPid.reset(elevatorEncoder.position)
         elevatorPid.setConstraints(ArmConstants.elevatorTrapezoidConstraints)
         elevatorPid.setGoal(ElevatorPos)
     }
-
+    /**
+     * moves the arm towards the desired position
+     *
+     * The elevator needs to be zeroed for all of this.
+     * Then, as long as the encoders are within the safe range, the motor moves according to the PID.
+     */
     override fun periodic() {
+
         super.periodic()
         /** be setting the ntvalue for elbow position **/
         if (elevatorZeroed == true) {
@@ -89,8 +104,15 @@ class ArmSubsystem(val topBreakerID: Int, val bottomBreakerID: Int, /*val elbowM
                 //elevatorEncoder.position = ArmConstants.elevatorMaxHeight
             }
         }
-
+        /**
+         * checks if or not elevator is at bottom
+         *
+         * looks to see if the bottom linebreak is hit
+         *
+         * @return true if it is at the bottom, otherwise false
+         */
         fun bottomAligned(): Boolean {
+
             if (!reverseLimit.get()) {
                 return true
             } else {
