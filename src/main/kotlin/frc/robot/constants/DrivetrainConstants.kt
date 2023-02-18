@@ -96,8 +96,8 @@ object DrivetrainConstants {
     val turningMotorIdleMode = CANSparkMax.IdleMode.kBrake
 
     // Current limits for motors, set using smartcurrentlimits in swervemodulecontroller
-    const val drivingMotorCurrentLimit = 50 // amps
-    const val turningMotorCurrentLimit = 30 // amps
+    const val drivingMotorCurrentLimit = 40 // amps
+    const val turningMotorCurrentLimit = 20 // amps
 
     const val lineupP = 1.0
     const val lineupI = 1.0

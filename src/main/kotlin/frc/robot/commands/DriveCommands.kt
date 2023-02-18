@@ -99,8 +99,6 @@ fun TrajectoryDrivePathPlanner(swerveSubsystem: SwerveSubsystem, trajectory: Pat
 
     var thetaControllerError = NetworkTableInstance.getDefault().getTable("Swerve").getDoubleTopic("TurningError2").getEntry(0.0)
 
-
-
     var swerveControllerCommand = PPSwerveControllerCommand(
         trajectory,
         swerveSubsystem::pose,
