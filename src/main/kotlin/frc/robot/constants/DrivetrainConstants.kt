@@ -99,5 +99,8 @@ object DrivetrainConstants {
     const val drivingMotorCurrentLimit = 50 // amps
     const val turningMotorCurrentLimit = 30 // amps
 
+    const val lineupP = 1.0
+    const val lineupI = 1.0
+    const val lineupD = 1.0
 
 }
