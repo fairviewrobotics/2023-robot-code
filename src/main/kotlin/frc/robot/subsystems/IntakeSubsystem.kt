@@ -10,7 +10,15 @@ import edu.wpi.first.wpilibj.Encoder
 import edu.wpi.first.wpilibj.motorcontrol.MotorController
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup
 import edu.wpi.first.wpilibj2.command.SubsystemBase
+import frc.robot.constants.IntakeConstants
 
+/** Subsystem for the intake.
+ * @param intakeMotorLID The CAN id for the left intake motor.
+ * @param intakeMotorRID The CAN id for the right intake motor.
+ * @param pitchMotorID The CAN id for the pitch motor.
+ *
+ * Warning: This subsystem has not been tested and/or tuned.
+ * **/
 class IntakeSubsystem(intakeMotorLID: Int,
                       intakeMotorRID: Int,
                       pitchMotorID: Int,
@@ -22,53 +30,30 @@ class IntakeSubsystem(intakeMotorLID: Int,
     var intakeMotors = MotorControllerGroup(intakeMotorL, intakeMotorR)
 
     val pitchEncoder = pitchMotor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle)
-    //var elbowPos = NetworkTableInstance.getDefault().getTable("Arm").getDoubleTopic("ElbowPositions")
-    // var desiredIntakePitch = NetworkTableInstance.getDefault().getTable("Intake").getDoubleTopic("IntakePositions").publish()
-    var desiredIntakeSpeed = NetworkTableInstance.getDefault().getTable("Intake").getDoubleTopic("IntakePositions").publish()
-    var desiredIntakePitch = NetworkTableInstance.getDefault().getTable("Intake").getDoubleTopic("IntakePositions").publish()
-    var intakePosition = NetworkTableInstance.getDefault().getTable("Intake").getDoubleTopic("IntakePositions").publish()
+    val elbowPos = NetworkTableInstance.getDefault().getTable("")
 
-
-
-    val pitchFFS = 0.0
-    val pitchFFG = 0.0
-    val pitchFFV = 0.0
-    val pitchFFA = 0.0
-    val FFVelocity = 0.0
-
-    var intakeFeedforward = ArmFeedforward(pitchFFS,pitchFFG, pitchFFV, pitchFFA)
-
-    val pitchP = 0.0
-    val pitchI = 0.0
-    val pitchD = 0.0
-
-    val intakePID = PIDController(pitchP,pitchI,pitchD)
-
-    val pitchEncoderPositionConversionFactor = 0.0
-    val pitchEncoderVelocityConversionFactor = 0.0
-
-    // limits for the position of the intake pitch
-    val maxIntakePosition = 2*Math.PI
-    val minIntakePosition = Math.PI
-
-    var targetIntakeSpeed = 0.0
-    var targetIntagePitch = 0.0
-
-    // when elbow pointing down --> 3pi/2
-    // when intake perpendicular to elbow --> 3pi/2
-    // offsets in revolutions
-    val elbowPosOffset = 0.0
-    val intakePosOffset = 0.0
-
-    //------------------------------------------------------------------------------------------------------------------------------------------------
-
+    // Telemetry
+    // the Ts stand for telemetry, this is horrible, I know.
+    val TabsoluteIntakePosition = NetworkTableInstance.getDefault().getTable("Intake").getDoubleTopic("RelativeIntakePosition").publish()
+    val TrelativeIntakePosition = NetworkTableInstance.getDefault().getTable("Intake").getDoubleTopic("AbsoluteIntakePosition").publish()
+    val TintakeVoltage =  NetworkTableInstance.getDefault().getTable("Intake").getDoubleTopic("IntakeVoltage").publish()
+    val TpitchVoltage =  NetworkTableInstance.getDefault().getTable("Intake").getDoubleTopic("PitchVoltage").publish()
     init {
-        intakeMotorR.inverted = true
-        pitchEncoder.positionConversionFactor = pitchEncoderPositionConversionFactor
-        pitchEncoder.velocityConversionFactor = pitchEncoderVelocityConversionFactor
+        intakeMotorR.inverted = IntakeConstants.intakeMotorRInverted
+        intakeMotorL.inverted = IntakeConstants.intakeMotorLInverted
+        pitchEncoder.positionConversionFactor = IntakeConstants.pitchEncoderPositionConversionFactor
+        pitchEncoder.velocityConversionFactor = IntakeConstants.pitchEncoderVelocityConversionFactor
+
+        intakeMotorR.setSmartCurrentLimit(IntakeConstants.intakeMotorsCurrentLimit)
+        intakeMotorL.setSmartCurrentLimit(IntakeConstants.intakeMotorsCurrentLimit)
+        pitchMotor.setSmartCurrentLimit(IntakeConstants.pitchMotorCurrentLimit)
+
+        intakeMotorR.burnFlash()
+        intakeMotorL.burnFlash()
+        pitchMotor.burnFlash()
     }
 
-    // radian pitch input
+    /*// radian pitch input
     // targetPitch between pi and 2pi
     fun setTargets(intakeSpeed: Double, intakePitch: Double){
         targetIntakeSpeed = intakeSpeed
@@ -95,14 +80,32 @@ class IntakeSubsystem(intakeMotorLID: Int,
 
         return levelPitch/(2*Math.PI) - intakePosOffset
     }
+*/
 
-    override fun periodic() {
-        intakeMotors.set(targetIntakeSpeed)
-        pitchMotor.setVoltage(intakePID.calculate(pitchEncoder.position, targetIntagePitch) + intakeFeedforward.calculate(targetIntagePitch, FFVelocity))
+    /** This is the pitch without taking consideration to the position of the elbow.
+     * 0 degrees means the intake is parallel to the rest of the arm. **/
+    val relativePitch get() = 2.0
 
-        intakePosition.set(pitchEncoder.position)
-        desiredIntakePitch.set(targetIntagePitch)
-        desiredIntakeSpeed.set(targetIntakeSpeed)
-    }
+    /** This is the pitch with taking consideration to the position of the elbow.
+     * 0 degrees means the intake is parallel to the ground.
+      */
+    val absolutePitch get() = 2.0
 
+    /** This value sets the voltage for the intake motors. Positive value will spin the wheels inward
+     * and pick objects up.
+     */
+    var intakeVoltage = 0.0
+        set(x: Double) {
+            field = x
+            intakeMotors.setVoltage(x)
+        }
+
+    /** This value sets the voltage for the pitch motors. Positive values will tilt the intake up,
+     * negative values will tilt the intake down.
+     */
+    var pitchVoltage = 0.0
+        set(x: Double) {
+            field = x
+            pitchMotor.setVoltage(x)
+        }
 }

@@ -54,11 +54,4 @@ class LineUpHorizontal(val driveSubsystem: SwerveSubsystem, val limelight: Limel
     }
 }
 
-fun AligntoApriltag() {
-    return SequentialCommandGroup(
-        VisionOrRumble(),
-        LineUpHorizontal
-    )
-}
-
 
