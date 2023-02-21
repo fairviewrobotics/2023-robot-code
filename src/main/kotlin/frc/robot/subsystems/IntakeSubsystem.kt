@@ -30,7 +30,7 @@ class IntakeSubsystem(intakeMotorLID: Int,
     var intakeMotors = MotorControllerGroup(intakeMotorL, intakeMotorR)
 
     val pitchEncoder = pitchMotor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle)
-    val elbowPos = NetworkTableInstance.getDefault().getTable("")
+    val elbowPos = NetworkTableInstance.getDefault().getTable("Arm").getDoubleTopic("ElbowPosition").publish()
 
     // Telemetry
     // the Ts stand for telemetry, this is horrible, I know.

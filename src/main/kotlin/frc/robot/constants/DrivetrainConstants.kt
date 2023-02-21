@@ -32,22 +32,22 @@ object DrivetrainConstants {
 
     // FIXME: Right now 0degrees is in the Y-positive direction, when normally 0 rad is in the X-positive direction. Could this be an issue?
     // TUNED
-    const val frontLeftChassisAngularOffset = 2.862-(Math.PI/2)
-    const val frontRightChassisAngularOffset = 4.285+(0.0)
-    const val rearLeftChassisAngularOffset = 0.871+(Math.PI)
-    const val rearRightChassisAngularOffset =  2.090+(Math.PI/2)
+    const val frontLeftChassisAngularOffset = 5.772-(Math.PI/2)
+    const val frontRightChassisAngularOffset = 6.09+(0.0)
+    const val rearLeftChassisAngularOffset = 3.227+(Math.PI)
+    const val rearRightChassisAngularOffset =  3.650+(Math.PI/2)
 
     // SPARK MAX CAN ID
     // TUNED
-    const val frontLeftDrivingPort = 1
-    const val rearLeftDrivingPort = 5
-    const val frontRightDrivingPort = 3
-    const val rearRightDrivingPort = 7
+    const val frontLeftDrivingPort = 5
+    const val rearLeftDrivingPort = 1
+    const val frontRightDrivingPort = 7
+    const val rearRightDrivingPort = 3
 
-    const val frontLeftTurningPort = 2
-    const val rearLeftTurningPort = 6
-    const val frontRightTurningPort = 4
-    const val rearRightTurningPort = 8
+    const val frontLeftTurningPort = 6
+    const val rearLeftTurningPort = 2
+    const val frontRightTurningPort = 8
+    const val rearRightTurningPort = 4
 
     const val gyroReversed = false // TUNED
     const val turningEncoderReversed = true
