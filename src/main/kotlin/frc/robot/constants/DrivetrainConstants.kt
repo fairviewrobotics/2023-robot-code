@@ -8,16 +8,17 @@ import edu.wpi.first.math.util.Units
 
 object DrivetrainConstants {
 
-    const val maxSpeedMetersPerSecond = 2.0
-    const val maxAngularSpeed = 2 * Math.PI
 
-    const val dircetionSlewRate = 1.2 // rads/sec
-    const val magnitudeSlewRate = 1.8 // percent/second (1 = 100%)
-    const val rotationalSlewRate = 2.0 // percent/second (1 = 100%)
+    const val maxSpeedMetersPerSecond = 3.5
+    const val maxAngularSpeed = 4 * Math.PI
+
+    const val directionSlewRate = 5.0 // rads/sec
+    const val magnitudeSlewRate = 8.0 // percent/second (1 = 100%)
+    const val rotationalSlewRate = 12.0 // percent/second (1 = 100%)
 
 
-    const val drivingSpeedScalar = 1.2
-    const val rotationSpeedScalar = -1.7
+    const val drivingSpeedScalar = 1.0
+    const val rotationSpeedScalar = -1.0
 
     // TUNED
     val trackWidth = Units.inchesToMeters(26.5)

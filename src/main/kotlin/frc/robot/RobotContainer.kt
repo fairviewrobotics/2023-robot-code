@@ -32,11 +32,22 @@ import frc.robot.subsystems.*
 class RobotContainer {
     val mArmSubsystem = ArmSubsystem(1,0,2)
     val primaryController = XboxController(0)
+    val secondaryController = XboxController(1)
+//    val topBreaker = DigitalInputSubsystem(0)
+//    val bottomBreaker = DigitalInputSubsystem(1)
+    val swerveSubsystem = SwerveSubsystem()
+//    val elevatorMotor = SparkMaxSubsystem(9)
 
    // val topBreaker = DigitalInputSubsystem(1)
     //val bottomBreaker = DigitalInputSubsystem(0) //linebreak wiring: brown - 5v, blue - GND, black - output
 
     //val elevatorMotor = SparkMaxSubsystem(2)
+
+
+
+
+
+
 
     /** The container for the robot. Contains subsystems, OI devices, and commands.  */
     init {
@@ -45,6 +56,24 @@ class RobotContainer {
 
 
     }
+    
+    private fun configureButtonBindings() {
+        // Current Button Bindings:
+        //
+        // Primary Controller:
+        // Swerve default = drive
+        // X = set the wheels in an X configuration
+        // B = zero the gyro
+        // Y = zero the gyro and the pose
+        // A = run trajectory
+        // Right Bumper = Emergency Stop(driving)
+        swerveSubsystem.defaultCommand = StandardDrive(swerveSubsystem,
+            { primaryController.leftY * DrivetrainConstants.drivingSpeedScalar },
+            { primaryController.leftX * DrivetrainConstants.drivingSpeedScalar },
+            { primaryController.rightX * DrivetrainConstants.rotationSpeedScalar },
+            true,
+            true
+        )
 
     /**
      * Use this method to define your button->command mappings. Buttons can be created by
