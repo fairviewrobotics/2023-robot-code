@@ -45,7 +45,7 @@ class Robot : TimedRobot() {
 
     /** This function is called once each time the robot enters Disabled mode.  */
     override fun disabledInit() {
-        m_robotContainer?.mArmSubsystem?.elevatorZeroed = false
+        //m_robotContainer?.mArmSubsystem?.elevatorZeroed = false
     }
     override fun disabledPeriodic() {}
 
