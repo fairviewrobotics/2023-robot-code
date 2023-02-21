@@ -21,10 +21,10 @@ object ArmConstants {
     //PID vals
     //PID stuff
     //also needs tuning
-    val elevatorP = 0.1
-    val elevatorI = 0.1
-    val elevatorD = 0.1
-    val elevatorTrapezoidConstraints = TrapezoidProfile.Constraints(3.0, 1.0)
+    val elevatorP =600.0 //500
+    val elevatorI = 0.0
+    val elevatorD = 0.0
+    val elevatorTrapezoidConstraints = TrapezoidProfile.Constraints(10.0, 0.8)
 
     val elbowP = 0.1
     val elbowI = 0.1
@@ -41,6 +41,8 @@ object ArmConstants {
 
     val elevatorMotorInverted = false
     val intakeMotorInverted = false
+
+    val topPosition = 1.0
 
     val elbowEncoderVelocityMultiplier = 2.0 //this should turn revs/min to radians/sec (Yay!)
     val elbowEncoderPosMultiplier = 2.0 //this should turn revs to radians (Yay again!)

@@ -1,0 +1,40 @@
+name: Build documentation
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+  
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build-examples:
+    runs-on: ubuntu-latest
+    if: github.repository == 'fairviewrobotics/2023-robot-code'
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v3.10.0
+        with:
+          distribution: 'zulu'
+          java-version: 16
+          cache: 'gradle'
+      - uses: gradle/gradle-build-action@v2
+      - name: Build documentation
+        run: ./gradlew dokkaHtml --no-daemon --stacktrace
+        working-directory: .
+      - name: Setup pages
+        uses: actions/configure-pages@v3
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: build/dokka/html
+      - name: Deploy pages
+        id: deployment
+        uses: actions/deploy-pages@v1
