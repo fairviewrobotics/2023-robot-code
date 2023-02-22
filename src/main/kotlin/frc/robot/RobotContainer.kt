@@ -30,12 +30,12 @@ import frc.robot.subsystems.*
  * subsystems, commands, and button mappings) should be declared here.
  */
 class RobotContainer {
-    val mArmSubsystem = ArmSubsystem(1,0,2)
+//    val mArmSubsystem = ArmSubsystem(1,0,2)
     val primaryController = XboxController(0)
     val secondaryController = XboxController(1)
 //    val topBreaker = DigitalInputSubsystem(0)
 //    val bottomBreaker = DigitalInputSubsystem(1)
-    val swerveSubsystem = SwerveSubsystem()
+//    val swerveSubsystem = SwerveSubsystem()
 //    val elevatorMotor = SparkMaxSubsystem(9)
 
    // val topBreaker = DigitalInputSubsystem(1)
@@ -74,13 +74,6 @@ class RobotContainer {
             true,
             true
         )
-
-    /**
-     * Use this method to define your button->command mappings. Buttons can be created by
-     * instantiating a [GenericHID] or one of its subclasses ([ ] or [XboxController]), and then passing it to a [ ].
-     */
-    private fun configureButtonBindings() {
-        mArmSubsystem.defaultCommand = gotoPos(mArmSubsystem,0.6,0.3)
-       // mArmSubsystem.defaultCommand = slowlyToTop(mArmSubsystem)
     }
+
 }
