@@ -8,16 +8,17 @@ import edu.wpi.first.math.util.Units
 
 object DrivetrainConstants {
 
-    const val maxSpeedMetersPerSecond = 2.0
-    const val maxAngularSpeed = 2 * Math.PI
 
-    const val dircetionSlewRate = 1.2 // rads/sec
-    const val magnitudeSlewRate = 1.8 // percent/second (1 = 100%)
-    const val rotationalSlewRate = 2.0 // percent/second (1 = 100%)
+    const val maxSpeedMetersPerSecond = 3.5
+    const val maxAngularSpeed = 4 * Math.PI
+
+    const val directionSlewRate = 5.0 // rads/sec
+    const val magnitudeSlewRate = 8.0 // percent/second (1 = 100%)
+    const val rotationalSlewRate = 12.0 // percent/second (1 = 100%)
 
 
-    const val drivingSpeedScalar = 1.2
-    const val rotationSpeedScalar = -1.7
+    const val drivingSpeedScalar = 1.0
+    const val rotationSpeedScalar = -1.0
 
     // TUNED
     val trackWidth = Units.inchesToMeters(26.5)
@@ -32,11 +33,17 @@ object DrivetrainConstants {
 
     // FIXME: Right now 0degrees is in the Y-positive direction, when normally 0 rad is in the X-positive direction. Could this be an issue?
     // TUNED
-    const val frontLeftChassisAngularOffset = 5.772-(Math.PI/2)
-    const val frontRightChassisAngularOffset = 6.09+(0.0)
-    const val rearLeftChassisAngularOffset = 3.227+(Math.PI)
-    const val rearRightChassisAngularOffset =  3.650+(Math.PI/2)
+    const val frontLeftChassisAngularOffset = 5.772 - (Math.PI)
+    const val frontRightChassisAngularOffset = 6.09 - (Math.PI)
+    const val rearLeftChassisAngularOffset = .871
+    const val rearRightChassisAngularOffset =  3.650 + (Math.PI)
 
+    /**
+     *     const val frontLeftChassisAngularOffset = 5.772 - (Math.PI/2) -(Math.PI/2)
+     *     const val frontRightChassisAngularOffset = 6.09 - (Math.PI)+(0.0)
+     *     const val rearLeftChassisAngularOffset = .871
+     *     const val rearRightChassisAngularOffset =  3.650 + (Math.PI/2) +(Math.PI/2)
+     */
     // SPARK MAX CAN ID
     // TUNED
     const val frontLeftDrivingPort = 5
@@ -98,9 +105,4 @@ object DrivetrainConstants {
     // Current limits for motors, set using smartcurrentlimits in swervemodulecontroller
     const val drivingMotorCurrentLimit = 40 // amps
     const val turningMotorCurrentLimit = 20 // amps
-
-    const val lineupP = 1.0
-    const val lineupI = 1.0
-    const val lineupD = 1.0
-
 }

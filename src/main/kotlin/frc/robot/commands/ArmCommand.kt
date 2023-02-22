@@ -6,7 +6,7 @@ import frc.robot.constants.ArmConstants
 import frc.robot.subsystems.ArmSubsystem
 
 
-
+/*
 /**
  * Sets the position the arm should go to
  *
@@ -260,4 +260,4 @@ fun GotoTopShelf(armSubsystem: ArmSubsystem): Command {
 fun GotoPickup(armSubsystem: ArmSubsystem): Command {
 
     return ArmSetPosition(armSubsystem, ArmConstants.elbowPickupPos/*, ArmConstants.elevatorPickupPos*/)
-}
+}*/
