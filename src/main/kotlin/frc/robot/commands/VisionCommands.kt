@@ -1,16 +1,14 @@
 package frc.robot.commands
 
-import com.pathplanner.lib.PathPlannerTrajectory
-import com.pathplanner.lib.PathPoint
-import edu.wpi.first.math.MathUtil.clamp
 import edu.wpi.first.math.controller.PIDController
-import edu.wpi.first.math.geometry.Rotation2d
-import edu.wpi.first.math.geometry.Translation2d
+import edu.wpi.first.math.controller.ProfiledPIDController
+import edu.wpi.first.math.trajectory.TrapezoidProfile
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandBase
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
-import frc.robot.LimelightHelpers
+import edu.wpi.first.wpilibj2.command.RunCommand
+import frc.robot.VisionUtils
 import frc.robot.constants.DrivetrainConstants
+import frc.robot.constants.VisionConstants
 import frc.robot.subsystems.LimelightSubsystem
 import frc.robot.subsystems.SwerveSubsystem
 
@@ -36,21 +34,28 @@ class GoToAprilTag(driveSubsystem: SwerveSubsystem, limelight: LimelightSubsyste
     return driveUtils.trajectoryDrivePathPlanner(trajectory, false)*/
 
 }
-class LineUpHorizontal(val driveSubsystem: SwerveSubsystem, val limelight: LimelightSubsystem) : CommandBase() {
-    val lineupPID = PIDController(DrivetrainConstants.lineupP, DrivetrainConstants.lineupI, DrivetrainConstants.lineupD)
+
+fun SetPipeline(pipeline: VisionConstants.Pipelines) : Command {
+    return RunCommand({
+        VisionUtils.setPipelineIndex("", pipeline.ordinal)
+    })
+}
+
+class Align(val driveSubsystem: SwerveSubsystem, val limelight: LimelightSubsystem) : CommandBase() {
+    val lineupPID = ProfiledPIDController(VisionConstants.lineupP, VisionConstants.lineupI, VisionConstants.lineupD, TrapezoidProfile.Constraints(1.0, 100.0))
 
     init {
         lineupPID.setTolerance(1.0)
     }
 
     override fun execute() {
-        val out = lineupPID.calculate(limelight.getAprilTagOffset(), 0.0)
+        val out = lineupPID.calculate(VisionUtils.getTX("") - VisionConstants.alignmentTxOffset, 0.0)
 
         driveSubsystem.drive(0.0, out, 0.0, false, false)
     }
 
     override fun isFinished(): Boolean {
-        return lineupPID.atSetpoint()
+        return !VisionUtils.getTV("") || lineupPID.atSetpoint()
     }
 }
 
