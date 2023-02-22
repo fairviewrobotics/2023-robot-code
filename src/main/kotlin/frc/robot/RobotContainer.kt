@@ -35,7 +35,7 @@ class RobotContainer {
     val secondaryController = XboxController(1)
 //    val topBreaker = DigitalInputSubsystem(0)
 //    val bottomBreaker = DigitalInputSubsystem(1)
-//    val swerveSubsystem = SwerveSubsystem()
+    val swerveSubsystem = SwerveSubsystem()
 //    val elevatorMotor = SparkMaxSubsystem(9)
 
    // val topBreaker = DigitalInputSubsystem(1)
