@@ -6,7 +6,7 @@ import frc.robot.constants.ArmConstants
 import frc.robot.subsystems.ArmSubsystem
 
 
-/*
+
 /**
  * Sets the position the arm should go to
  *
@@ -16,7 +16,7 @@ import frc.robot.subsystems.ArmSubsystem
  * @param[elevatorPosition : Double] the position you want the elevator to go to
  * @param[elbowPosition: Double] the position you want the elbow to go to
  */
-class ArmSetPosition(val armSubsystem: ArmSubsystem, /*val elbowPosition: Double,*/ val elevatorPosition: Double) : CommandBase() {
+/*class ArmSetPosition(val armSubsystem: ArmSubsystem, /*val elbowPosition: Double,*/ val elevatorPosition: Double) : CommandBase() {
 
     init{
 
@@ -25,7 +25,7 @@ class ArmSetPosition(val armSubsystem: ArmSubsystem, /*val elbowPosition: Double
         println("set")
 
         if(elevatorPosition > 0 || elevatorPosition < 0.85) {
-            armSubsystem.SetDesired(/*elbowPosition,*/ elevatorPosition)
+            armSubsystem.setDesired(/*elbowPosition,*/ elevatorPosition)
         }
     }
     override fun isFinished(): Boolean {

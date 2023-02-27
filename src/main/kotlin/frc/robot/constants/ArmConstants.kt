@@ -5,8 +5,8 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile
 
 object ArmConstants {
     /** make a network table value in table Arm and value ElbowPosition**/
-    val elbowMotorId = 9
-    val elevatorMotorId = 3
+    val elbowMotorId = 10
+    val elevatorMotorId = 9
 
     val topLinebreakerId = 0
     val bottomLinebreakerId = 1

@@ -4,21 +4,27 @@ import com.revrobotics.CANSparkMax
 import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics
 import edu.wpi.first.math.util.Units
+import edu.wpi.first.networktables.NetworkTableInstance
 
 
 object DrivetrainConstants {
 
 
     const val maxSpeedMetersPerSecond = 3.5
-    const val maxAngularSpeed = 4 * Math.PI
+    const val maxAngularSpeed = 2 * Math.PI
 
-    const val directionSlewRate = 5.0 // rads/sec
-    const val magnitudeSlewRate = 8.0 // percent/second (1 = 100%)
-    const val rotationalSlewRate = 12.0 // percent/second (1 = 100%)
+    const val directionSlewRate = 4.0 // rads/sec   - turning
+    const val magnitudeSlewRate = 5.0 // percent/second (1 = 100%)   - forward/backward/traverse
+    const val rotationalSlewRate = 12.0 // percent/second (1 = 100%)   - rotation
+
+    val directionSlewNet = NetworkTableInstance.getDefault().getTable("Swerve").getDoubleTopic("DirectionalSlewRate").getEntry((directionSlewRate))
+    val magnitudeSlewNet = NetworkTableInstance.getDefault().getTable("Swerve").getDoubleTopic("MagnitudeSlewRate").getEntry((directionSlewRate))
+    val rotationSlewNet = NetworkTableInstance.getDefault().getTable("Swerve").getDoubleTopic("RotationSlewRate").getEntry((directionSlewRate))
+
 
 
     const val drivingSpeedScalar = 1.0
-    const val rotationSpeedScalar = -1.0
+    const val rotationSpeedScalar = 1.0
 
     // TUNED
     val trackWidth = Units.inchesToMeters(26.5)
