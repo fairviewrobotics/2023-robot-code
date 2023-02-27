@@ -117,7 +117,7 @@ class SwerveSubsystem: SubsystemBase() {
     }
 
     //Define robot pose
-    val pose: Pose2d get() = odometry.poseMeters
+    val pose: Pose2d get() = odometry.poseMeters *-1.0
 
     //Reset odometry function
     fun resetOdometry(pose: Pose2d) {
