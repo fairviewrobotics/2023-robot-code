@@ -1,5 +1,7 @@
 package frc.robot.constants
 
+import edu.wpi.first.math.controller.ArmFeedforward
+import edu.wpi.first.math.controller.ProfiledPIDController
 import edu.wpi.first.math.trajectory.TrapezoidProfile
 
 
@@ -22,15 +24,21 @@ object ArmConstants {
     val elevatorD = 0.0
     val elevatorTrapezoidConstraints = TrapezoidProfile.Constraints(10.0, 0.8)
 
-    val elbowP = 0.1
-    val elbowI = 0.1
-    val elbowD = 0.1
+    val elbowP = 6.0
+    val elbowI = 0.0
+    val elbowD = 0.0
+    val elbowTrapezoidProfile = TrapezoidProfile.Constraints(6.0, 24.0)
+    val elbowFF = ArmFeedforward(0.13, 2.07, 1.00)
+
+    val wristP = 1.0
+    val wristI = 0.0
+    val wristD = 0.0
 
     val elevatorMinHeight = 0.0
     val elevatorMaxHeight = 0.9245
 
-    val elbowMaxRotation = (3.0/4.0) * Math.PI
-    val elbowMinRotation = -(1.0/4.0) * Math.PI
+    val elbowMaxRotation = (1.0/2.0) * Math.PI
+    val elbowMinRotation = -(1.0/2.0) * Math.PI
 
     //multipliers for unit conversion and stuff
     // these values obtained from tuning
@@ -40,12 +48,6 @@ object ArmConstants {
     val elbowEncoderVelocityMultiplier = 2.0 //this should turn revs/min to radians/sec (Yay!)
     val elbowEncoderPosMultiplier = 2.0 //this should turn revs to radians (Yay again!)
     val elbowEncoderPosOffset = 0.0
-
-    //FF vals
-    val elbowFeedforwardKA = 0.0
-    val elbowFeedforwardKG = 0.0
-    val elbowFeedforwardKS = 0.0
-    val elbowFeedforwardKV = 0.0
 
     //all those random command values
     //knowing the mechanism, these will end up being really strange values for all the way down.

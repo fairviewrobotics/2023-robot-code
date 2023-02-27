@@ -51,7 +51,7 @@ class Robot : TimedRobot() {
 
     /** This autonomous runs the autonomous command selected by your [RobotContainer] class.  */
     override fun autonomousInit() {
-        m_autonomousCommand = m_robotContainer!!.autonomousCommand
+        //m_autonomousCommand = m_robotContainer!!.autonomousCommand
 
         // schedule the autonomous command (example)
         if (m_autonomousCommand != null) {
