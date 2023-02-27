@@ -39,6 +39,7 @@ class IntakeSubsystem(intakeMotorLID: Int,
     val TintakeVoltage =  NetworkTableInstance.getDefault().getTable("Intake").getDoubleTopic("IntakeVoltage").publish()
     val TpitchVoltage =  NetworkTableInstance.getDefault().getTable("Intake").getDoubleTopic("PitchVoltage").publish()
     init {
+        pitchMotor.idleMode = CANSparkMax.IdleMode.kBrake
         intakeMotorR.inverted = IntakeConstants.intakeMotorRInverted
         intakeMotorL.inverted = IntakeConstants.intakeMotorLInverted
         pitchEncoder.positionConversionFactor = IntakeConstants.pitchEncoderPositionConversionFactor
@@ -97,7 +98,8 @@ class IntakeSubsystem(intakeMotorLID: Int,
     var intakeVoltage = 0.0
         set(x: Double) {
             field = x
-            intakeMotors.setVoltage(x)
+            intakeMotorR.setVoltage(x)
+            intakeMotorL.setVoltage(-x)
         }
 
     /** This value sets the voltage for the pitch motors. Positive values will tilt the intake up,

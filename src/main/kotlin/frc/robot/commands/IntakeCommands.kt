@@ -1,8 +1,11 @@
 package frc.robot.commands
 
+import com.revrobotics.CANSparkMax
+import com.revrobotics.CANSparkMaxLowLevel
 import edu.wpi.first.math.controller.PIDController
+import edu.wpi.first.networktables.NetworkTable
+import edu.wpi.first.networktables.NetworkTableInstance
 import edu.wpi.first.wpilibj2.command.CommandBase
-import edu.wpi.first.wpilibj2.command.PIDCommand
 import frc.robot.constants.IntakeConstants
 import frc.robot.subsystems.IntakeSubsystem
 
@@ -49,6 +52,16 @@ class RunIntakeWithPitch(val intake: IntakeSubsystem, val intakeVoltage: () -> D
     }
 }
 
+class moveElevator(val motorid : Int, val voltage : Double) :CommandBase()
+{
+    val motor = CANSparkMax(motorid, CANSparkMaxLowLevel.MotorType.kBrushless)
+
+    override fun execute(){
+        motor.setVoltage(voltage)
+    }
+}
+
+
 /** Functionally very similar to [RunIntakeWithPitch], but rather than supplying a radians value to
  * pitch the intake at, we set a voltage to spin the intake motors at.
  *
@@ -72,3 +85,5 @@ class RunIntakeWithPitchVoltage(val intake: IntakeSubsystem, val intakeVoltage: 
         intake.pitchVoltage = 0.0
     }
 }
+
+

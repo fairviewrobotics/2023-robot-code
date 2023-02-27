@@ -54,9 +54,9 @@ class Robot : TimedRobot() {
         //m_autonomousCommand = m_robotContainer!!.autonomousCommand
 
         // schedule the autonomous command (example)
-        //if (m_autonomousCommand != null) {
-           // m_autonomousCommand!!.schedule()
-        //}
+        if (m_autonomousCommand != null) {
+           m_autonomousCommand!!.schedule()
+        }
     }
 
     /** This function is called periodically during autonomous.  */
