@@ -12,6 +12,13 @@ import edu.wpi.first.wpilibj2.command.*
 import frc.robot.constants.DrivetrainConstants
 import frc.robot.constants.TrajectoryConstants
 import frc.robot.subsystems.SwerveSubsystem
+
+/**
+ * Standard driving of the swerve chassis, to be used primarily for driver controls.
+ * @param swerveSubsystem The swerve subsystem to drive.
+ * @param forward a function that returns a double that will be the desired forward meters per second.
+ * @param sideways a function
+ */
 class StandardDrive(val swerveSubsystem: SwerveSubsystem, val forward: () -> Double, val sideways: () -> Double, val radians: () -> Double, val fieldRelative: Boolean, val limited: Boolean) : CommandBase() {
 
     init {
@@ -91,8 +98,6 @@ fun TrajectoryDrivePathPlanner(swerveSubsystem: SwerveSubsystem, trajectory: Pat
     thetaController.enableContinuousInput(-Math.PI, Math.PI)
 
     var thetaControllerError = NetworkTableInstance.getDefault().getTable("Swerve").getDoubleTopic("TurningError2").getEntry(0.0)
-
-
 
     var swerveControllerCommand = PPSwerveControllerCommand(
         trajectory,

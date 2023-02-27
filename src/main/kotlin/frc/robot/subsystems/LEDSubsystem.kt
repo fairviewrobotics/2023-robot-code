@@ -53,9 +53,11 @@ class LEDSubsystem : SubsystemBase() {
         }
 
     }
-    fun setState(sstate: LEDSubsystemState) {
+
+    fun setLEDState(sstate: LEDSubsystemState) {
         state = sstate
     }
+    
     fun offLeds() {
         for (i in 0..ledBuffer.length-1) {
             ledBuffer.setRGB(i, 179, 20, 20)
@@ -93,6 +95,7 @@ class LEDSubsystem : SubsystemBase() {
             led.setData(ledBuffer)
             ledBuffer.setHSV((i+1+time) % 23, 166, 255, 255)
         }
+
         led.setData(ledBuffer)
         ledBuffer.setHSV(23, 26, 255, 255)
     }
@@ -106,7 +109,7 @@ class LEDSubsystem : SubsystemBase() {
             led.setData(ledBuffer)
             ledBuffer.setHSV((i+1+time) % 23, 157, 255, 255)
         }
-        //set the one obnoxious non-even one33
+        //set the one obnoxious non-even one
         led.setData(ledBuffer)
         ledBuffer.setHSV(23, 143, 255, 255)
     }

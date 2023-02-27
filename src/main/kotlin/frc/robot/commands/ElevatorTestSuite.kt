@@ -1,6 +1,10 @@
 package frc.robot.commands
 
+import com.revrobotics.SparkMaxAbsoluteEncoder
+import edu.wpi.first.math.controller.ArmFeedforward
 import edu.wpi.first.math.controller.PIDController
+import edu.wpi.first.math.controller.ProfiledPIDController
+import edu.wpi.first.math.trajectory.TrapezoidProfile
 import edu.wpi.first.math.util.Units
 import edu.wpi.first.networktables.NetworkTableInstance
 import edu.wpi.first.wpilibj.XboxController
@@ -34,6 +38,50 @@ class EncoderConversion(val controller: XboxController, val motor: SparkMaxSubsy
         rawPosition.set(motor.x.encoder.position)
         convertedPosition.set(motor.x.encoder.position * conversion)
     }
+}
+
+class absoluteEncoderTest(val controller: XboxController, val motor: SparkMaxSubsystem) : CommandBase()
+{
+    val encoderPos = NetworkTableInstance.getDefault().getTable("ElevatorTestSuite").getDoubleTopic("encoderpos").getEntry(0.0)
+    val elbowEncoder = motor.x.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle)
+    init {
+        addRequirements(motor)
+    }
+
+    override fun execute() {
+
+        //motor.x.set((controller.rightTriggerAxis - controller.leftTriggerAxis));
+
+        encoderPos.set(elbowEncoder.position)
+    }
+}
+
+class elbowPIDTest(val motor: SparkMaxSubsystem ) : CommandBase()
+{
+    val setpoint = 0.0;
+    val kp = 1.0;
+    val ki = 0.0;
+    val kd = 0.0;
+    val pid = PIDController(kp, ki, kd)
+
+    //FIXME recalculate values we used wrong mass
+    val ks = 0.0; //what's a ks?
+    val kg = 3.42;
+    val kv = 1.25;
+    val ka = 0.19;
+    var feedForward = ArmFeedforward(ks,kg, kv, ka)
+
+    init{
+        pid.setpoint = setpoint
+        addRequirements(motor)
+    }
+    override fun execute()
+    {
+        motor.x.setVoltage(pid.calculate(motor.x.encoder.position, setpoint)+feedForward.calculate(setpoint, 0.0))
+
+    }
+
+
 }
 
 class DigitalInputTest(val input: DigitalInputSubsystem) :CommandBase() {
@@ -97,11 +145,11 @@ class PIDElevatorTuning(val bottomBreaker: DigitalInputSubsystem, val topBreaker
     val convertedPosition = NetworkTableInstance.getDefault().getTable("ElevatorTestSuite").getDoubleTopic("Position").getEntry(0.0)
     val bottomHit = NetworkTableInstance.getDefault().getTable("ElevatorTestSuite").getBooleanTopic("BottomHit").getEntry(false)
     val topHit = NetworkTableInstance.getDefault().getTable("ElevatorTestSuite").getBooleanTopic("TopHit").getEntry(false)
-
+    val motorVelocity = NetworkTableInstance.getDefault().getTable("ElevatorTestSuite").getDoubleTopic("motorVelocity").getEntry(0.0)
     val outputNT = NetworkTableInstance.getDefault().getTable("ElevatorTestSuite").getDoubleTopic("Output").getEntry(0.0)
     val errorNT = NetworkTableInstance.getDefault().getTable("ElevatorTestSuite").getDoubleTopic("Error").getEntry(0.0)
 
-    val pid = PIDController(3.0,0.01,0.05)
+    val pid = ProfiledPIDController(3.0,0.01,0.05, TrapezoidProfile.Constraints(5.5,100.0))
     var position = motor.x.encoder.position
     init {
         addRequirements(bottomBreaker)
@@ -110,7 +158,6 @@ class PIDElevatorTuning(val bottomBreaker: DigitalInputSubsystem, val topBreaker
 
         motor.x.encoder.positionConversionFactor = ArmConstants.elevatorEncoderPositionConversionFactor
         motor.x.inverted = ArmConstants.elevatorMotorInverted
-
         pid.setTolerance(0.025)
     }
 
@@ -160,6 +207,7 @@ class PIDElevatorTuning(val bottomBreaker: DigitalInputSubsystem, val topBreaker
         topHit.set(top)
         bottomHit.set(bottom)
         outputNT.set(output)
+        motorVelocity.set(motor.x.encoder.velocity)
         errorNT.set(pid.positionError)
     }
 }

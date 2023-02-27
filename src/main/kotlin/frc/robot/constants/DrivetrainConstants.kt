@@ -4,21 +4,27 @@ import com.revrobotics.CANSparkMax
 import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics
 import edu.wpi.first.math.util.Units
+import edu.wpi.first.networktables.NetworkTableInstance
 
 
 object DrivetrainConstants {
 
 
     const val maxSpeedMetersPerSecond = 3.5
-    const val maxAngularSpeed = 4 * Math.PI
+    const val maxAngularSpeed = 2 * Math.PI
 
-    const val directionSlewRate = 5.0 // rads/sec
-    const val magnitudeSlewRate = 8.0 // percent/second (1 = 100%)
-    const val rotationalSlewRate = 12.0 // percent/second (1 = 100%)
+    const val directionSlewRate = 4.0 // rads/sec   - turning
+    const val magnitudeSlewRate = 5.0 // percent/second (1 = 100%)   - forward/backward/traverse
+    const val rotationalSlewRate = 12.0 // percent/second (1 = 100%)   - rotation
+
+    val directionSlewNet = NetworkTableInstance.getDefault().getTable("Swerve").getDoubleTopic("DirectionalSlewRate").getEntry((directionSlewRate))
+    val magnitudeSlewNet = NetworkTableInstance.getDefault().getTable("Swerve").getDoubleTopic("MagnitudeSlewRate").getEntry((directionSlewRate))
+    val rotationSlewNet = NetworkTableInstance.getDefault().getTable("Swerve").getDoubleTopic("RotationSlewRate").getEntry((directionSlewRate))
+
 
 
     const val drivingSpeedScalar = 1.0
-    const val rotationSpeedScalar = -1.0
+    const val rotationSpeedScalar = 1.0
 
     // TUNED
     val trackWidth = Units.inchesToMeters(26.5)
@@ -33,22 +39,28 @@ object DrivetrainConstants {
 
     // FIXME: Right now 0degrees is in the Y-positive direction, when normally 0 rad is in the X-positive direction. Could this be an issue?
     // TUNED
-    const val frontLeftChassisAngularOffset = 2.862-(Math.PI/2)
-    const val frontRightChassisAngularOffset = 4.285+(0.0)
-    const val rearLeftChassisAngularOffset = 0.871+(Math.PI)
-    const val rearRightChassisAngularOffset =  2.090+(Math.PI/2)
+    const val frontLeftChassisAngularOffset = 5.772 - (Math.PI)
+    const val frontRightChassisAngularOffset = 6.09 - (Math.PI)
+    const val rearLeftChassisAngularOffset = .871
+    const val rearRightChassisAngularOffset =  3.650 + (Math.PI)
 
+    /**
+     *     const val frontLeftChassisAngularOffset = 5.772 - (Math.PI/2) -(Math.PI/2)
+     *     const val frontRightChassisAngularOffset = 6.09 - (Math.PI)+(0.0)
+     *     const val rearLeftChassisAngularOffset = .871
+     *     const val rearRightChassisAngularOffset =  3.650 + (Math.PI/2) +(Math.PI/2)
+     */
     // SPARK MAX CAN ID
     // TUNED
-    const val frontLeftDrivingPort = 1
-    const val rearLeftDrivingPort = 5
-    const val frontRightDrivingPort = 3
-    const val rearRightDrivingPort = 7
+    const val frontLeftDrivingPort = 5
+    const val rearLeftDrivingPort = 1
+    const val frontRightDrivingPort = 7
+    const val rearRightDrivingPort = 3
 
-    const val frontLeftTurningPort = 2
-    const val rearLeftTurningPort = 6
-    const val frontRightTurningPort = 4
-    const val rearRightTurningPort = 8
+    const val frontLeftTurningPort = 6
+    const val rearLeftTurningPort = 2
+    const val frontRightTurningPort = 8
+    const val rearRightTurningPort = 4
 
     const val gyroReversed = false // TUNED
     const val turningEncoderReversed = true
@@ -97,8 +109,6 @@ object DrivetrainConstants {
     val turningMotorIdleMode = CANSparkMax.IdleMode.kBrake
 
     // Current limits for motors, set using smartcurrentlimits in swervemodulecontroller
-    const val drivingMotorCurrentLimit = 50 // amps
-    const val turningMotorCurrentLimit = 30 // amps
-
-
+    const val drivingMotorCurrentLimit = 40 // amps
+    const val turningMotorCurrentLimit = 20 // amps
 }
