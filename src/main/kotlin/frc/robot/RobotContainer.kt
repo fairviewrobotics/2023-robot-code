@@ -39,6 +39,7 @@ import java.nio.file.Path
  * subsystems, commands, and button mappings) should be declared here.
  */
 class RobotContainer {
+//    val mArmSubsystem = ArmSubsystem(1,0,2)
     val primaryController = XboxController(0)
     val secondaryController = XboxController(1)
     val swerveSubsystem = SwerveSubsystem()
@@ -81,31 +82,6 @@ class RobotContainer {
             true,
             true
         )
-
-        // y - Reset gyro
-        JoystickButton(primaryController, XboxController.Button.kY.value).whileTrue(RunCommand({
-            swerveSubsystem.zeroGyro()
-        }, swerveSubsystem))
-
-        JoystickButton(primaryController, XboxController.Button.kX.value).whileTrue(RunCommand({
-            swerveSubsystem.setX()
-        }, swerveSubsystem))
-
-        subsystem1.defaultCommand = KCMTMasterElevatorCommand(subsystem1, ArmConstants.elevatorMotorId, ArmConstants.topLinebreakerId, ArmConstants.bottomLinebreakerId, primaryController)
-
-        // SECONDARY
-        subsystem2.defaultCommand = KCMTMasterArmCommand(subsystem2, IntakeConstants.wristMotorID, ArmConstants.elbowMotorId, secondaryController)
     }
 
-    /**
-     * Use this method to define your button->command mappings. Buttons can be created by
-     * instantiating a [GenericHID] or one of its subclasses ([ ] or [XboxController]), and then passing it to a [ ].
-     */
-    val autonomousCommand: Command = SequentialCommandGroup(
-        RunCommand({swerveSubsystem.zeroGyroAndOdometry()}),
-        RunCommand({
-            //swerveSubsystem.drive(1.0, 0.0,0.0,true, true)
-            TrajectoryDrivePathPlanner(swerveSubsystem, traj, false)
-        }).withTimeout(10.0)
-    )
 }
