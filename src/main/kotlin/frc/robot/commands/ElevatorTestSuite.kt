@@ -1,5 +1,7 @@
 package frc.robot.commands
 
+import com.revrobotics.CANSparkMax
+import com.revrobotics.CANSparkMaxLowLevel
 import com.revrobotics.SparkMaxAbsoluteEncoder
 import edu.wpi.first.math.controller.ArmFeedforward
 import edu.wpi.first.math.controller.PIDController
@@ -10,6 +12,7 @@ import edu.wpi.first.networktables.NetworkTableInstance
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj2.command.CommandBase
 import frc.robot.constants.ArmConstants
+import frc.robot.subsystems.ArmSubsystem
 import frc.robot.subsystems.DigitalInputSubsystem
 import frc.robot.subsystems.SparkMaxSubsystem
 
@@ -26,6 +29,7 @@ class EncoderConversion(val controller: XboxController, val motor: SparkMaxSubsy
         motor.x.encoder.position = 0.0
         motor.x.encoder.positionConversionFactor = 1.0
         motor.x.encoder.velocityConversionFactor = 1.0
+
     }
 
     override fun execute() {
@@ -239,5 +243,19 @@ class IntakeSpinTest(val leftMotor: SparkMaxSubsystem, val rightMotor: SparkMaxS
 
         leftMotor.x.set(leftMotorSpeed)
         rightMotor.x.set(rightMotorSpeed)
+    }
+}
+
+class moveSlowly(val motor: CANSparkMax, val controller: XboxController, val armSubsystem: ArmSubsystem) : CommandBase()
+{
+    init {
+        addRequirements(armSubsystem)
+        motor.setSmartCurrentLimit(40)
+    }
+
+    override fun execute()
+    {
+            motor.setVoltage(controller.rightX * 12.0)
+
     }
 }

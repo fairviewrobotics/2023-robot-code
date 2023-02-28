@@ -10,12 +10,12 @@ import edu.wpi.first.networktables.NetworkTableInstance
 import edu.wpi.first.wpilibj.DigitalInput
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.robot.constants.ArmConstants
-
+/*
 /**
  * The subsystem for the arm. The arm consists of the motor driving the elevator, the motor driving the elbow, and the
  * two linebreakers at the top and bottom of elevator.
  */
-class ArmSubsystem(topBreakerID: Int, bottomBreakerID: Int, elbowMotorID: Int, elevatorMotorID: Int) :SubsystemBase() {
+class ArmSubsystem(topBreakerID: Int, bottomBreakerID: Int, elbowMotorID: Int, /*elevatorMotorID: Int*/) :SubsystemBase() {
     /** The elevator is zeroed if it has reached the bottom of its path (tripping the bottom breaker) at least once.
      * Since the elevator is only controlled through setting a desired position, this is required to ensure positions are
      * correctly reached.
@@ -24,8 +24,8 @@ class ArmSubsystem(topBreakerID: Int, bottomBreakerID: Int, elbowMotorID: Int, e
 
     // Standard motor, encoder, and hardware declarations.
     val elbowMotor = CANSparkMax(elbowMotorID, CANSparkMaxLowLevel.MotorType.kBrushless)
-    val elevatorMotor = CANSparkMax(elevatorMotorID, CANSparkMaxLowLevel.MotorType.kBrushless)
-    val elevatorEncoder = elevatorMotor.getEncoder()
+    //val elevatorMotor = CANSparkMax(elevatorMotorID, CANSparkMaxLowLevel.MotorType.kBrushless)
+    //val elevatorEncoder = elevatorMotor.getEncoder()
     val elbowEncoder = elbowMotor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle)
     val forwardLimit = DigitalInput(topBreakerID);
     val reverseLimit = DigitalInput(bottomBreakerID);
@@ -34,7 +34,7 @@ class ArmSubsystem(topBreakerID: Int, bottomBreakerID: Int, elbowMotorID: Int, e
      * Used to get the current position of the elevator. This unit is in meters, and should be interpreted as how far
      * along the carriage is on its path. 0.0 means the elevator is at the bottom.
      */
-    val elevatorPositionMeters get() = elevatorEncoder.position
+   // val elevatorPositionMeters get() = elevatorEncoder.position
 
     /**
      * Used to get the current position of the elbow. This unit is in radians, and should be interpreted as how rotated
@@ -87,11 +87,11 @@ class ArmSubsystem(topBreakerID: Int, bottomBreakerID: Int, elbowMotorID: Int, e
         // TODO: Elevator conversion factors have been tuned, but the elbow conversion factors have not.
         elbowEncoder.positionConversionFactor = ArmConstants.elbowEncoderPosMultiplier
         elbowEncoder.velocityConversionFactor = ArmConstants.elbowEncoderVelocityMultiplier
-        elevatorEncoder.positionConversionFactor = ArmConstants.elevatorEncoderPositionConversionFactor
-        elevatorEncoder.velocityConversionFactor = ArmConstants.elevatorEncoderVelocityMultiplier
+        //elevatorEncoder.positionConversionFactor = ArmConstants.elevatorEncoderPositionConversionFactor
+        //elevatorEncoder.velocityConversionFactor = ArmConstants.elevatorEncoderVelocityMultiplier
 
         // TODO: The=is may or may not need to be checked.
-        elevatorMotor.inverted = ArmConstants.elevatorMotorInverted
+        //elevatorMotor.inverted = ArmConstants.elevatorMotorInverted
     }
     /**
      * Sets the desired position
@@ -103,11 +103,11 @@ class ArmSubsystem(topBreakerID: Int, bottomBreakerID: Int, elbowMotorID: Int, e
      * positive radians will make the intake farther from the ground.
      * @param elevatorPositionMeters the new desired position for the elevator. 0 meters is bottom of the elevator
      */
-    fun setDesired(elbowPositionRadians: Double, elevatorPositionMeters: Double) {
+    fun setDesired(elbowPositionRadians: Double/*, elevatorPositionMeters: Double*/) {
         // We use a coerceIn to ensure the desired positions are not set out of the acceptable range. We don't want the
         // arm smashing into the elevator, for example.
         desiredElbowPositionRadians = elbowPositionRadians.coerceIn(ArmConstants.elbowMinRotation, ArmConstants.elbowMaxRotation)
-        desiredElevatorPositionMeters = elevatorPositionMeters.coerceIn(ArmConstants.elevatorMinHeight, ArmConstants.elevatorMaxHeight)
+        //desiredElevatorPositionMeters = elevatorPositionMeters.coerceIn(ArmConstants.elevatorMinHeight, ArmConstants.elevatorMaxHeight)
     }
     /**
      * This will either move the elevator and elbow to its desired states, or, if the elevator is not zeroed, move the
@@ -129,7 +129,7 @@ class ArmSubsystem(topBreakerID: Int, bottomBreakerID: Int, elbowMotorID: Int, e
             }
         } else {
             // IF the elevator is zeroed, then proceed as normal. Move the elevator and elbow to the desired states.
-            elevatorVoltage = elevatorPid.calculate(elevatorPositionMeters, desiredElevatorPositionMeters)
+           // elevatorVoltage = elevatorPid.calculate(elevatorPositionMeters, desiredElevatorPositionMeters)
             elbowVoltage =
                 elbowPid.calculate(elbowPositionRadians, desiredElbowPositionRadians) + elbowFeedforward.calculate(
                     desiredElbowPositionRadians,
@@ -140,32 +140,32 @@ class ArmSubsystem(topBreakerID: Int, bottomBreakerID: Int, elbowMotorID: Int, e
         // Here we do the checks for the bottom and top linebreakers, and constrain voltage, zero elevator, and reset
         // elevator position accordingly.
         if (bottomHit) {
-            if (elevatorVoltage < 0.0) {
-                elevatorVoltage = 0.0
-            }
+            //if (elevatorVoltage < 0.0) {
+               // elevatorVoltage = 0.0
+            //}
 
-            elevatorEncoder.position = ArmConstants.elevatorMinHeight
+           // elevatorEncoder.position = ArmConstants.elevatorMinHeight
             elevatorZeroed = true
         }
 
         if (topHit) {
-            if (elevatorVoltage > 0.0) {
-                elevatorVoltage = 0.0
-            }
+            //if (elevatorVoltage > 0.0) {
+              //  elevatorVoltage = 0.0
+            //}
 
-            elevatorEncoder.position = ArmConstants.elevatorMaxHeight
+           // elevatorEncoder.position = ArmConstants.elevatorMaxHeight
         }
-        elevatorMotor.setVoltage(elevatorVoltage)
-        //elbowMotor.setVoltage(elbowVoltage)
+       // elevatorMotor.setVoltage(elevatorVoltage)
+        elbowMotor.setVoltage(elbowVoltage)
 
         // Telemetry setting.
-        Telemetry.elevatorVoltage.set(elevatorVoltage)
+        //Telemetry.elevatorVoltage.set(elevatorVoltage)
         Telemetry.elbowPosition.set(elbowPositionRadians)
         Telemetry.elbowVelocity.set(elbowEncoder.velocity)
-        Telemetry.elevatorPosition.set(elevatorPositionMeters)
-        Telemetry.elevatorVelocity.set(elevatorEncoder.velocity)
+        //Telemetry.elevatorPosition.set(elevatorPositionMeters)
+        //Telemetry.elevatorVelocity.set(elevatorEncoder.velocity)
         Telemetry.desiredElevatorPosition.set(desiredElevatorPositionMeters)
         Telemetry.desiredElbowPosition.set(desiredElbowPositionRadians)
     }
 
-}
+}*/
