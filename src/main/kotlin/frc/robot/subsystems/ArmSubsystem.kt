@@ -77,7 +77,6 @@ class ArmSubsystem(topBreakerID: Int, bottomBreakerID: Int, elbowMotorID: Int, e
      * PIDs and feedforward for elevator and elbow.
      */
     val elbowPid = PIDController(ArmConstants.elbowP, ArmConstants.elbowI, ArmConstants.elbowD)
-    val elbowFeedforward = ArmFeedforward(ArmConstants.elbowFeedforwardKA, ArmConstants.elbowFeedforwardKG, ArmConstants.elbowFeedforwardKS, ArmConstants.elbowFeedforwardKV)
     var elevatorPid = ProfiledPIDController(
         ArmConstants.elevatorP,
         ArmConstants.elevatorI,
@@ -130,11 +129,11 @@ class ArmSubsystem(topBreakerID: Int, bottomBreakerID: Int, elbowMotorID: Int, e
         } else {
             // IF the elevator is zeroed, then proceed as normal. Move the elevator and elbow to the desired states.
             elevatorVoltage = elevatorPid.calculate(elevatorPositionMeters, desiredElevatorPositionMeters)
-            elbowVoltage =
-                elbowPid.calculate(elbowPositionRadians, desiredElbowPositionRadians) + elbowFeedforward.calculate(
-                    desiredElbowPositionRadians,
-                    Math.PI
-                )
+            //elbowVoltage =
+            //    elbowPid.calculate(elbowPositionRadians, desiredElbowPositionRadians) + elbowFeedforward.calculate(
+            //        desiredElbowPositionRadians,
+            //        Math.PI
+            //    )
         }
 
         // Here we do the checks for the bottom and top linebreakers, and constrain voltage, zero elevator, and reset

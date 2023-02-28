@@ -6,13 +6,16 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandBase
 import edu.wpi.first.wpilibj2.command.RunCommand
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
+import edu.wpi.first.wpilibj.GenericHID.RumbleType
+import edu.wpi.first.wpilibj.XboxController
 import frc.robot.VisionUtils
 import frc.robot.constants.DrivetrainConstants
 import frc.robot.constants.VisionConstants
-import frc.robot.subsystems.LimelightSubsystem
 import frc.robot.subsystems.SwerveSubsystem
+import com.fasterxml.jackson.databind.ext.SqlBlobSerializer
 
-class GoToAprilTag(driveSubsystem: SwerveSubsystem, limelight: LimelightSubsystem): CommandBase() {
+class GoToAprilTag(driveSubsystem: SwerveSubsystem): CommandBase() {
 /*    val targetpose = limelight.getTargetPose()
     val trajectory: PathPlannerTrajectory
 
@@ -40,8 +43,16 @@ fun SetPipeline(pipeline: VisionConstants.Pipelines) : Command {
         VisionUtils.setPipelineIndex("", pipeline.ordinal)
     })
 }
+class RumbleCheck(val controller: XboxController, val check: () -> Boolean): CommandBase() {
+  override fun execute(){
+    controller.setRumble(RumbleType.kBothRumble, (if (check()) 1.0 else 0.0));
+  }
+  override fun isFinished(): Boolean {
+    return !check()
+  }
+}
 
-class Align(val driveSubsystem: SwerveSubsystem, val limelight: LimelightSubsystem) : CommandBase() {
+class Align(val driveSubsystem: SwerveSubsystem) : CommandBase() {
     val lineupPID = ProfiledPIDController(VisionConstants.lineupP, VisionConstants.lineupI, VisionConstants.lineupD, TrapezoidProfile.Constraints(1.0, 100.0))
 
     init {
@@ -59,4 +70,25 @@ class Align(val driveSubsystem: SwerveSubsystem, val limelight: LimelightSubsyst
     }
 }
 
+fun AlignToAprilTag(driveSubsystem: SwerveSubsystem, controller: XboxController): SequentialCommandGroup{
+  return(SequentialCommandGroup(
+    SetPipeline(VisionConstants.Pipelines.APRILTAG),
+    RumbleCheck(controller, {VisionUtils.getTV("")}),
+    Align(driveSubsystem)
+  ))
+}
+fun AlignToCone(driveSubsystem: SwerveSubsystem, controller: XboxController): SequentialCommandGroup{
+  return(SequentialCommandGroup(
+    SetPipeline(VisionConstants.Pipelines.CONE),
+    RumbleCheck(controller, {VisionUtils.getTV("")}),
+    Align(driveSubsystem)
+  ))
+}
+fun AlignToRetroreflective(driveSubsystem: SwerveSubsystem, controller: XboxController): SequentialCommandGroup{
+  return(SequentialCommandGroup(
+    SetPipeline(VisionConstants.Pipelines.RETROREFLECTIVE),
+    RumbleCheck(controller, {VisionUtils.getTV("")}),
+    Align(driveSubsystem)
+  ))
+}
 
