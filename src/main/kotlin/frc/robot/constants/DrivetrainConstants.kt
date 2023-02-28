@@ -23,8 +23,8 @@ object DrivetrainConstants {
 
 
 
-    const val drivingSpeedScalar = 1.0
-    const val rotationSpeedScalar = 1.0
+    const val drivingSpeedScalar = -1.0
+    const val rotationSpeedScalar = -1.0
 
     // TUNED
     val trackWidth = Units.inchesToMeters(26.5)
@@ -39,10 +39,10 @@ object DrivetrainConstants {
 
     // FIXME: Right now 0degrees is in the Y-positive direction, when normally 0 rad is in the X-positive direction. Could this be an issue?
     // TUNED
-    const val frontLeftChassisAngularOffset = 5.772 - (Math.PI)
-    const val frontRightChassisAngularOffset = 6.09 - (Math.PI)
-    const val rearLeftChassisAngularOffset = .871
-    const val rearRightChassisAngularOffset =  3.650 + (Math.PI)
+    const val frontLeftChassisAngularOffset = 5.772
+    const val frontRightChassisAngularOffset = 6.09
+    const val rearLeftChassisAngularOffset = .871 + (Math.PI)
+    const val rearRightChassisAngularOffset =  3.650
 
     /**
      *     const val frontLeftChassisAngularOffset = 5.772 - (Math.PI/2) -(Math.PI/2)

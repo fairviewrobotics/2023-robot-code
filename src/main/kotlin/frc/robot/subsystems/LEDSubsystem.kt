@@ -9,7 +9,7 @@ class LEDSubsystem : SubsystemBase() {
     private var ds = DriverStation.isTeleop()
     var led = AddressableLED(0)
     var ledBuffer = AddressableLEDBuffer(24)
-    var coneNeeded : Boolean = false
+    var coneNeeded : Boolean = true
     var cubeNeeded : Boolean = false
     //TODO: Remember, the lights are RBG not RGB so G and B must be switched to get the correct color
     init {

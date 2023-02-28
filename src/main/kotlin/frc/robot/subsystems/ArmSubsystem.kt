@@ -77,7 +77,7 @@ class ArmSubsystem(topBreakerID: Int, bottomBreakerID: Int, elbowMotorID: Int, e
      * PIDs and feedforward for elevator and elbow.
      */
     val elbowPid = PIDController(ArmConstants.elbowP, ArmConstants.elbowI, ArmConstants.elbowD)
-    val elbowFeedforward = ArmFeedforward(ArmConstants.elbowFeedforwardKA, ArmConstants.elbowFeedforwardKG, ArmConstants.elbowFeedforwardKS, ArmConstants.elbowFeedforwardKV)
+    //val elbowFeedforward = ArmFeedforward(ArmConstants.elbowFeedforwardKA, ArmConstants.elbowFeedforwardKG, ArmConstants.elbowFeedforwardKS, ArmConstants.elbowFeedforwardKV)
     var elevatorPid = ProfiledPIDController(
         ArmConstants.elevatorP,
         ArmConstants.elevatorI,
@@ -129,37 +129,37 @@ class ArmSubsystem(topBreakerID: Int, bottomBreakerID: Int, elbowMotorID: Int, e
             }
         } else {
             // IF the elevator is zeroed, then proceed as normal. Move the elevator and elbow to the desired states.
-            elevatorVoltage = elevatorPid.calculate(elevatorPositionMeters, desiredElevatorPositionMeters)
-            elbowVoltage =
-                elbowPid.calculate(elbowPositionRadians, desiredElbowPositionRadians) + elbowFeedforward.calculate(
-                    desiredElbowPositionRadians,
-                    Math.PI
-                )
+//            elevatorVoltage = elevatorPid.calculate(elevatorPositionMeters, desiredElevatorPositionMeters)
+//            elbowVoltage =
+//                elbowPid.calculate(elbowPositionRadians, desiredElbowPositionRadians) + elbowFeedforward.calculate(
+//                    desiredElbowPositionRadians,
+//                    Math.PI
+//                )
         }
 
         // Here we do the checks for the bottom and top linebreakers, and constrain voltage, zero elevator, and reset
         // elevator position accordingly.
         if (bottomHit) {
-            if (elevatorVoltage < 0.0) {
-                elevatorVoltage = 0.0
-            }
+//            if (elevatorVoltage < 0.0) {
+//                elevatorVoltage = 0.0
+//            }
 
             elevatorEncoder.position = ArmConstants.elevatorMinHeight
             elevatorZeroed = true
         }
 
         if (topHit) {
-            if (elevatorVoltage > 0.0) {
-                elevatorVoltage = 0.0
-            }
+//            if (elevatorVoltage > 0.0) {
+//                elevatorVoltage = 0.0
+//            }
 
             elevatorEncoder.position = ArmConstants.elevatorMaxHeight
         }
-        elevatorMotor.setVoltage(elevatorVoltage)
+        //elevatorMotor.setVoltage(elevatorVoltage)
         //elbowMotor.setVoltage(elbowVoltage)
 
         // Telemetry setting.
-        Telemetry.elevatorVoltage.set(elevatorVoltage)
+        //Telemetry.elevatorVoltage.set(elevatorVoltage)
         Telemetry.elbowPosition.set(elbowPositionRadians)
         Telemetry.elbowVelocity.set(elbowEncoder.velocity)
         Telemetry.elevatorPosition.set(elevatorPositionMeters)

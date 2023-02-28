@@ -17,6 +17,10 @@ class Robot : TimedRobot() {
     private var m_autonomousCommand: Command? = null
     private var m_robotContainer: RobotContainer? = null
 
+
+    fun getAutonomousCommand(): Command? {
+        return m_autonomousCommand
+    }
     /**
      * This function is run when the robot is first started up and should be used for any
      * initialization code.
@@ -51,7 +55,7 @@ class Robot : TimedRobot() {
 
     /** This autonomous runs the autonomous command selected by your [RobotContainer] class.  */
     override fun autonomousInit() {
-        //m_autonomousCommand = m_robotContainer!!.autonomousCommand
+        m_autonomousCommand = m_robotContainer?.autonoumousCommand
 
         // schedule the autonomous command (example)
         if (m_autonomousCommand != null) {
