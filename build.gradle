@@ -2,7 +2,7 @@ import edu.wpi.first.gradlerio.deploy.roborio.RoboRIO
 
 plugins {
     id "java"
-    id "edu.wpi.first.GradleRIO" version "2023.3.2"
+    id "edu.wpi.first.GradleRIO" version "2023.4.2"
     id 'org.jetbrains.kotlin.jvm' version '1.8.0'
 }
 
@@ -10,7 +10,9 @@ sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
 
 def ROBOT_MAIN_CLASS = "frc.robot.Main"
-
+build{
+  ext.kotlin_version = '1.6.0'
+}
 // Define my targets (RoboRIO) and artifacts (deployable files)
 // This is added by GradleRIO's backing project DeployUtils.
 deploy {
