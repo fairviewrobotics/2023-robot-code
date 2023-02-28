@@ -46,12 +46,12 @@ class RobotContainer {
     val subsystem1 = DummySubsystem()
     val subsystem2 = DummySubsystem()
 
-    val traj: PathPlannerTrajectory = PathPlanner.generatePath(
-        PathConstraints(12.0,3.5),
-        PathPoint(Translation2d(0.0,0.0), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(0.0), 0.0) ,
-        PathPoint(Translation2d(-2.0,0.0), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(0.0))
+    val traj: PathPlannerTrajectory = PathPlanner.loadPath("Blue Top A", PathConstraints(4.0,3.0))
+//        PathConstraints(12.0,3.5),
+//        PathPoint(Translation2d(0.0,0.0), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(0.0), 0.0) ,
+//        PathPoint(Translation2d(-2.0,0.0), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(0.0))
 
-    )
+
 
 
 
@@ -69,11 +69,27 @@ class RobotContainer {
         //
         // Primary Controller:
         // Swerve default = drive
-        // X = set the wheels in an X configuration
-        // B = zero the gyro
-        // Y = zero the gyro and the pose
+        JoystickButton(primaryController, XboxController.Button.kX.value).whileTrue(
+            RunCommand({
+                swerveSubsystem.setX()
+            }, swerveSubsystem)
+        )
+        JoystickButton(primaryController, XboxController.Button.kB.value).whileTrue(
+            RunCommand({
+                swerveSubsystem.zeroGyro()
+            }, swerveSubsystem)
+        )
+        JoystickButton(primaryController, XboxController.Button.kY.value).whileTrue(
+            RunCommand({
+                swerveSubsystem.zeroGyroAndOdometry()
+            }, swerveSubsystem)
+        )
+        JoystickButton(primaryController, XboxController.Button.kRightBumper.value).whileTrue(
+            TrajectoryDrivePathPlanner(swerveSubsystem, traj, false)
+        )
         // A = run trajectory
         // Right Bumper = Emergency Stop(driving)
+
         swerveSubsystem.defaultCommand = StandardDrive(
             swerveSubsystem,
             { primaryController.leftY * DrivetrainConstants.drivingSpeedScalar },
@@ -83,5 +99,7 @@ class RobotContainer {
             true
         )
     }
+    val autonoumousCommand: Command = TrajectoryDrivePathPlanner(swerveSubsystem, traj, false)
+
 
 }
