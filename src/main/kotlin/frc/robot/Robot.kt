@@ -44,7 +44,9 @@ class Robot : TimedRobot() {
     }
 
     /** This function is called once each time the robot enters Disabled mode.  */
-    override fun disabledInit() {}
+    override fun disabledInit() {
+        //m_robotContainer?.mArmSubsystem?.elevatorZeroed = false
+    }
     override fun disabledPeriodic() {}
 
     /** This autonomous runs the autonomous command selected by your [RobotContainer] class.  */
@@ -52,9 +54,9 @@ class Robot : TimedRobot() {
         //m_autonomousCommand = m_robotContainer!!.autonomousCommand
 
         // schedule the autonomous command (example)
-        //if (m_autonomousCommand != null) {
-           // m_autonomousCommand!!.schedule()
-        //}
+        if (m_autonomousCommand != null) {
+           m_autonomousCommand!!.schedule()
+        }
     }
 
     /** This function is called periodically during autonomous.  */

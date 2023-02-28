@@ -52,16 +52,18 @@
 //             offLeds()
 //         }
 
-//     }
-//     fun setState(sstate: LEDSubsystemState) {
-//         state = sstate
-//     }
-//     fun offLeds() {
-//         for (i in 0..ledBuffer.length-1) {
-//             ledBuffer.setRGB(i, 179, 20, 20)
-//         }
-//         led.setData(ledBuffer)
-//     }
+    }
+
+    fun setLEDState(sstate: LEDSubsystemState) {
+        state = sstate
+    }
+    
+    fun offLeds() {
+        for (i in 0..ledBuffer.length-1) {
+            ledBuffer.setRGB(i, 179, 20, 20)
+        }
+        led.setData(ledBuffer)
+    }
 
 //     private fun gyroFlat() {
 //         for (i in 0..ledBuffer.length - 1) {
@@ -81,34 +83,35 @@
 
 //     fun rainbow() {
 
-//         for (i in 0..23) {
-//             led.setData(ledBuffer)
-//             ledBuffer.setHSV(i, ((i+time) % 23)*180/23, 255, 255)
-//         }
-//     }
-//     fun cone() {
-//         for (i in 0..22 step 2) {
-//             led.setData(ledBuffer)
-//             ledBuffer.setHSV((i + time) % 23, 26, 255, 255)
-//             led.setData(ledBuffer)
-//             ledBuffer.setHSV((i+1+time) % 23, 166, 255, 255)
-//         }
-//         led.setData(ledBuffer)
-//         ledBuffer.setHSV(23, 26, 255, 255)
-//     }
+        for (i in 0..23) {
+            led.setData(ledBuffer)
+            ledBuffer.setHSV(i, ((i+time) % 23)*180/23, 255, 255)
+        }
+    }
+    fun cone() {
+        for (i in 0..22 step 2) {
+            led.setData(ledBuffer)
+            ledBuffer.setHSV((i + time) % 23, 26, 255, 255)
+            led.setData(ledBuffer)
+            ledBuffer.setHSV((i+1+time) % 23, 166, 255, 255)
+        }
 
-//     fun cube(){
-//         for (i in 0..22 step 2) { //(289/365)*180
-//             //set the cube color
-//             led.setData(ledBuffer)
-//             ledBuffer.setHSV((i+time) % 23, 143, 255, 255)
-//             //set that random other color on the other blocks
-//             led.setData(ledBuffer)
-//             ledBuffer.setHSV((i+1+time) % 23, 157, 255, 255)
-//         }
-//         //set the one obnoxious non-even one33
-//         led.setData(ledBuffer)
-//         ledBuffer.setHSV(23, 143, 255, 255)
-//     }
+        led.setData(ledBuffer)
+        ledBuffer.setHSV(23, 26, 255, 255)
+    }
+
+    fun cube(){
+        for (i in 0..22 step 2) { //(289/365)*180
+            //set the cube color
+            led.setData(ledBuffer)
+            ledBuffer.setHSV((i+time) % 23, 143, 255, 255)
+            //set that random other color on the other blocks
+            led.setData(ledBuffer)
+            ledBuffer.setHSV((i+1+time) % 23, 157, 255, 255)
+        }
+        //set the one obnoxious non-even one
+        led.setData(ledBuffer)
+        ledBuffer.setHSV(23, 143, 255, 255)
+    }
 
 // }

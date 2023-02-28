@@ -3,6 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot
 
+import com.kauailabs.navx.frc.AHRS
 import com.pathplanner.lib.PathConstraints
 import com.pathplanner.lib.PathPlanner
 import com.pathplanner.lib.PathPlannerTrajectory
@@ -12,20 +13,24 @@ import edu.wpi.first.wpilibj2.command.RunCommand
 import edu.wpi.first.wpilibj2.command.button.JoystickButton
 
 
-import frc.robot.subsystems.SwerveSubsystem
-// import frc.robot.subsystems.LEDSubsystem
-
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.math.trajectory.TrajectoryGenerator
 import edu.wpi.first.wpilibj.motorcontrol.Spark
+import edu.wpi.first.wpilibj2.command.Command
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
+import edu.wpi.first.wpilibj2.command.Subsystem
+import edu.wpi.first.wpilibj2.command.SubsystemBase
+import edu.wpi.first.wpilibj2.command.button.Trigger
 
 import frc.robot.commands.*
+import frc.robot.constants.ArmConstants
 import frc.robot.constants.DrivetrainConstants
+import frc.robot.constants.IntakeConstants
 import frc.robot.constants.TrajectoryConstants
-import frc.robot.subsystems.DigitalInputSubsystem
-import frc.robot.subsystems.SparkMaxSubsystem
+import frc.robot.subsystems.*
+import java.nio.file.Path
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -34,12 +39,22 @@ import frc.robot.subsystems.SparkMaxSubsystem
  * subsystems, commands, and button mappings) should be declared here.
  */
 class RobotContainer {
+//    val mArmSubsystem = ArmSubsystem(1,0,2)
     val primaryController = XboxController(0)
+    val secondaryController = XboxController(1)
+    val swerveSubsystem = SwerveSubsystem()
+    val subsystem1 = DummySubsystem()
+    val subsystem2 = DummySubsystem()
 
-    val topBreaker = DigitalInputSubsystem(0)
-    val bottomBreaker = DigitalInputSubsystem(1)
+    val traj: PathPlannerTrajectory = PathPlanner.generatePath(
+        PathConstraints(12.0,3.5),
+        PathPoint(Translation2d(0.0,0.0), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(0.0), 0.0) ,
+        PathPoint(Translation2d(-2.0,0.0), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(0.0))
 
-    val elevatorMotor = SparkMaxSubsystem(2)
+    )
+
+
+
 
     /** The container for the robot. Contains subsystems, OI devices, and commands.  */
     init {
@@ -48,12 +63,25 @@ class RobotContainer {
 
 
     }
-
-    /**
-     * Use this method to define your button->command mappings. Buttons can be created by
-     * instantiating a [GenericHID] or one of its subclasses ([ ] or [XboxController]), and then passing it to a [ ].
-     */
+    
     private fun configureButtonBindings() {
-        elevatorMotor.defaultCommand = PIDElevatorTuning(bottomBreaker, topBreaker, elevatorMotor, primaryController)
+        // Current Button Bindings:
+        //
+        // Primary Controller:
+        // Swerve default = drive
+        // X = set the wheels in an X configuration
+        // B = zero the gyro
+        // Y = zero the gyro and the pose
+        // A = run trajectory
+        // Right Bumper = Emergency Stop(driving)
+        swerveSubsystem.defaultCommand = StandardDrive(
+            swerveSubsystem,
+            { primaryController.leftY * DrivetrainConstants.drivingSpeedScalar },
+            { primaryController.leftX * DrivetrainConstants.drivingSpeedScalar },
+            { primaryController.rightX * DrivetrainConstants.rotationSpeedScalar },
+            true,
+            true
+        )
     }
+
 }
