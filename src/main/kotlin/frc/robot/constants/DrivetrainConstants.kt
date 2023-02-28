@@ -10,8 +10,8 @@ import edu.wpi.first.networktables.NetworkTableInstance
 object DrivetrainConstants {
 
 
-    const val maxSpeedMetersPerSecond = 3.5
-    const val maxAngularSpeed = 2 * Math.PI
+    const val maxSpeedMetersPerSecond = 2.0
+    const val maxAngularSpeed = Math.PI
 
     const val directionSlewRate = 4.0 // rads/sec   - turning
     const val magnitudeSlewRate = 5.0 // percent/second (1 = 100%)   - forward/backward/traverse

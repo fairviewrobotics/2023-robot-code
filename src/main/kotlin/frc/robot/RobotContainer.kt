@@ -46,7 +46,7 @@ class RobotContainer {
     val subsystem1 = DummySubsystem()
     val subsystem2 = DummySubsystem()
 
-    val traj: PathPlannerTrajectory = PathPlanner.loadPath("Test Blue", PathConstraints(1.0,1.0))
+    val traj: PathPlannerTrajectory = PathPlanner.loadPath("Blue Top A", PathConstraints(4.0,3.0))
 //        PathConstraints(12.0,3.5),
 //        PathPoint(Translation2d(0.0,0.0), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(0.0), 0.0) ,
 //        PathPoint(Translation2d(-2.0,0.0), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(0.0))
