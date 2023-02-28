@@ -1,7 +1,7 @@
 package frc.robot.commands
 
-import edu.wpi.first.math.controller.ArmFeedforward
 import edu.wpi.first.math.controller.ProfiledPIDController
+import edu.wpi.first.networktables.NetworkTableInstance
 import edu.wpi.first.wpilibj2.command.CommandBase
 import frc.robot.constants.ArmConstants
 import frc.robot.subsystems.PickAndPlaceSubsystem
@@ -12,10 +12,6 @@ class SetPickAndPlacePosition(val continuous: Boolean ,val subsystem: PickAndPla
                           val wristSupplier:()->Double,
                           val intakeSupplier: ()->Double,
                           ) : CommandBase() {
-
-    var lastElevatorSupplier = elevatorSupplier()
-    var lastElbowSupplier = elevatorSupplier()
-    var lastWristSupplier = elevatorSupplier()
 
     var elevatorPid = ProfiledPIDController(
     ArmConstants.elevatorP,
@@ -33,6 +29,24 @@ class SetPickAndPlacePosition(val continuous: Boolean ,val subsystem: PickAndPla
 
     val elbowFeedforward = ArmConstants.elbowFF
 
+    object Telemetry{
+        val desiredElbow = NetworkTableInstance.getDefault().getTable("Arm").getDoubleTopic("DesiredElbow").publish()
+        val desiredWrist = NetworkTableInstance.getDefault().getTable("Arm").getDoubleTopic("DesiredWrist").publish()
+        val desiredElevator = NetworkTableInstance.getDefault().getTable("Arm").getDoubleTopic("DesiredElevator").publish()
+        val desiredIntake = NetworkTableInstance.getDefault().getTable("Arm").getDoubleTopic("DesiredIntake").publish()
+
+        val elbowPidPosError = NetworkTableInstance.getDefault().getTable("Arm").getDoubleTopic("ElbowPidError").publish()
+        val elevatorPidPosError = NetworkTableInstance.getDefault().getTable("Arm").getDoubleTopic("ElevatorPidError").publish()
+        val wristPidPosError = NetworkTableInstance.getDefault().getTable("Arm").getDoubleTopic("WristPidError").publish()
+
+        val elbowPidVelocityError = NetworkTableInstance.getDefault().getTable("Arm").getDoubleTopic("ElbowPidError").publish()
+        val elevatorPidVelocityError = NetworkTableInstance.getDefault().getTable("Arm").getDoubleTopic("ElevatorPidError").publish()
+        val wristPidVelocityError = NetworkTableInstance.getDefault().getTable("Arm").getDoubleTopic("WristPidError").publish()
+
+        val elbowVoltage = NetworkTableInstance.getDefault().getTable("Arm").getDoubleTopic("ElbowVolts").publish()
+        val wristVoltage = NetworkTableInstance.getDefault().getTable("Arm").getDoubleTopic("WristVolts").publish()
+        val elevatorVoltage = NetworkTableInstance.getDefault().getTable("Arm").getDoubleTopic("ElevatorVolts").publish()
+    }
 
     init{
         elbowPid.setGoal(elbowSupplier())
@@ -48,5 +62,24 @@ class SetPickAndPlacePosition(val continuous: Boolean ,val subsystem: PickAndPla
         subsystem.wristVoltage = wristPid.calculate(subsystem.wristEncoder.position,wristSupplier())
         subsystem.intakeOneMotor.setVoltage(intakeSupplier())
         subsystem.intakeTwoMotor.setVoltage(intakeSupplier())
+
+        // TODO: Add telemetry: desired states (from suppliers), pid errors, voltages
+        Telemetry.desiredWrist.set(wristSupplier())
+        Telemetry.desiredElbow.set(elbowSupplier())
+        Telemetry.desiredElevator.set(elevatorSupplier())
+        Telemetry.desiredIntake.set(intakeSupplier())
+        Telemetry.elbowPidPosError.set(elbowPid.positionError)
+        Telemetry.elevatorPidPosError.set(elevatorPid.positionError)
+        Telemetry.wristPidPosError.set(wristPid.positionError)
+        Telemetry.elbowPidVelocityError.set(elbowPid.velocityError)
+        Telemetry.elevatorPidVelocityError.set(elevatorPid.velocityError)
+        Telemetry.wristPidVelocityError.set(wristPid.velocityError)
+        Telemetry.elbowVoltage.set(subsystem.elbowVoltage)
+        Telemetry.wristVoltage.set(subsystem.wristVoltage)
+        Telemetry.elevatorVoltage.set(subsystem.elevatorVoltage)
+    }
+
+    override fun isFinished(): Boolean {
+        return !continuous && (elbowPid.atGoal() && elevatorPid.atGoal() && wristPid.atGoal())
     }
 }
