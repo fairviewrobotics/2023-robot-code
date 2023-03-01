@@ -100,7 +100,7 @@ class ElevatorSetting(val motor: SparkMaxSubsystem, val controller: XboxControll
     init {
         addRequirements(motor)
         motor.x.encoder.positionConversionFactor = ArmConstants.elevatorEncoderPositionConversionFactor
-        motor.x.encoder.velocityConversionFactor = ArmConstants.elevatorEncoderVelocityMultiplier
+        motor.x.encoder.velocityConversionFactor = ArmConstants.elevatorEncoderVelocityConversionFactor
 
     }
 
