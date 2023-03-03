@@ -2,6 +2,8 @@ package frc.robot.commands
 
 import edu.wpi.first.math.controller.ProfiledPIDController
 import edu.wpi.first.networktables.NetworkTableInstance
+import edu.wpi.first.wpilibj.XboxController
+import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandBase
 import frc.robot.constants.ArmConstants
 import frc.robot.subsystems.PickAndPlaceSubsystem
@@ -12,7 +14,9 @@ class SetPickAndPlacePosition(val continuous: Boolean ,val subsystem: PickAndPla
                           val wristSupplier:()->Double,
                           val intakeSupplier: ()->Double,
                           ) : CommandBase() {
-
+    init {
+        addRequirements(subsystem)
+    }
     var elevatorPid = ProfiledPIDController(
     ArmConstants.elevatorP,
     ArmConstants.elevatorI,
@@ -48,20 +52,12 @@ class SetPickAndPlacePosition(val continuous: Boolean ,val subsystem: PickAndPla
         val elevatorVoltage = NetworkTableInstance.getDefault().getTable("Arm").getDoubleTopic("ElevatorVolts").publish()
     }
 
-    init{
-        elbowPid.setGoal(elbowSupplier())
-        elevatorPid.setGoal(elevatorSupplier())
-        wristPid.setGoal(wristSupplier())
-    }
-
-
     override fun execute() {
 
-        subsystem.elevatorVoltage = elevatorPid.calculate(subsystem.elevatorPositionMeters,elevatorSupplier())
-        subsystem.elbowVoltage = elbowPid.calculate(subsystem.elbowEncoder.position,elbowSupplier())
-        subsystem.wristVoltage = wristPid.calculate(subsystem.wristEncoder.position,wristSupplier())
-        subsystem.intakeOneMotor.setVoltage(intakeSupplier())
-        subsystem.intakeTwoMotor.setVoltage(intakeSupplier())
+        subsystem.elevatorVoltage = elevatorPid.calculate(subsystem.elevatorPositionMeters,elevatorSupplier().coerceIn(ArmConstants.elevatorMinHeight, ArmConstants.elevatorMaxHeight))
+        subsystem.elbowVoltage = elbowPid.calculate(subsystem.elbowPositionRadians,elbowSupplier().coerceIn(ArmConstants.elbowMinRotation, ArmConstants.elbowMaxRotation))
+        subsystem.wristVoltage = wristPid.calculate(subsystem.absoluteWristPosition,wristSupplier().coerceIn(ArmConstants.wristMinRotation, ArmConstants.wristMaxRotation))
+        subsystem.intakesVoltage = intakeSupplier()
 
         // TODO: Add telemetry: desired states (from suppliers), pid errors, voltages
         Telemetry.desiredWrist.set(wristSupplier())
@@ -82,4 +78,19 @@ class SetPickAndPlacePosition(val continuous: Boolean ,val subsystem: PickAndPla
     override fun isFinished(): Boolean {
         return !continuous && (elbowPid.atGoal() && elevatorPid.atGoal() && wristPid.atGoal())
     }
+}
+
+fun NTPnP(pnp: PickAndPlaceSubsystem, controller: XboxController): Command {
+    var height = 0.5
+    return SetPickAndPlacePosition(
+        true,
+        pnp,
+        {
+            height += controller.leftX / 25;
+            height
+        }, // elevator
+        { 0.0 }, // eblbow
+        { Math.PI / 2.0 }, // wrist
+        { controller.leftTriggerAxis * 12.0 } // intake
+    )
 }

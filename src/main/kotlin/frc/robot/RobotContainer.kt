@@ -8,6 +8,8 @@ import com.pathplanner.lib.PathConstraints
 import com.pathplanner.lib.PathPlanner
 import com.pathplanner.lib.PathPlannerTrajectory
 import com.pathplanner.lib.PathPoint
+import com.revrobotics.CANSparkMax
+import com.revrobotics.CANSparkMaxLowLevel
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj2.command.RunCommand
 import edu.wpi.first.wpilibj2.command.button.JoystickButton
@@ -43,8 +45,8 @@ class RobotContainer {
     val primaryController = XboxController(0)
     val secondaryController = XboxController(1)
     val swerveSubsystem = SwerveSubsystem()
-    val subsystem1 = DummySubsystem()
-    val subsystem2 = DummySubsystem()
+
+    val pnpSubsystem = PickAndPlaceSubsystem(ArmConstants.elevatorMotorId, ArmConstants.elbowMotorId, 11, 12, 13, 0, 1)
 
     val traj: PathPlannerTrajectory = PathPlanner.loadPath("Blue Top A", PathConstraints(4.0,3.0))
 //        PathConstraints(12.0,3.5),
@@ -65,40 +67,9 @@ class RobotContainer {
     }
     
     private fun configureButtonBindings() {
-        // Current Button Bindings:
-        //
-        // Primary Controller:
-        // Swerve default = drive
-        JoystickButton(primaryController, XboxController.Button.kX.value).whileTrue(
-            RunCommand({
-                swerveSubsystem.setX()
-            }, swerveSubsystem)
-        )
-        JoystickButton(primaryController, XboxController.Button.kB.value).whileTrue(
-            RunCommand({
-                swerveSubsystem.zeroGyro()
-            }, swerveSubsystem)
-        )
-        JoystickButton(primaryController, XboxController.Button.kY.value).whileTrue(
-            RunCommand({
-                swerveSubsystem.zeroGyroAndOdometry()
-            }, swerveSubsystem)
-        )
-        JoystickButton(primaryController, XboxController.Button.kRightBumper.value).whileTrue(
-            TrajectoryDrivePathPlanner(swerveSubsystem, traj, false)
-        )
-        // A = run trajectory
-        // Right Bumper = Emergency Stop(driving)
-
-        swerveSubsystem.defaultCommand = StandardDrive(
-            swerveSubsystem,
-            { primaryController.leftY * DrivetrainConstants.drivingSpeedScalar },
-            { primaryController.leftX * DrivetrainConstants.drivingSpeedScalar },
-            { primaryController.rightX * DrivetrainConstants.rotationSpeedScalar },
-            true,
-            true
-        )
+        pnpSubsystem.defaultCommand = NTPnP(pnpSubsystem, primaryController)
     }
+
     val autonoumousCommand: Command = TrajectoryDrivePathPlanner(swerveSubsystem, traj, false)
 
 
