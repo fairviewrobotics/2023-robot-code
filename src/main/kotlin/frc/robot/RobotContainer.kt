@@ -41,22 +41,9 @@ import java.nio.file.Path
  * subsystems, commands, and button mappings) should be declared here.
  */
 class RobotContainer {
-//    val mArmSubsystem = ArmSubsystem(1,0,2)
     val primaryController = XboxController(0)
     val secondaryController = XboxController(1)
     val swerveSubsystem = SwerveSubsystem()
-
-    val pnpSubsystem = PickAndPlaceSubsystem(ArmConstants.elevatorMotorId, ArmConstants.elbowMotorId, 11, 12, 13, 0, 1)
-
-    val traj: PathPlannerTrajectory = PathPlanner.loadPath("Blue Top A", PathConstraints(4.0,3.0))
-//        PathConstraints(12.0,3.5),
-//        PathPoint(Translation2d(0.0,0.0), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(0.0), 0.0) ,
-//        PathPoint(Translation2d(-2.0,0.0), Rotation2d.fromDegrees(0.0), Rotation2d.fromDegrees(0.0))
-
-
-
-
-
 
     /** The container for the robot. Contains subsystems, OI devices, and commands.  */
     init {
@@ -67,10 +54,17 @@ class RobotContainer {
     }
     
     private fun configureButtonBindings() {
-        pnpSubsystem.defaultCommand = NTPnP(pnpSubsystem, primaryController)
+        swerveSubsystem.defaultCommand = StandardDrive(swerveSubsystem,
+            { primaryController.leftY * 5.0 },
+            { primaryController.leftX * 5.0 },
+            { primaryController.rightX * 1.0},
+            true,
+            true)
+
+        JoystickButton(primaryController, XboxController.Button.kA.value).onTrue(
+            AlignToAprilTag(swerveSubsystem, primaryController)
+        )
     }
 
-    val autonoumousCommand: Command = TrajectoryDrivePathPlanner(swerveSubsystem, traj, false)
-
-
+    val autonoumousCommand: Command = RunCommand({})
 }
