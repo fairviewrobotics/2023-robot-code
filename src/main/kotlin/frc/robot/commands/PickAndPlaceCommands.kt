@@ -6,6 +6,7 @@ import edu.wpi.first.networktables.NetworkTableInstance
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandBase
+import edu.wpi.first.wpilibj2.command.RunCommand
 import frc.robot.constants.ArmConstants
 import frc.robot.subsystems.PickAndPlaceSubsystem
 
@@ -27,11 +28,6 @@ class SetPickAndPlacePosition(val continuous: Boolean ,val subsystem: PickAndPla
         ArmConstants.elbowP,
         ArmConstants.elbowI,
         ArmConstants.elbowD, )
-    var wristPid = PIDController(
-        ArmConstants.wristP,
-        ArmConstants.wristI,
-        ArmConstants.wristD, )
-
     val elbowFeedforward = ArmConstants.elbowFF
 
     object Telemetry{
@@ -57,7 +53,7 @@ class SetPickAndPlacePosition(val continuous: Boolean ,val subsystem: PickAndPla
 
         subsystem.elevatorVoltage = elevatorPid.calculate(subsystem.elevatorPositionMeters,elevatorSupplier().coerceIn(ArmConstants.elevatorMinHeight, ArmConstants.elevatorMaxHeight))
         subsystem.elbowVoltage = elbowPid.calculate(subsystem.elbowPositionRadians,elbowSupplier().coerceIn(ArmConstants.elbowMinRotation, ArmConstants.elbowMaxRotation)) + elbowFeedforward.calculate(subsystem.elbowPositionRadians, Math.PI)
-        subsystem.wristVoltage = wristPid.calculate(subsystem.absoluteWristPosition,wristSupplier().coerceIn(ArmConstants.wristMinRotation, ArmConstants.wristMaxRotation))
+        subsystem.wristVoltage = wristSupplier()
         subsystem.intakesVoltage = intakeSupplier()
 
         // TODO: Add telemetry: desired states (from suppliers), pid errors, voltages
@@ -67,31 +63,56 @@ class SetPickAndPlacePosition(val continuous: Boolean ,val subsystem: PickAndPla
         Telemetry.desiredIntake.set(intakeSupplier())
         Telemetry.elbowPidPosError.set(elbowPid.positionError)
         Telemetry.elevatorPidPosError.set(elevatorPid.positionError)
-        Telemetry.wristPidPosError.set(wristPid.positionError)
         Telemetry.elbowPidVelocityError.set(elbowPid.velocityError)
         Telemetry.elevatorPidVelocityError.set(elevatorPid.velocityError)
-        Telemetry.wristPidVelocityError.set(wristPid.velocityError)
         Telemetry.elbowVoltage.set(subsystem.elbowVoltage)
         Telemetry.wristVoltage.set(subsystem.wristVoltage)
         Telemetry.elevatorVoltage.set(subsystem.elevatorVoltage)
     }
 
     override fun isFinished(): Boolean {
-        return !continuous && (elbowPid.atSetpoint() && elevatorPid.atSetpoint() && wristPid.atSetpoint())
+        return !continuous && (elbowPid.atSetpoint() && elevatorPid.atSetpoint())
     }
 }
 
 fun NTPnP(pnp: PickAndPlaceSubsystem, controller: XboxController): Command {
-    var height = 0.5
+    var table = NetworkTableInstance.getDefault().getTable("NtPnP positions")
+
     return SetPickAndPlacePosition(
         true,
         pnp,
         {
-            height += controller.leftX / 25;
-            height
+            table.getDoubleTopic("Elevator").subscribe(0.0).get()
         }, // elevator
-        { 0.0 }, // eblbow
-        { Math.PI / 2.0 }, // wrist
+        { table.getDoubleTopic("Elbow").subscribe(0.0).get() }, // eblbow
+        { table.getDoubleTopic("Wrist").subscribe(0.0).get() }, // wrist
         { controller.leftTriggerAxis * 12.0 } // intake
     )
+}
+
+class VoltageControlPNP(val pnp: PickAndPlaceSubsystem, val controller: XboxController) : CommandBase() {
+    init {
+        addRequirements(pnp)
+    }
+
+    override fun execute() {
+        pnp.intakesVoltage = if (controller.leftBumper) {
+            12.0
+        } else if (controller.rightBumper) {
+            -12.0
+        } else {
+            0.0
+        }
+
+        pnp.elevatorVoltage = controller.leftY * 12.0
+        pnp.elbowVoltage = controller.rightY * 12.0
+        pnp.wristVoltage = (controller.leftTriggerAxis - controller.rightTriggerAxis) * 12.0
+    }
+
+    override fun end(interrupted: Boolean) {
+        pnp.intakesVoltage = 0.0
+        pnp.elevatorVoltage = 0.0
+        pnp.elbowVoltage = 0.0
+        pnp.wristVoltage = 0.0
+    }
 }
