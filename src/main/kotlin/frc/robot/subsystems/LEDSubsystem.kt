@@ -2,7 +2,6 @@ package frc.robot.subsystems
 
 import edu.wpi.first.wpilibj.AddressableLED
 import edu.wpi.first.wpilibj.AddressableLEDBuffer
-import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 
 enum class LEDSubsystemState {
@@ -14,8 +13,8 @@ enum class LEDSubsystemState {
     NULL
 }
 
-class LEDSubsystem : SubsystemBase() {
-    var led = AddressableLED(0)
+class LEDSubsystem(val port: Int) : SubsystemBase() {
+    var led = AddressableLED(port)
     var ledBuffer = AddressableLEDBuffer(24)
     var state = LEDSubsystemState.NULL
     init {
@@ -48,7 +47,7 @@ class LEDSubsystem : SubsystemBase() {
         }
         else
         {
-            offLeds()
+            red()
         }
 
     }
@@ -57,7 +56,7 @@ class LEDSubsystem : SubsystemBase() {
         state = sstate
     }
 
-    fun offLeds() {
+    fun red() {
         for (i in 0..ledBuffer.length-1) {
             ledBuffer.setRGB(i, 179, 20, 20)
         }
