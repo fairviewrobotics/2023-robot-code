@@ -17,21 +17,17 @@ object ArmConstants {
     val intakeMotorInverted = false
 
     //PID vals
-    //PID stuff
-    //also needs tuning
-    val elevatorP = 5.0 //500
+    val elevatorP = 500.0 //500
     val elevatorI = 0.0
     val elevatorD = 0.0
-    val elevatorTrapezoidConstraints = TrapezoidProfile.Constraints(50.0, 30.0)
-
-    val elbowP = 6.0
+    //val elevatorTrapezoidConstraints = TrapezoidProfile.Constraints(50.0, 30.0)
+//tune:
+    val elbowP = 7.0
     val elbowI = 0.0
     val elbowD = 0.0
-    val elbowTrapezoidConstraints = TrapezoidProfile.Constraints(.0, 24.0)
-    val wristTrapezoidConstraints = TrapezoidProfile.Constraints(6.0, 24.0) //TODO tune.......
     val elbowFF = ArmFeedforward(0.13, 2.07, 1.00)
 
-    val wristP = 460.0
+    val wristP = 1.0
     val wristI = 0.0
     val wristD = 0.0
 

@@ -68,21 +68,21 @@ class PickAndPlaceSubsystem(elevatorMotorId : Int,
         wristMotor.setSmartCurrentLimit(20)
         elbowMotor.inverted = ArmConstants.elbowMotorInverted
         wristMotor.idleMode = CANSparkMax.IdleMode.kBrake
-        intakeOneMotor.idleMode = CANSparkMax.IdleMode.kBrake
-        intakeTwoMotor.idleMode = CANSparkMax.IdleMode.kBrake
+        //intakeOneMotor.idleMode = CANSparkMax.IdleMode.kBrake
+        //intakeTwoMotor.idleMode = CANSparkMax.IdleMode.kBrake
         elbowMotor.idleMode = CANSparkMax.IdleMode.kBrake
         elevatorMotor.idleMode = CANSparkMax.IdleMode.kBrake
 
-        intakeOneMotor.inverted = IntakeConstants.intakeMotorRInverted
-        intakeTwoMotor.inverted = IntakeConstants.intakeMotorLInverted
+        //intakeOneMotor.inverted = IntakeConstants.intakeMotorRInverted
+        //intakeTwoMotor.inverted = IntakeConstants.intakeMotorLInverted
 
 
-        intakeOneMotor.setSmartCurrentLimit(IntakeConstants.intakeMotorsCurrentLimit)
-        intakeTwoMotor.setSmartCurrentLimit(IntakeConstants.intakeMotorsCurrentLimit)
+        //intakeOneMotor.setSmartCurrentLimit(IntakeConstants.intakeMotorsCurrentLimit)
+        //intakeTwoMotor.setSmartCurrentLimit(IntakeConstants.intakeMotorsCurrentLimit)
         wristMotor.setSmartCurrentLimit(IntakeConstants.pitchMotorCurrentLimit)
 
-        intakeOneMotor.burnFlash()
-        intakeTwoMotor.burnFlash()
+        //intakeOneMotor.burnFlash()
+        //intakeTwoMotor.burnFlash()
         wristMotor.burnFlash()
         //everything else:
         // TODO: Elevator conversion factors have been tuned, but the elbow conversion factors have not.

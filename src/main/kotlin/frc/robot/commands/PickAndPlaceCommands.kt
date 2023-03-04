@@ -1,5 +1,6 @@
 package frc.robot.commands
 
+import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.controller.ProfiledPIDController
 import edu.wpi.first.networktables.NetworkTableInstance
 import edu.wpi.first.wpilibj.XboxController
@@ -17,19 +18,19 @@ class SetPickAndPlacePosition(val continuous: Boolean ,val subsystem: PickAndPla
     init {
         addRequirements(subsystem)
     }
-    var elevatorPid = ProfiledPIDController(
+    var elevatorPid = PIDController(
     ArmConstants.elevatorP,
     ArmConstants.elevatorI,
-    ArmConstants.elevatorD, ArmConstants.elevatorTrapezoidConstraints, 0.02)
+    ArmConstants.elevatorD)
 
-    var elbowPid = ProfiledPIDController(
+    var elbowPid = PIDController(
         ArmConstants.elbowP,
         ArmConstants.elbowI,
-        ArmConstants.elbowD, ArmConstants.elbowTrapezoidConstraints, 0.02)
-    var wristPid = ProfiledPIDController(
+        ArmConstants.elbowD, )
+    var wristPid = PIDController(
         ArmConstants.wristP,
         ArmConstants.wristI,
-        ArmConstants.wristD, ArmConstants.wristTrapezoidConstraints, 0.02)
+        ArmConstants.wristD, )
 
     val elbowFeedforward = ArmConstants.elbowFF
 
@@ -76,7 +77,7 @@ class SetPickAndPlacePosition(val continuous: Boolean ,val subsystem: PickAndPla
     }
 
     override fun isFinished(): Boolean {
-        return !continuous && (elbowPid.atGoal() && elevatorPid.atGoal() && wristPid.atGoal())
+        return !continuous && (elbowPid.atSetpoint() && elevatorPid.atSetpoint() && wristPid.atSetpoint())
     }
 }
 
