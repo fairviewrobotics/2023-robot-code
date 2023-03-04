@@ -43,6 +43,7 @@ import java.nio.file.Path
 class RobotContainer {
     val primaryController = XboxController(0)
     val secondaryController = XboxController(1)
+    val pickAndPlace = PickAndPlaceSubsystem(ArmConstants.elevatorMotorId, ArmConstants.elbowMotorId, 11, 12, 13, 0, 1)
     val swerveSubsystem = SwerveSubsystem()
 
     /** The container for the robot. Contains subsystems, OI devices, and commands.  */
@@ -54,16 +55,32 @@ class RobotContainer {
     }
     
     private fun configureButtonBindings() {
-        swerveSubsystem.defaultCommand = StandardDrive(swerveSubsystem,
+       /*swerveSubsystem.defaultCommand = StandardDrive(swerveSubsystem,
             { primaryController.leftY * 5.0 },
             { primaryController.leftX * 5.0 },
             { primaryController.rightX * 1.0},
             true,
             true)
-
+*/
         JoystickButton(primaryController, XboxController.Button.kA.value).onTrue(
             AlignToAprilTag(swerveSubsystem, primaryController)
         )
+
+        var height = 0.5
+        var rotation = Math.PI/4.0
+
+        pickAndPlace.defaultCommand = SetPickAndPlacePosition(true, pickAndPlace,
+            {
+                height = (height + primaryController.leftY / 25.0).coerceIn(0.0, 0.9)
+                height
+            }, // elevator position meters
+            {
+                rotation = (rotation + primaryController.rightY / 25.0).coerceIn(-Math.PI / 2.0, Math.PI / 2.0);
+                rotation
+            }, // elbow radians
+            { 0.0 }, // wrist radians
+            { (primaryController.leftTriggerAxis - primaryController.rightTriggerAxis) * 12.0}
+            )
     }
 
     val autonoumousCommand: Command = RunCommand({})
