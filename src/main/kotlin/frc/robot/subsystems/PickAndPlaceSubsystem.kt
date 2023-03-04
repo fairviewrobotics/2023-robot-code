@@ -25,8 +25,8 @@ class PickAndPlaceSubsystem(elevatorMotorId : Int,
     val intakeTwoMotor = CANSparkMax(intakeMotorTwoId, CANSparkMaxLowLevel.MotorType.kBrushless)
 
     val elevatorEncoder = elevatorMotor.encoder
-    val elbowEncoder = elbowMotor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle)
-    val wristEncoder = wristMotor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle)
+    val sprocketEncoder = elbowMotor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle)
+    val axleEncoder = wristMotor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle)
 
     val forwardLimit = DigitalInput(topBreakerID);
     val reverseLimit = DigitalInput(bottomBreakerID);
@@ -86,33 +86,20 @@ class PickAndPlaceSubsystem(elevatorMotorId : Int,
         wristMotor.burnFlash()
         //everything else:
         // TODO: Elevator conversion factors have been tuned, but the elbow conversion factors have not.
-        elbowEncoder.positionConversionFactor = 2.0 * Math.PI
-        elbowEncoder.velocityConversionFactor = 2.0 * Math.PI / 60.0
+        sprocketEncoder.positionConversionFactor = 2.0 * Math.PI
+        sprocketEncoder.velocityConversionFactor = 2.0 * Math.PI / 60.0
 
         elevatorEncoder.positionConversionFactor = ArmConstants.elevatorEncoderPositionConversionFactor
         elevatorEncoder.velocityConversionFactor = ArmConstants.elevatorEncoderVelocityConversionFactor
 
-        wristEncoder.positionConversionFactor = 2.0 *Math.PI
-        wristEncoder.velocityConversionFactor = 2.0 *Math.PI / 60.0
+        axleEncoder.positionConversionFactor = 2.0 *Math.PI
+        axleEncoder.velocityConversionFactor = 2.0 *Math.PI / 60.0
         // TODO: wristEncoder position and velocity conversion factor
     }
 
-    val elbowPositionRadians get() = Rotation2d(elbowEncoder.position).plus(Rotation2d(absoluteWristPosition)).minus(Rotation2d(05.880)).minus(
-        Rotation2d(-1.25)
-    ).radians
+    val elbowPositionRadians get() = 1.0
     val elevatorPositionMeters get() = elevatorEncoder.position
 
-    //intake
-    val absoluteWristPosition get() = Rotation2d(wristEncoder.position).minus(Rotation2d(0.900)).radians
-
-    /** This is the pitch with taking consideration to the position of the elbow.
-     * 0 degrees means the intake is parallel to the ground.
-     */
-    val relativeWristPosition get() = 2.0
-
-    /** This value sets the voltage for the intake motors. Positive value will spin the wheels inward
-     * and pick objects up.
-     */
     var intakesVoltage = 0.0
         set(x: Double) {
             field = x
@@ -120,9 +107,6 @@ class PickAndPlaceSubsystem(elevatorMotorId : Int,
             intakeTwoMotor.setVoltage(x)
         }
 
-    /** This value sets the voltage for the pitch motors. Positive values will tilt the intake up,
-     * negative values will tilt the intake down.
-     */
     var wristVoltage = 0.0
         set(x: Double) {
             field = x
@@ -169,8 +153,7 @@ class PickAndPlaceSubsystem(elevatorMotorId : Int,
         Telemetry.elevatorZeroed.set(elevatorZeroed)
         Telemetry.elbowPosition.set(elbowPositionRadians)
         Telemetry.elevatorPosition.set(elevatorEncoder.position)
-        Telemetry.wristPosition.set(absoluteWristPosition)
-        Telemetry.elbowVelocity.set(elbowEncoder.velocity)
+        Telemetry.elbowVelocity.set(sprocketEncoder.velocity)
         Telemetry.topHit.set(topHit)
         Telemetry.bottomHit.set(bottomHit)
         Telemetry.wristVoltage.set(wristVoltage)

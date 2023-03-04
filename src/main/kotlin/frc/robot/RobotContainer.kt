@@ -42,9 +42,9 @@ import java.nio.file.Path
  * subsystems, commands, and button mappings) should be declared here.
  */
 class RobotContainer {
-    val primaryController = CommandXboxController(0)
+    val primaryController = XboxController(0)
     val secondaryController = CommandXboxController(1)
-    //val pickAndPlace = PickAndPlaceSubsystem(ArmConstants.elevatorMotorId, ArmConstants.elbowMotorId, 11, 12, 13, 0, 1)
+    val pickAndPlace = PickAndPlaceSubsystem(ArmConstants.elevatorMotorId, ArmConstants.elbowMotorId, 11, 12, 13, 0, 1)
     //val swerveSubsystem = SwerveSubsystem()
     val leds = LEDSubsystem(0)
     /** The container for the robot. Contains subsystems, OI devices, and commands.  */
@@ -56,14 +56,14 @@ class RobotContainer {
     }
     
     private fun configureButtonBindings() {
-        leds.defaultCommand = SetLEDs(leds, LEDSubsystemState.NULL)
+        //leds.defaultCommand = SetLEDs(leds, LEDSubsystemState.NULL)
        /*swerveSubsystem.defaultCommand = StandardDrive(swerveSubsystem,
             { primaryController.leftY * 5.0 },
             { primaryController.leftX * 5.0 },
             { primaryController.rightX * 1.0},
             true,
-            true)
-*//*
+            false)*/
+/*
         JoystickButton(primaryController, XboxController.Button.kA.value).onTrue(
             AlignToAprilTag(swerveSubsystem, primaryController)
         )
@@ -83,10 +83,7 @@ class RobotContainer {
             { 0.0 }, // wrist radians
             { (primaryController.leftTriggerAxis - primaryController.rightTriggerAxis) * 12.0}
             )*/
-        primaryController.a().onTrue(SetLEDs(leds, LEDSubsystemState.CUBE))
-        primaryController.b().onTrue(SetLEDs(leds, LEDSubsystemState.CONE))
-        primaryController.x().onTrue(SetLEDs(leds, LEDSubsystemState.RAINBOW))
-        primaryController.y().onTrue(SetLEDs(leds, LEDSubsystemState.GYRO_FLAT))
+        pickAndPlace.defaultCommand = VoltageControlPNP(pickAndPlace, primaryController)
     }
 
     val autonoumousCommand: Command = RunCommand({})
