@@ -25,12 +25,14 @@ object ArmConstants {
     val elbowP = 5.0 //5
     val elbowI = 0.0
     val elbowD = 0.0
+    //maybe change:
     val elbowFF = ArmFeedforward(0.13, 0.50, 1.00)
 
     //tune:
     val wristP = 3.0
     val wristI = 0.0
     val wristD = 0.0
+    //maybe change:
     val wristFF = ArmFeedforward(0.13, 1.50, 1.00)
 
     val elevatorMinHeight = 0.0
@@ -51,5 +53,5 @@ object ArmConstants {
     val elbowEncoderPosOffset = -2.727
     val wristEncoderPosOffset = -0.0925
 
-    val elevatorZeroingVoltage = -0.5
+    val elevatorZeroingVoltage = -1.0
 }

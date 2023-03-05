@@ -28,7 +28,7 @@ class SetPickAndPlacePosition(val continuous: Boolean ,val subsystem: PickAndPla
         ArmConstants.elbowP,
         ArmConstants.elbowI,
         ArmConstants.elbowD,
-        TrapezoidProfile.Constraints(Math.PI/4, Math.PI/32)
+        TrapezoidProfile.Constraints(Math.PI/4, Math.PI/32)//I think might need to be slowed down, cause robot can drive while the elbow is moving as long as elevator is down
     )
 
     var wristPid = ProfiledPIDController(
@@ -44,9 +44,9 @@ class SetPickAndPlacePosition(val continuous: Boolean ,val subsystem: PickAndPla
         addRequirements(subsystem)
         first = true
 
-        elevatorPid.setTolerance(0.03)
-        elbowPid.setTolerance(0.09)
-    }
+        elevatorPid.setTolerance(0.03)//might need changing
+        elbowPid.setTolerance(0.09)//might need changing
+    }//This might need to be above the variables
 
     object Telemetry{
         val desiredElbow = NetworkTableInstance.getDefault().getTable("Arm").getDoubleTopic("DesiredElbow").publish()
@@ -132,23 +132,24 @@ class zeroVoltage(val subsystem: PickAndPlaceSubsystem): CommandBase() {
 
 
 }
+//TODO: All values for functions must be tested with degrees, height, and vision on a field
 fun Base(pnp: PickAndPlaceSubsystem): Command {
     return SequentialCommandGroup(
         SetPickAndPlacePosition(
-            true,
+            false,
             pnp,
             { 0.0 }, // elevator
-            { Math.toRadians(60.0) }, // elbow
-            { Math.toRadians(0.0) }, // wrist
+            { Math.toRadians(40.0) }, // elbow
+            { Math.toRadians(45.0) }, // wrist
             { 0.0 } // intake
         ),
 
         SetPickAndPlacePosition(
-            true,
+            false,
             pnp,
             { 0.0 }, // elevator
-            { Math.toRadians(85.0) }, // elbow
-            { Math.toRadians(0.0) }, // wrist
+            { Math.toRadians(80.0) }, // elbow
+            { Math.toRadians(45.0) }, // wrist
             { 0.0 } // intake
         )
     )
@@ -161,19 +162,19 @@ fun LowPlace(pnp: PickAndPlaceSubsystem): Command {
         SetPickAndPlacePosition(
             false,
             pnp,
-            { 0.5 }, // elevator
+            { 0.1 }, // elevator
             { Math.toRadians(45.0) }, // elbow
-            { 0.0 }, // wrist
+            { Math.toRadians(-90.0) }, // wrist
             { 0.0 } // intake
         ),
 
         SetPickAndPlacePosition(
             true,
             pnp,
-            { 0.5 }, // elevator
+            { 0.1 }, // elevator
             { Math.toRadians(45.0) }, // elbow
-            { 0.0 }, // wrist
-            { 0.0 } // intake
+            { Math.toRadians(-90.0) }, // wrist
+            { 2.0 } // intake
         )
     )
 
@@ -182,10 +183,19 @@ fun LowPlace(pnp: PickAndPlaceSubsystem): Command {
 fun MidPlace(pnp: PickAndPlaceSubsystem): Command {
     return SequentialCommandGroup(
         SetPickAndPlacePosition(
-            true,
+            false,
             pnp,
-            { 0.0 }, // elevator
-            { Math.toRadians(75.0) }, // elbow
+            { 0.1 }, // elevator
+            { Math.toRadians(65.0) }, // elbow
+            { Math.toRadians(20.0) }, // wrist
+            { 0.0 } // intake
+        ),
+
+        SetPickAndPlacePosition(
+            false,
+            pnp,
+            { 0.45 }, // elevator
+            { Math.toRadians(8.0) }, // elbow
             { 0.0 }, // wrist
             { 0.0 } // intake
         ),
@@ -194,18 +204,9 @@ fun MidPlace(pnp: PickAndPlaceSubsystem): Command {
             true,
             pnp,
             { 0.45 }, // elevator
-            { Math.toRadians(75.0) }, // elbow
+            { Math.toRadians(8.0) }, // elbow
             { 0.0 }, // wrist
-            { 0.0 } // intake
-        ),
-
-        SetPickAndPlacePosition(
-            true,
-            pnp,
-            { 0.45 }, // elevator
-            { 0.0 }, // elbow
-            { 0.0 }, // wrist
-            { 0.0 } // intake
+            { 2.0 } // intake
         )
 
 
@@ -218,9 +219,9 @@ fun HighPlace(pnp: PickAndPlaceSubsystem): Command {
         SetPickAndPlacePosition(
             false,
             pnp,
-            { 0.0 }, // elevator
+            { 0.1 }, // elevator
             { Math.toRadians(65.0) }, // elbow
-            { 0.0 }, // wrist
+            { Math.toRadians(20.0) }, // wrist
             { 0.0 }
         ),
 
@@ -228,7 +229,7 @@ fun HighPlace(pnp: PickAndPlaceSubsystem): Command {
             false,
             pnp,
             { 0.9 }, // elevator
-            { Math.toRadians(65.0) }, // elbow
+            { Math.toRadians(8.0) }, // elbow
             { 0.0 }, // wrist
             { 0.0 }
         ),
@@ -237,7 +238,7 @@ fun HighPlace(pnp: PickAndPlaceSubsystem): Command {
             true,
             pnp,
             { 0.9 }, // elevator
-            { Math.toRadians(65.0) }, // elbow
+            { Math.toRadians(8.0) }, // elbow
             { 0.0 }, // wrist
             { 2.0 }
         )
@@ -306,29 +307,37 @@ fun TestPickandPlace(pnp: PickAndPlaceSubsystem): Command {
             { 0.6 }, // elevator
             { Math.toRadians(-40.0) }, // elbow
             { 0.0 }, // wrist
-            { 0.0 }
+            { 2.0 }
         )
     )
 }
 fun LowPickCone(pnp: PickAndPlaceSubsystem): Command {
-    return SetPickAndPlacePosition(
-        true,
-        pnp,
-        { 0.0 }, // elevator
-        { Math.toRadians(5.0) }, // elbow
-        { Math.toRadians(-35.0) }, // wrist
-        { 0.0 } // intake
-    )
-}
-
-
-fun LowPickCube(pnp: PickAndPlaceSubsystem): Command {
     return SequentialCommandGroup(
+        SetPickAndPlacePosition(
+            false,
+            pnp,
+            { 0.1 }, // elevator
+            { Math.toRadians(-10.0) }, // elbow
+            { 0.0 }, // wrist
+            { 0.0 } // intake
+        ),
         SetPickAndPlacePosition(
             true,
             pnp,
             { 0.0 }, // elevator
-            { 0.0 }, // elbow
+            { Math.toRadians(-10.0) }, // elbow
+            { 0.0 }, // wrist
+            { 2.0 } // intake
+        )
+    )
+}
+fun LowPickCube(pnp: PickAndPlaceSubsystem): Command {
+    return SequentialCommandGroup(
+        SetPickAndPlacePosition(
+            false,
+            pnp,
+            { 0.2 }, // elevator
+            { Math.toRadians(-25.0) }, // elbow
             { 0.0 }, // wrist
             { 0.0 } // intake
         ),
@@ -336,10 +345,10 @@ fun LowPickCube(pnp: PickAndPlaceSubsystem): Command {
         SetPickAndPlacePosition(
             true,
             pnp,
-            { 0.0 }, // elevator
-            { 0.0 }, // elbow
+            { 0.2 }, // elevator
+            { Math.toRadians(-25.0) }, // elbow
             { 0.0 }, // wrist
-            { 0.2 } // intake
+            { 2.0 } // intake
         )
 
     )
