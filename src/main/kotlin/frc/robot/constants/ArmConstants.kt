@@ -16,7 +16,7 @@ object ArmConstants {
     val elbowMotorInverted = true
     val intakeMotorInverted = false
 
-    //PID vals
+    //Need very small tune
     val elevatorP = 150.0 //500
     val elevatorI = 0.0
     val elevatorD = 0.0
@@ -27,6 +27,7 @@ object ArmConstants {
     val elbowD = 0.0
     val elbowFF = ArmFeedforward(0.13, 0.50, 1.00)
 
+    //tune:
     val wristP = 3.0
     val wristI = 0.0
     val wristD = 0.0
@@ -46,6 +47,7 @@ object ArmConstants {
     val elevatorEncoderVelocityConversionFactor = (0.003010870139 * 2.4) / 60.0 //this should turn revs/min to meters/sec
     val elevatorEncoderPositionConversionFactor = 0.003010870139 * 2.4 //this should turn revs to meters
 
+    //could need small tuning:
     val elbowEncoderPosOffset = -2.727
     val wristEncoderPosOffset = -0.0925
 
