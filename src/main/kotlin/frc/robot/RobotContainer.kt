@@ -62,26 +62,51 @@ class RobotContainer {
             true,
             true)
 */
-        JoystickButton(primaryController, XboxController.Button.kA.value).onTrue(
-            AlignToAprilTag(swerveSubsystem, primaryController)
+//        JoystickButton(primaryController, XboxController.Button.kA.value).onTrue(
+//            AlignToAprilTag(swerveSubsystem, primaryController)
+//        )
+
+
+
+//        var height = 0.5
+//        var rotation = Math.PI/4.0
+
+//        pickAndPlace.defaultCommand = SetPickAndPlacePosition(true, pickAndPlace,
+//            {
+//                height = (height + primaryController.leftY / 25.0).coerceIn(0.0, 0.9)
+//                height
+//            }, // elevator position meters
+//            {
+//                rotation = (rotation + primaryController.rightY / 25.0).coerceIn(-Math.PI / 2.0, Math.PI / 2.0);
+//                rotation
+//            }, // elbow radians
+//            { 0.0 }, // wrist radians
+//            { (primaryController.leftTriggerAxis - primaryController.rightTriggerAxis) * 12.0}
+//            )
+
+        pickAndPlace.defaultCommand = zeroVoltage(pickAndPlace)
+
+        JoystickButton(primaryController, XboxController.Button.kA.value).whileTrue(
+            TestPickandPlace(pickAndPlace)
         )
+//
+//        JoystickButton(primaryController, XboxController.Button.kX.value).whileTrue(
+//            MidPlace(pickAndPlace)
+//        )
+//
+//        JoystickButton(primaryController, XboxController.Button.kY.value).whileTrue(
+//            HighPlace(pickAndPlace)
+//        )
+//
+//        JoystickButton(primaryController, XboxController.Button.kB.value).whileTrue(
+//            Base(pickAndPlace)
+//        )
 
-        var height = 0.5
-        var rotation = Math.PI/4.0
 
-        pickAndPlace.defaultCommand = SetPickAndPlacePosition(true, pickAndPlace,
-            {
-                height = (height + primaryController.leftY / 25.0).coerceIn(0.0, 0.9)
-                height
-            }, // elevator position meters
-            {
-                rotation = (rotation + primaryController.rightY / 25.0).coerceIn(-Math.PI / 2.0, Math.PI / 2.0);
-                rotation
-            }, // elbow radians
-            { 0.0 }, // wrist radians
-            { (primaryController.leftTriggerAxis - primaryController.rightTriggerAxis) * 12.0}
-            )
+
+
+
     }
 
-    val autonoumousCommand: Command = RunCommand({})
+    //val autonoumousCommand: Command = RunCommand({})
 }

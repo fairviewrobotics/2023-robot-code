@@ -6,7 +6,10 @@ import com.revrobotics.SparkMaxAbsoluteEncoder
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.networktables.NetworkTableInstance
 import edu.wpi.first.wpilibj.DigitalInput
+import edu.wpi.first.wpilibj.XboxController
+import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.SubsystemBase
+import frc.robot.commands.SetPickAndPlacePosition
 import frc.robot.constants.ArmConstants
 import frc.robot.constants.IntakeConstants
 
@@ -59,13 +62,19 @@ class PickAndPlaceSubsystem(elevatorMotorId : Int,
 
         val elevatorZeroed =  NetworkTableInstance.getDefault().getTable("Arm").getBooleanTopic("ElevatorZeroed").publish()
 
+        var table = NetworkTableInstance.getDefault().getTable("NtPnP positions")
+
+        var elevatorValue = table.getDoubleTopic("Elevator").subscribe(0.0)
+        var elbowValue = table.getDoubleTopic("Elbow").subscribe(0.0)
+        var wristValue = table.getDoubleTopic("Wrist").subscribe(0.0)
+
     }
 
 
     init {
         //intake
-        elbowMotor.setSmartCurrentLimit(20)
-        wristMotor.setSmartCurrentLimit(20)
+        elbowMotor.setSmartCurrentLimit(38)
+        wristMotor.setSmartCurrentLimit(38)
         elbowMotor.inverted = ArmConstants.elbowMotorInverted
         wristMotor.idleMode = CANSparkMax.IdleMode.kBrake
         //intakeOneMotor.idleMode = CANSparkMax.IdleMode.kBrake
@@ -87,28 +96,30 @@ class PickAndPlaceSubsystem(elevatorMotorId : Int,
         //everything else:
         // TODO: Elevator conversion factors have been tuned, but the elbow conversion factors have not.
         elbowEncoder.positionConversionFactor = 2.0 * Math.PI
-        elbowEncoder.velocityConversionFactor = 2.0 * Math.PI / 60.0
+        elbowEncoder.velocityConversionFactor = (2.0 *Math.PI)/60
 
         elevatorEncoder.positionConversionFactor = ArmConstants.elevatorEncoderPositionConversionFactor
         elevatorEncoder.velocityConversionFactor = ArmConstants.elevatorEncoderVelocityConversionFactor
 
-        wristEncoder.positionConversionFactor = 2.0 *Math.PI
-        wristEncoder.velocityConversionFactor = 2.0 *Math.PI / 60.0
+        wristEncoder.positionConversionFactor = 2.0 * Math.PI
+        wristEncoder.velocityConversionFactor = (2.0 * Math.PI)/ 60.0
         // TODO: wristEncoder position and velocity conversion factor
     }
 
-    val elbowPositionRadians get() = Rotation2d(elbowEncoder.position).plus(Rotation2d(absoluteWristPosition)).minus(Rotation2d(05.880)).minus(
-        Rotation2d(-1.25)
-    ).radians
+
+    val elbowPositionFirst get() = Rotation2d(elbowEncoder.position).plus(Rotation2d(absoluteWristPosition))
+
+    val elbowPositionRadians get() = elbowPositionFirst.minus(Rotation2d(ArmConstants.elbowEncoderPosOffset)).radians
     val elevatorPositionMeters get() = elevatorEncoder.position
 
     //intake
-    val absoluteWristPosition get() = Rotation2d(wristEncoder.position).minus(Rotation2d(0.900)).radians
+    val absoluteWristPosition get() = Rotation2d(wristEncoder.position).minus(Rotation2d(ArmConstants.wristEncoderPosOffset)).radians
+
 
     /** This is the pitch with taking consideration to the position of the elbow.
      * 0 degrees means the intake is parallel to the ground.
      */
-    val relativeWristPosition get() = 2.0
+    //val relativeWristPosition get() = Rotation2d(wristEncoder.position).minus(Rotation2d(ArmConstants.wristEncoderPosOffset)).radians
 
     /** This value sets the voltage for the intake motors. Positive value will spin the wheels inward
      * and pick objects up.
@@ -138,8 +149,9 @@ class PickAndPlaceSubsystem(elevatorMotorId : Int,
     var elevatorVoltage = 0.0
         set(x: Double) {
             field = x
+            Telemetry.elevatorVoltage.set(elevatorVoltage)
             if (!elevatorZeroed) {
-                elevatorMotor.setVoltage(-3.0)
+                elevatorMotor.setVoltage(ArmConstants.elevatorZeroingVoltage)
             } else if (bottomHit && x < 0.0) {
                 elevatorMotor.setVoltage(0.0)
             } else if (topHit && x > 0.0) {
@@ -152,7 +164,7 @@ class PickAndPlaceSubsystem(elevatorMotorId : Int,
     override fun periodic() {
         super.periodic()
         if (!elevatorZeroed) {
-            elevatorMotor.setVoltage(-3.0)
+            elevatorMotor.setVoltage(ArmConstants.elevatorZeroingVoltage)
         }
         // These are the voltages we set and will be sent to the elevator and elbow.
         if(bottomHit)
@@ -175,10 +187,24 @@ class PickAndPlaceSubsystem(elevatorMotorId : Int,
         Telemetry.bottomHit.set(bottomHit)
         Telemetry.wristVoltage.set(wristVoltage)
         Telemetry.elbowVoltage.set(elbowVoltage)
-        Telemetry.elevatorVoltage.set(elevatorVoltage)
+
         Telemetry.intakeVoltage.set(intakesVoltage)
         Telemetry.elevatorPosition.set(elevatorPositionMeters)
         Telemetry.elevatorVelocity.set(elevatorEncoder.velocity)
+
+    }
+    fun NTPnP(pnp: PickAndPlaceSubsystem, controller: XboxController): Command {
+
+        return SetPickAndPlacePosition(
+            true,
+            pnp,
+            {
+                Telemetry.elevatorValue.get()
+            }, // elevator
+            { Telemetry.elbowValue.get() }, // elbow
+            { Telemetry.wristValue.get() }, // wrist
+            { controller.leftTriggerAxis * 12.0 } // intake
+        )
     }
 
 }

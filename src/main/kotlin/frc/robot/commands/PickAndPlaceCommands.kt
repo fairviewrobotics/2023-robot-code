@@ -2,10 +2,12 @@ package frc.robot.commands
 
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.controller.ProfiledPIDController
+import edu.wpi.first.math.trajectory.TrapezoidProfile
 import edu.wpi.first.networktables.NetworkTableInstance
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandBase
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
 import frc.robot.constants.ArmConstants
 import frc.robot.subsystems.PickAndPlaceSubsystem
 
@@ -15,24 +17,36 @@ class SetPickAndPlacePosition(val continuous: Boolean ,val subsystem: PickAndPla
                           val wristSupplier:()->Double,
                           val intakeSupplier: ()->Double,
                           ) : CommandBase() {
-    init {
-        addRequirements(subsystem)
-    }
-    var elevatorPid = PIDController(
-    ArmConstants.elevatorP,
-    ArmConstants.elevatorI,
-    ArmConstants.elevatorD)
-
-    var elbowPid = PIDController(
+    var first = true
+    var elevatorPid = ProfiledPIDController(
+        ArmConstants.elevatorP,
+        ArmConstants.elevatorI,
+        ArmConstants.elevatorD,
+        TrapezoidProfile.Constraints(3.0, 0.9)
+    )
+    var elbowPid = ProfiledPIDController(
         ArmConstants.elbowP,
         ArmConstants.elbowI,
-        ArmConstants.elbowD, )
-    var wristPid = PIDController(
+        ArmConstants.elbowD,
+        TrapezoidProfile.Constraints(Math.PI/4, Math.PI/32)
+    )
+
+    var wristPid = ProfiledPIDController(
         ArmConstants.wristP,
         ArmConstants.wristI,
-        ArmConstants.wristD, )
-
+        ArmConstants.wristD,
+        TrapezoidProfile.Constraints(Math.PI/8, Math.PI/32)
+    )
     val elbowFeedforward = ArmConstants.elbowFF
+
+    val wristFeedforward = ArmConstants.wristFF
+    init {
+        addRequirements(subsystem)
+        first = true
+
+        elevatorPid.setTolerance(0.03)
+        elbowPid.setTolerance(0.09)
+    }
 
     object Telemetry{
         val desiredElbow = NetworkTableInstance.getDefault().getTable("Arm").getDoubleTopic("DesiredElbow").publish()
@@ -47,18 +61,31 @@ class SetPickAndPlacePosition(val continuous: Boolean ,val subsystem: PickAndPla
         val elbowPidVelocityError = NetworkTableInstance.getDefault().getTable("Arm").getDoubleTopic("ElbowPidError").publish()
         val elevatorPidVelocityError = NetworkTableInstance.getDefault().getTable("Arm").getDoubleTopic("ElevatorPidError").publish()
         val wristPidVelocityError = NetworkTableInstance.getDefault().getTable("Arm").getDoubleTopic("WristPidError").publish()
-
-        val elbowVoltage = NetworkTableInstance.getDefault().getTable("Arm").getDoubleTopic("ElbowVolts").publish()
-        val wristVoltage = NetworkTableInstance.getDefault().getTable("Arm").getDoubleTopic("WristVolts").publish()
-        val elevatorVoltage = NetworkTableInstance.getDefault().getTable("Arm").getDoubleTopic("ElevatorVolts").publish()
     }
 
     override fun execute() {
 
-        subsystem.elevatorVoltage = elevatorPid.calculate(subsystem.elevatorPositionMeters,elevatorSupplier().coerceIn(ArmConstants.elevatorMinHeight, ArmConstants.elevatorMaxHeight))
-        subsystem.elbowVoltage = elbowPid.calculate(subsystem.elbowPositionRadians,elbowSupplier().coerceIn(ArmConstants.elbowMinRotation, ArmConstants.elbowMaxRotation)) + elbowFeedforward.calculate(subsystem.elbowPositionRadians, Math.PI)
-        subsystem.wristVoltage = wristPid.calculate(subsystem.absoluteWristPosition,wristSupplier().coerceIn(ArmConstants.wristMinRotation, ArmConstants.wristMaxRotation))
-        subsystem.intakesVoltage = intakeSupplier()
+        if (first){
+            elevatorPid.reset(subsystem.elevatorPositionMeters)
+            elbowPid.reset(subsystem.elbowPositionRadians)
+            wristPid.reset(subsystem.absoluteWristPosition)
+
+            subsystem.elevatorVoltage = elevatorPid.calculate(subsystem.elevatorPositionMeters,elevatorSupplier().coerceIn(ArmConstants.elevatorMinHeight, ArmConstants.elevatorMaxHeight))
+            subsystem.elbowVoltage = elbowPid.calculate(subsystem.elbowPositionRadians,elbowSupplier().coerceIn(ArmConstants.elbowMinRotation, ArmConstants.elbowMaxRotation)) + elbowFeedforward.calculate(subsystem.elbowPositionRadians, 0.0)
+            subsystem.wristVoltage = wristPid.calculate(subsystem.absoluteWristPosition,wristSupplier().coerceIn(ArmConstants.wristMinRotation, ArmConstants.wristMaxRotation)) + wristFeedforward.calculate(subsystem.absoluteWristPosition, 0.0)
+            subsystem.intakesVoltage = intakeSupplier()
+        } else {
+            subsystem.elevatorVoltage = elevatorPid.calculate(subsystem.elevatorPositionMeters)
+
+            subsystem.elbowVoltage = elbowPid.calculate(subsystem.elbowPositionRadians) + elbowFeedforward.calculate(subsystem.elbowPositionRadians, 0.0)
+            subsystem.wristVoltage = wristPid.calculate(subsystem.absoluteWristPosition) + wristFeedforward.calculate(subsystem.absoluteWristPosition, 0.0)
+            subsystem.intakesVoltage = intakeSupplier()
+
+
+
+
+        }
+
 
         // TODO: Add telemetry: desired states (from suppliers), pid errors, voltages
         Telemetry.desiredWrist.set(wristSupplier())
@@ -71,27 +98,249 @@ class SetPickAndPlacePosition(val continuous: Boolean ,val subsystem: PickAndPla
         Telemetry.elbowPidVelocityError.set(elbowPid.velocityError)
         Telemetry.elevatorPidVelocityError.set(elevatorPid.velocityError)
         Telemetry.wristPidVelocityError.set(wristPid.velocityError)
-        Telemetry.elbowVoltage.set(subsystem.elbowVoltage)
-        Telemetry.wristVoltage.set(subsystem.wristVoltage)
-        Telemetry.elevatorVoltage.set(subsystem.elevatorVoltage)
+
+        first = false
     }
 
     override fun isFinished(): Boolean {
-        return !continuous && (elbowPid.atSetpoint() && elevatorPid.atSetpoint() && wristPid.atSetpoint())
+        return !continuous && (elbowPid.atSetpoint() && elevatorPid.atSetpoint())
+    }
+
+    override fun end(interrupted: Boolean) {
+        // TODO: does zeroing the intake voltage cause the piece to drop?
+        subsystem.elevatorVoltage = 0.0
+        subsystem.wristVoltage = 0.0
+        subsystem.elbowVoltage = 0.0
+        subsystem.intakesVoltage = 0.0
     }
 }
 
-fun NTPnP(pnp: PickAndPlaceSubsystem, controller: XboxController): Command {
-    var height = 0.5
-    return SetPickAndPlacePosition(
-        true,
-        pnp,
-        {
-            height += controller.leftX / 25;
-            height
-        }, // elevator
-        { 0.0 }, // eblbow
-        { Math.PI / 2.0 }, // wrist
-        { controller.leftTriggerAxis * 12.0 } // intake
+class zeroVoltage(val subsystem: PickAndPlaceSubsystem): CommandBase() {
+
+    init {
+        addRequirements(subsystem)
+    }
+
+    override fun execute() {
+        subsystem.wristVoltage = 0.0
+        subsystem.elevatorVoltage = 0.0
+        subsystem.elbowVoltage = 0.0
+        subsystem.intakesVoltage = 0.0
+    }
+
+
+
+}
+fun Base(pnp: PickAndPlaceSubsystem): Command {
+    return SequentialCommandGroup(
+        SetPickAndPlacePosition(
+            true,
+            pnp,
+            { 0.0 }, // elevator
+            { Math.toRadians(60.0) }, // elbow
+            { Math.toRadians(0.0) }, // wrist
+            { 0.0 } // intake
+        ),
+
+        SetPickAndPlacePosition(
+            true,
+            pnp,
+            { 0.0 }, // elevator
+            { Math.toRadians(85.0) }, // elbow
+            { Math.toRadians(0.0) }, // wrist
+            { 0.0 } // intake
+        )
+    )
+
+
+}
+
+fun LowPlace(pnp: PickAndPlaceSubsystem): Command {
+    return SequentialCommandGroup(
+        SetPickAndPlacePosition(
+            false,
+            pnp,
+            { 0.5 }, // elevator
+            { Math.toRadians(45.0) }, // elbow
+            { 0.0 }, // wrist
+            { 0.0 } // intake
+        ),
+
+        SetPickAndPlacePosition(
+            true,
+            pnp,
+            { 0.5 }, // elevator
+            { Math.toRadians(45.0) }, // elbow
+            { 0.0 }, // wrist
+            { 0.0 } // intake
+        )
+    )
+
+
+}
+fun MidPlace(pnp: PickAndPlaceSubsystem): Command {
+    return SequentialCommandGroup(
+        SetPickAndPlacePosition(
+            true,
+            pnp,
+            { 0.0 }, // elevator
+            { Math.toRadians(75.0) }, // elbow
+            { 0.0 }, // wrist
+            { 0.0 } // intake
+        ),
+
+        SetPickAndPlacePosition(
+            true,
+            pnp,
+            { 0.45 }, // elevator
+            { Math.toRadians(75.0) }, // elbow
+            { 0.0 }, // wrist
+            { 0.0 } // intake
+        ),
+
+        SetPickAndPlacePosition(
+            true,
+            pnp,
+            { 0.45 }, // elevator
+            { 0.0 }, // elbow
+            { 0.0 }, // wrist
+            { 0.0 } // intake
+        )
+
+
+    )
+
+
+}
+fun HighPlace(pnp: PickAndPlaceSubsystem): Command {
+    return SequentialCommandGroup(
+        SetPickAndPlacePosition(
+            true,
+            pnp,
+            { 0.0 }, // elevator
+            { Math.toRadians(75.0) }, // elbow
+            { 0.0 }, // wrist
+            { 0.0 }
+        ),
+
+        SetPickAndPlacePosition(
+            true,
+            pnp,
+            { 0.9 }, // elevator
+            { Math.toRadians(75.0) }, // elbow
+            { 0.0 }, // wrist
+            { 0.0 }
+        ),
+
+        SetPickAndPlacePosition(
+            true,
+            pnp,
+            { 0.9 }, // elevator
+            { 0.0 }, // elbow
+            { 0.0 }, // wrist
+            { 0.0 }
+        )
     )
 }
+fun TestPickandPlace(pnp: PickAndPlaceSubsystem): Command {
+    return SequentialCommandGroup(
+        SetPickAndPlacePosition(
+            false,
+            pnp,
+            { 0.5 }, // elevator
+            { 0.0 }, // elbow
+            { 0.0 }, // wrist
+            { 0.0 }
+        )
+//
+//        SetPickAndPlacePosition(
+//            false,
+//            pnp,
+//            { 0.5 }, // elevator
+//            { Math.toRadians(-40.0) }, // elbow
+//            { 0.0 }, // wrist
+//            { 0.0 }
+//        ),
+//
+//        SetPickAndPlacePosition(
+//            false,
+//            pnp,
+//            { 0.5 }, // elevator
+//            { 0.0 }, // elbow
+//            { 0.0 }, // wrist
+//            { 0.0 }
+//        ),
+//
+//        SetPickAndPlacePosition(
+//            false,
+//            pnp,
+//            { 0.0 }, // elevator
+//            { 0.0 }, // elbow
+//            { 0.0 }, // wrist
+//            { 0.0 }
+//        ),
+//
+//        SetPickAndPlacePosition(
+//            false,
+//            pnp,
+//            { 0.6 }, // elevator
+//            { Math.toRadians(0.0) }, // elbow
+//            { 0.0 }, // wrist
+//            { 0.0 }
+//        ),
+//
+//        SetPickAndPlacePosition(
+//            false,
+//            pnp,
+//            { 0.6 }, // elevator
+//            { Math.toRadians(-45.0) }, // elbow
+//            { 0.0 }, // wrist
+//            { 0.0 }
+//        ),
+//
+//        SetPickAndPlacePosition(
+//            true,
+//            pnp,
+//            { 0.6 }, // elevator
+//            { Math.toRadians(-40.0) }, // elbow
+//            { 0.0 }, // wrist
+//            { 0.0 }
+//        )
+    )
+}
+//fun LowPickCone(pnp: PickAndPlaceSubsystem): Command {
+//    return SetPickAndPlacePosition(
+//        true,
+//        pnp,
+//        { 0.0 }, // elevator
+//        { Math.toRadians(5.0) }, // elbow
+//        { Math.toRadians(-35.0) }, // wrist
+//        { 0.0 } // intake
+//    )
+//}
+
+
+//fun LowPickCube(pnp: PickAndPlaceSubsystem): Command {
+//    return SequentialCommandGroup(
+//        SetPickAndPlacePosition(
+//            true,
+//            pnp,
+//            { 0.0 }, // elevator
+//            { 0.0 }, // elbow
+//            { 0.0 }, // wrist
+//            { 0.0 } // intake
+//        ),
+//
+//        SetPickAndPlacePosition(
+//            true,
+//            pnp,
+//            { 0.0 }, // elevator
+//            { 0.0 }, // elbow
+//            { 0.0 }, // wrist
+//            { 0.2 } // intake
+//        )
+//
+//    )
+//
+//
+//}

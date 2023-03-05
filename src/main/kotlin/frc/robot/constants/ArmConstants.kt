@@ -17,19 +17,20 @@ object ArmConstants {
     val intakeMotorInverted = false
 
     //PID vals
-    val elevatorP = 500.0 //500
+    val elevatorP = 150.0 //500
     val elevatorI = 0.0
     val elevatorD = 0.0
     //val elevatorTrapezoidConstraints = TrapezoidProfile.Constraints(50.0, 30.0)
 //tune:
-    val elbowP = 7.0
+    val elbowP = 5.0 //5
     val elbowI = 0.0
     val elbowD = 0.0
-    val elbowFF = ArmFeedforward(0.13, 2.07, 1.00)
+    val elbowFF = ArmFeedforward(0.13, 0.50, 1.00)
 
-    val wristP = 1.0
+    val wristP = 3.0
     val wristI = 0.0
     val wristD = 0.0
+    val wristFF = ArmFeedforward(0.13, 1.50, 1.00)
 
     val elevatorMinHeight = 0.0
     val elevatorMaxHeight = 0.9245
@@ -42,42 +43,11 @@ object ArmConstants {
 
     // multipliers for unit conversion and stuff
     // these values obtained from tuning
-    val elevatorEncoderVelocityConversionFactor = 0.003010870139 / 60.0 //this should turn revs/min to meters/sec
-    val elevatorEncoderPositionConversionFactor = 0.003010870139 //this should turn revs to meters
+    val elevatorEncoderVelocityConversionFactor = (0.003010870139 * 2.4) / 60.0 //this should turn revs/min to meters/sec
+    val elevatorEncoderPositionConversionFactor = 0.003010870139 * 2.4 //this should turn revs to meters
 
-     val elbowEncoderPosOffset = 0.0
+    val elbowEncoderPosOffset = -2.727
+    val wristEncoderPosOffset = -0.0925
 
-    //all those random command values
-    //knowing the mechanism, these will end up being really strange values for all the way down.
-//bottom
-    val elevatorBottomPos = 0.0
-    val elbowBottomPos = 0.0
-
-    //top peg
-    val elevatorTopPegPos = 3.0
-    val elbowTopPegPos = 3.0
-
-    //middle peg
-    val elevatorMidPegPos = 2.0
-    val elbowMidPegPos = 2.0
-
-    //ground
-    val elevatorGroundPos = 2.0
-    val elbowGroundPos = 1.0
-
-    //middle shelf
-    val elevatorMidShelfPos = 2.0
-    val elbowMidShelfPos = 2.0
-
-    //top shelf
-    val elevatorTopShelfPos = 3.0
-    val elbowTopShelfPos = 3.0
-
-    //pickup shelf position
-    val elevatorPickupPos = 3.0
-    val elbowPickupPos = 3.0
-
-
-
-
+    val elevatorZeroingVoltage = -0.5
 }
