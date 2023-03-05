@@ -26,7 +26,7 @@ object ArmConstants {
     val elbowI = 0.0
     val elbowD = 0.0
     //maybe change:
-    val elbowFF = ArmFeedforward(0.13, 0.50, 1.00)
+    val elbowFF = ArmFeedforward(0.13, 0.50, 1.00)//might need to change kg
 
     //tune:
     val wristP = 3.0

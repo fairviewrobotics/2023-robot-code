@@ -193,18 +193,18 @@ class PickAndPlaceSubsystem(elevatorMotorId : Int,
         Telemetry.elevatorVelocity.set(elevatorEncoder.velocity)
 
     }
-//    fun NTPnP(pnp: PickAndPlaceSubsystem, controller: XboxController): Command {
-//
-//        return SetPickAndPlacePosition(
-//            true,
-//            pnp,
-//            {
-//                Telemetry.elevatorValue.get()
-//            }, // elevator
-//            { Telemetry.elbowValue.get() }, // elbow
-//            { Telemetry.wristValue.get() }, // wrist
-//            { controller.leftTriggerAxis * 12.0 } // intake
-//        )
-//    }
+    fun NTPnP(pnp: PickAndPlaceSubsystem, controller: XboxController): Command {
+
+        return SetPickAndPlacePosition(
+            true,
+            pnp,
+            {
+                Telemetry.elevatorValue.get()
+            }, // elevator
+            { Telemetry.elbowValue.get() }, // elbow
+            { Telemetry.wristValue.get() }, // wrist
+            { controller.leftTriggerAxis * 12.0 } // intake
+        )
+    }
 
 }

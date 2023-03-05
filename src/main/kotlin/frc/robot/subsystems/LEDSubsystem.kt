@@ -5,19 +5,14 @@ import edu.wpi.first.wpilibj.AddressableLEDBuffer
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 
-enum class LEDSubsystemState {
-    GYRO_UP_OR_DOWN,
-    GYRO_FLAT,
-    RAINBOW,
-    CUBE,
-    CONE,
-    NULL
-}
-
 class LEDSubsystem : SubsystemBase() {
+    private var ds = DriverStation.isTeleop()
     var led = AddressableLED(0)
-    var ledBuffer = AddressableLEDBuffer(24)
-    var state = LEDSubsystemState.NULL
+    var ledBuffer = AddressableLEDBuffer(51)
+    var coneNeeded : Boolean = false
+    var cubeNeeded : Boolean = false
+    var rainbowFirstPixelHue: Int = 0
+    //TODO: Remember, the lights are RBG not RGB so G and B must be switched to get the correct color
     init {
         led.setLength(ledBuffer.length)
         led.setData(ledBuffer)
@@ -26,91 +21,71 @@ class LEDSubsystem : SubsystemBase() {
     var time = 0
     override fun periodic() {
         time += 1
-        if (state == LEDSubsystemState.GYRO_UP_OR_DOWN)
-        {
-            gyroUpOrDown()
+        println(time)
+        if (time >= 102) {
+            time = 0
         }
-        else if(state == LEDSubsystemState.GYRO_FLAT)
-        {
-            gyroFlat()
-        }
-        else if(state == LEDSubsystemState.RAINBOW)
-        {
+        if (DriverStation.isEnabled()) {
+            if (DriverStation.isAutonomous()) {
+                autoColor()
+            } else if (DriverStation.isTeleop()) {
+                teleop()
+            }
+        } else if (DriverStation.isDisabled()) {
             rainbow()
-        }
-        else if(state == LEDSubsystemState.CUBE)
-        {
-            cube()
-        }
-        else if(state == LEDSubsystemState.CONE)
-        {
-            cone()
-        }
-        else
-        {
-            offLeds()
-        }
-
-    }
-
-    fun setLEDState(sstate: LEDSubsystemState) {
-        state = sstate
+         }
     }
 
     fun offLeds() {
         for (i in 0..ledBuffer.length-1) {
-            ledBuffer.setRGB(i, 179, 20, 20)
+            ledBuffer.setHSV(i, 0, 0, 0)
         }
         led.setData(ledBuffer)
     }
-
-    private fun gyroFlat() {
+    fun autoColor() {
+        if (DriverStation.isAutonomous()) {
+            if (time >= 1) {
+                ledBuffer.setHSV(time / 4, 115, 230, 255)
+                led.setData(ledBuffer)
+                for (i in 0..ledBuffer.length - 1) {
+                    ledBuffer.setHSV(i, 0, 0, 0)
+                }
+                led.setData(ledBuffer)
+            }
+        }
+    }
+    fun teleop() {
+        if (DriverStation.isTeleop()) {
+            if (coneNeeded == true) {
+                for (i in 0..ledBuffer.length - 1) {
+                    ledBuffer.setHSV(i, 25, 255, 255)
+                }
+                led.setData(ledBuffer)
+            } else if (cubeNeeded == true) {
+                for (i in 0..ledBuffer.length - 1) {
+                    ledBuffer.setHSV(i, 144, 255, 255)
+                }
+                led.setData(ledBuffer)
+            } else {
+                for (i in 0..ledBuffer.length - 1) {
+                    ledBuffer.setHSV(i, 0, 0, 0)
+                }
+                led.setData(ledBuffer)
+            }
+        }
+        //connect to network tables on strategy app
+        //if strategy app says pickup cone, shine yellow solid lights
+    }
+    fun rainbowSystem() {
         for (i in 0..ledBuffer.length - 1) {
-            ledBuffer.setRGB(i, 95, 150, 0)
+            var hue: Int = (rainbowFirstPixelHue + (i * 180 / ledBuffer.length)) % 180
+            ledBuffer.setHSV(i, hue, 255, 128)
         }
-        led.setData(ledBuffer)
+        rainbowFirstPixelHue += 3
+        rainbowFirstPixelHue %= 180
     }
-
-    private fun gyroUpOrDown() {
-        for (i in 0..ledBuffer.length - 1) {
-            ledBuffer.setRGB(i, 255, 0, 200)
-
-        }
-        led.setData(ledBuffer)
-    }
-
-
     fun rainbow() {
-
-        for (i in 0..23) {
-            led.setData(ledBuffer)
-            ledBuffer.setHSV(i, ((i+time) % 23)*180/23, 255, 255)
-        }
-    }
-    fun cone() {
-        for (i in 0..22 step 2) {
-            led.setData(ledBuffer)
-            ledBuffer.setHSV((i + time) % 23, 26, 255, 255)
-            led.setData(ledBuffer)
-            ledBuffer.setHSV((i+1+time) % 23, 166, 255, 255)
-        }
-
+        rainbowSystem()
         led.setData(ledBuffer)
-        ledBuffer.setHSV(23, 26, 255, 255)
     }
-
-    fun cube(){
-        for (i in 0..22 step 2) { //(289/365)*180
-            //set the cube color
-            led.setData(ledBuffer)
-            ledBuffer.setHSV((i+time) % 23, 143, 255, 255)
-            //set that random other color on the other blocks
-            led.setData(ledBuffer)
-            ledBuffer.setHSV((i+1+time) % 23, 157, 255, 255)
-        }
-        //set the one obnoxious non-even one
-        led.setData(ledBuffer)
-        ledBuffer.setHSV(23, 143, 255, 255)
-    }
-
 }

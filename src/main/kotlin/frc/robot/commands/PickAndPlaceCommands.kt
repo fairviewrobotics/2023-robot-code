@@ -185,7 +185,7 @@ fun MidPlace(pnp: PickAndPlaceSubsystem): Command {
         SetPickAndPlacePosition(
             false,
             pnp,
-            { 0.1 }, // elevator
+            { 0.2 }, // elevator
             { Math.toRadians(65.0) }, // elbow
             { Math.toRadians(20.0) }, // wrist
             { 0.0 } // intake
@@ -194,8 +194,8 @@ fun MidPlace(pnp: PickAndPlaceSubsystem): Command {
         SetPickAndPlacePosition(
             false,
             pnp,
-            { 0.45 }, // elevator
-            { Math.toRadians(8.0) }, // elbow
+            { 0.2 }, // elevator
+            { Math.toRadians(25.0) }, // elbow
             { 0.0 }, // wrist
             { 0.0 } // intake
         ),
@@ -203,8 +203,8 @@ fun MidPlace(pnp: PickAndPlaceSubsystem): Command {
         SetPickAndPlacePosition(
             true,
             pnp,
-            { 0.45 }, // elevator
-            { Math.toRadians(8.0) }, // elbow
+            { 0.2 }, // elevator
+            { Math.toRadians(25.0) }, // elbow
             { 0.0 }, // wrist
             { 2.0 } // intake
         )
@@ -219,7 +219,7 @@ fun HighPlace(pnp: PickAndPlaceSubsystem): Command {
         SetPickAndPlacePosition(
             false,
             pnp,
-            { 0.1 }, // elevator
+            { 0.7 }, // elevator
             { Math.toRadians(65.0) }, // elbow
             { Math.toRadians(20.0) }, // wrist
             { 0.0 }
@@ -228,8 +228,8 @@ fun HighPlace(pnp: PickAndPlaceSubsystem): Command {
         SetPickAndPlacePosition(
             false,
             pnp,
-            { 0.9 }, // elevator
-            { Math.toRadians(8.0) }, // elbow
+            { 0.7 }, // elevator
+            { Math.toRadians(20.0) }, // elbow
             { 0.0 }, // wrist
             { 0.0 }
         ),
@@ -238,7 +238,7 @@ fun HighPlace(pnp: PickAndPlaceSubsystem): Command {
             true,
             pnp,
             { 0.9 }, // elevator
-            { Math.toRadians(8.0) }, // elbow
+            { Math.toRadians(20.0) }, // elbow
             { 0.0 }, // wrist
             { 2.0 }
         )
