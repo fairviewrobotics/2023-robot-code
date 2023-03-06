@@ -97,5 +97,5 @@ class RobotContainer {
 
     }
 
-    val autonoumousCommand: Command = RunCommand({})
+    val autonomousCommand: Command = RunCommand({})
 }
