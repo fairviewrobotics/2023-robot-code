@@ -68,7 +68,7 @@ class RobotContainer {
 //TODO: The alignment to apriltag needs to happen before the pick and place command in sequential command order
 //TODO: The alignment to apriltag needs to change to pegs for certain cases, or that needs to be added in in a different way cause right now, it would only place for cube shelves
 //TODO: Robot shoots down, something is wrong that we aren't noticing
-        pickAndPlace.defaultCommand = Base(pickAndPlace)//change to base once done testing
+        pickAndPlace.defaultCommand = Base(pickAndPlace)
 
         JoystickButton(primaryController, XboxController.Button.kA.value).whileTrue(
 //            AlignToAprilTag(swerveSubsystem, primaryController)
@@ -76,11 +76,13 @@ class RobotContainer {
         )
 
         JoystickButton(primaryController, XboxController.Button.kX.value).whileTrue(
-            LowPickCube(pickAndPlace)
+            RunCommand({
+                swerveSubsystem.setX()
+            })
         )
 
         JoystickButton(primaryController, XboxController.Button.kB.value).whileTrue(
-            Test2(pickAndPlace)
+            HighPlace(pickAndPlace)
         )
 
         JoystickButton(primaryController, XboxController.Button.kY.value).whileTrue(
@@ -89,9 +91,13 @@ class RobotContainer {
             })
 
         )
+        JoystickButton(primaryController, XboxController.Button.kLeftBumper.value).whileTrue(
+//            AlignToAprilTag(swerveSubsystem, primaryController)
+            LowPickCube(pickAndPlace)
+        )
         JoystickButton(primaryController, XboxController.Button.kRightBumper.value).whileTrue(
 //            AlignToAprilTag(swerveSubsystem, primaryController)
-            HighPlace(pickAndPlace)
+            LowPickCone(pickAndPlace)
         )
 
     }

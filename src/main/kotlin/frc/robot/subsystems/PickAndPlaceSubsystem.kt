@@ -95,7 +95,7 @@ class PickAndPlaceSubsystem(elevatorMotorId : Int,
         //intakeTwoMotor.burnFlash()
         wristMotor.burnFlash()
         //everything else:
-        // TODO: Elevator conversion factors have been tuned, but the elbow conversion factors have not.
+        // TODO: Elevator conversion factors have been tuned
         elbowEncoder.positionConversionFactor = 2.0 * Math.PI
         elbowEncoder.velocityConversionFactor = (2.0 *Math.PI)/60
 
@@ -164,11 +164,6 @@ class PickAndPlaceSubsystem(elevatorMotorId : Int,
 
     override fun periodic() {
         super.periodic()
-        println("--------------")
-        println(elevatorZeroed)
-        println("--------------")
-        println(elevatorEncoder.position)
-        println("--------------")
         if (!elevatorZeroed) {
             elevatorMotor.setVoltage(ArmConstants.elevatorZeroingVoltage)
         }

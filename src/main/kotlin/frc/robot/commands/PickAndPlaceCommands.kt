@@ -46,6 +46,7 @@ class SetPickAndPlacePosition(val continuous: Boolean ,val subsystem: PickAndPla
 
         elevatorPid.setTolerance(0.03)//might need changing
         elbowPid.setTolerance(0.03)//might need changing
+        wristPid.setTolerance(0.03)//TODO: Test and change this asap! DONT FORGET
     }//This might need to be above the variables
 
     object Telemetry{
@@ -69,16 +70,13 @@ class SetPickAndPlacePosition(val continuous: Boolean ,val subsystem: PickAndPla
 
         // store a lastValue for each of these, compare, and then set/reset if they are changed
         if (first){
-
-            elevatorPid.setGoal(subsystem.elevatorPositionMeters)
-            elbowPid.setGoal(subsystem.elbowPositionRadians)
-            wristPid.setGoal(subsystem.absoluteWristPosition)
-
             elevatorPid.reset(subsystem.elevatorPositionMeters)
             elbowPid.reset(subsystem.elbowPositionRadians)
             wristPid.reset(subsystem.absoluteWristPosition)
 
-
+            elevatorPid.setGoal(subsystem.elevatorPositionMeters)
+            elbowPid.setGoal(subsystem.elbowPositionRadians)
+            wristPid.setGoal(subsystem.absoluteWristPosition)
 
             subsystem.elevatorVoltage = elevatorPid.calculate(subsystem.elevatorPositionMeters,elevatorSupplier().coerceIn(ArmConstants.elevatorMinHeight, ArmConstants.elevatorMaxHeight))
             subsystem.elbowVoltage = elbowPid.calculate(subsystem.elbowPositionRadians,elbowSupplier().coerceIn(ArmConstants.elbowMinRotation, ArmConstants.elbowMaxRotation)) + elbowFeedforward.calculate(subsystem.elbowPositionRadians, 0.0)
@@ -91,12 +89,7 @@ class SetPickAndPlacePosition(val continuous: Boolean ,val subsystem: PickAndPla
             subsystem.elbowVoltage = elbowPid.calculate(subsystem.elbowPositionRadians) + elbowFeedforward.calculate(subsystem.elbowPositionRadians, 0.0)
             subsystem.wristVoltage = wristPid.calculate(subsystem.absoluteWristPosition) + wristFeedforward.calculate(subsystem.absoluteWristPosition, 0.0)
 
-
             subsystem.intakesVoltage = intakeSupplier()
-
-
-
-
         }
 
 
@@ -154,13 +147,11 @@ fun Base(pnp: PickAndPlaceSubsystem): Command {
             true,
             pnp,
             { 0.0 }, // elevator
-            { Math.toRadians(85.0) }, // elbow
-            { Math.toRadians(65.0) }, // wrist
+            { Math.toRadians(87.0) }, // elbow
+            { Math.toRadians(70.0) }, // wrist
             { 2.0 } // intake
         )
     )
-
-
 }
 
 fun LowPlace(pnp: PickAndPlaceSubsystem): Command {
@@ -171,7 +162,7 @@ fun LowPlace(pnp: PickAndPlaceSubsystem): Command {
             { 0.1 }, // elevator
             { Math.toRadians(45.0) }, // elbow
             { Math.toRadians(-90.0) }, // wrist
-            { 0.0 } // intake
+            { 1.5 } // intake
         ),
 
         SetPickAndPlacePosition(
@@ -180,11 +171,9 @@ fun LowPlace(pnp: PickAndPlaceSubsystem): Command {
             { 0.1 }, // elevator
             { Math.toRadians(45.0) }, // elbow
             { Math.toRadians(-90.0) }, // wrist
-            { 2.0 } // intake
+            { -2.0 } // intake
         )
     )
-
-
 }
 fun MidPlace(pnp: PickAndPlaceSubsystem): Command {
     return SequentialCommandGroup(
@@ -214,11 +203,7 @@ fun MidPlace(pnp: PickAndPlaceSubsystem): Command {
             { 0.0 }, // wrist
             { -2.0 } // intake
         )
-
-
     )
-
-
 }
 fun HighPlace(pnp: PickAndPlaceSubsystem): Command {
     return SequentialCommandGroup(
@@ -228,7 +213,7 @@ fun HighPlace(pnp: PickAndPlaceSubsystem): Command {
             { 0.7 }, // elevator
             { Math.toRadians(65.0) }, // elbow
             { Math.toRadians(20.0) }, // wrist
-            { 0.0 }
+            { 1.5 }
         ),
 
         SetPickAndPlacePosition(
@@ -237,7 +222,7 @@ fun HighPlace(pnp: PickAndPlaceSubsystem): Command {
             { 0.7 }, // elevator
             { Math.toRadians(20.0) }, // elbow
             { 0.0 }, // wrist
-            { 0.0 }
+            { 1.5 }
         ),
 
         SetPickAndPlacePosition(
@@ -246,7 +231,7 @@ fun HighPlace(pnp: PickAndPlaceSubsystem): Command {
             { 0.7 }, // elevator
             { Math.toRadians(20.0) }, // elbow
             { 0.0 }, // wrist
-            { 2.0 }
+            { -2.0 }
         )
     )
 }
@@ -298,42 +283,5 @@ fun LowPickCube(pnp: PickAndPlaceSubsystem): Command {
             { 0.0 }, // wrist
             { 4.0 } // intake
         )
-
     )
-
-
-}
-fun Test(pnp: PickAndPlaceSubsystem): Command {
-    return SequentialCommandGroup(
-        SetPickAndPlacePosition(
-            true,
-            pnp,
-            { 0.2 }, // elevator
-            { Math.toRadians(45.0) }, // elbow
-            { 0.0 }, // wrist
-            { 0.0 } // intake
-        )
-
-
-
-    )
-
-
-}
-fun Test2(pnp: PickAndPlaceSubsystem): Command {
-    return SequentialCommandGroup(
-        SetPickAndPlacePosition(
-            true,
-            pnp,
-            { 0.2 }, // elevator
-            { 0.0 }, // elbow
-            { 0.0 }, // wrist
-            { 0.0 } // intake
-        )
-
-
-
-    )
-
-
 }
