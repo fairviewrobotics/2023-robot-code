@@ -22,18 +22,18 @@ object ArmConstants {
     val elevatorD = 0.0
     //val elevatorTrapezoidConstraints = TrapezoidProfile.Constraints(50.0, 30.0)
 //tune:
-    val elbowP = 5.0 //5
+    val elbowP = 5.0
     val elbowI = 0.0
     val elbowD = 0.0
     //maybe change:
     val elbowFF = ArmFeedforward(0.13, 0.50, 1.00)//might need to change kg
 
     //tune:
-    val wristP = 3.0
+    val wristP = 4.5
     val wristI = 0.0
     val wristD = 0.0
     //maybe change:
-    val wristFF = ArmFeedforward(0.13, 1.50, 1.00)
+    val wristFF = ArmFeedforward(0.13, 0.20, 1.00)
 
     val elevatorMinHeight = 0.0
     val elevatorMaxHeight = 0.9245

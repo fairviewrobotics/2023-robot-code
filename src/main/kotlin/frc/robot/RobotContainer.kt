@@ -55,40 +55,39 @@ class RobotContainer {
     }
     
     private fun configureButtonBindings() {
-       /*swerveSubsystem.defaultCommand = StandardDrive(swerveSubsystem,
-            { primaryController.leftY * 5.0 },
-            { primaryController.leftX * 5.0 },
-            { primaryController.rightX * 1.0},
+       swerveSubsystem.defaultCommand = StandardDrive(swerveSubsystem,
+            { primaryController.leftY * -1.0 },
+            { primaryController.leftX * -1.0 },
+            { primaryController.rightX * -1.0},
             true,
             true)
-*/
+
 //        JoystickButton(primaryController, XboxController.Button.kA.value).onTrue(
 //            AlignToAprilTag(swerveSubsystem, primaryController)
 //        )
 //TODO: The alignment to apriltag needs to happen before the pick and place command in sequential command order
 //TODO: The alignment to apriltag needs to change to pegs for certain cases, or that needs to be added in in a different way cause right now, it would only place for cube shelves
 //TODO: Robot shoots down, something is wrong that we aren't noticing
-        pickAndPlace.defaultCommand = zeroVoltage(pickAndPlace)//change to base once done testing
+        pickAndPlace.defaultCommand = Base(pickAndPlace)//change to base once done testing
 
         JoystickButton(primaryController, XboxController.Button.kA.value).whileTrue(
 //            AlignToAprilTag(swerveSubsystem, primaryController)
-            TestPickandPlace(pickAndPlace)
+            MidPlace(pickAndPlace)
         )
 
         JoystickButton(primaryController, XboxController.Button.kX.value).whileTrue(
-            LowPickCone(pickAndPlace)
-        )
-
-        JoystickButton(primaryController, XboxController.Button.kB.value).whileTrue(
             LowPickCube(pickAndPlace)
         )
 
-        JoystickButton(primaryController, XboxController.Button.kY.value).whileTrue(
-            Base(pickAndPlace)
+        JoystickButton(primaryController, XboxController.Button.kB.value).whileTrue(
+            Test2(pickAndPlace)
         )
-        JoystickButton(primaryController, XboxController.Button.kLeftBumper.value).whileTrue(
-//            AlignToAprilTag(swerveSubsystem, primaryController)
-            MidPlace(pickAndPlace)
+
+        JoystickButton(primaryController, XboxController.Button.kY.value).whileTrue(
+            RunCommand({
+                swerveSubsystem.zeroGyroAndOdometry()
+            })
+
         )
         JoystickButton(primaryController, XboxController.Button.kRightBumper.value).whileTrue(
 //            AlignToAprilTag(swerveSubsystem, primaryController)

@@ -24,8 +24,8 @@ class PickAndPlaceSubsystem(elevatorMotorId : Int,
     val elevatorMotor = CANSparkMax(elevatorMotorId, CANSparkMaxLowLevel.MotorType.kBrushless)
     val elbowMotor = CANSparkMax(elbowMotorId, CANSparkMaxLowLevel.MotorType.kBrushless)
     val wristMotor = CANSparkMax(wristMotorId, CANSparkMaxLowLevel.MotorType.kBrushless)
-    val intakeOneMotor = CANSparkMax(intakeMotorOneId, CANSparkMaxLowLevel.MotorType.kBrushless)
-    val intakeTwoMotor = CANSparkMax(intakeMotorTwoId, CANSparkMaxLowLevel.MotorType.kBrushless)
+    val intakeOneMotor = CANSparkMax(12, CANSparkMaxLowLevel.MotorType.kBrushless)
+    val intakeTwoMotor = CANSparkMax(13, CANSparkMaxLowLevel.MotorType.kBrushless)
 
     val elevatorEncoder = elevatorMotor.encoder
     val elbowEncoder = elbowMotor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle)
@@ -79,6 +79,7 @@ class PickAndPlaceSubsystem(elevatorMotorId : Int,
         wristMotor.idleMode = CANSparkMax.IdleMode.kBrake
         //intakeOneMotor.idleMode = CANSparkMax.IdleMode.kBrake
         //intakeTwoMotor.idleMode = CANSparkMax.IdleMode.kBrake
+        intakeTwoMotor.inverted = false
         elbowMotor.idleMode = CANSparkMax.IdleMode.kBrake
         elevatorMotor.idleMode = CANSparkMax.IdleMode.kBrake
 
@@ -163,6 +164,11 @@ class PickAndPlaceSubsystem(elevatorMotorId : Int,
 
     override fun periodic() {
         super.periodic()
+        println("--------------")
+        println(elevatorZeroed)
+        println("--------------")
+        println(elevatorEncoder.position)
+        println("--------------")
         if (!elevatorZeroed) {
             elevatorMotor.setVoltage(ArmConstants.elevatorZeroingVoltage)
         }
