@@ -6,44 +6,46 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile
 
 object ArmConstants {
     /** make a network table value in table Arm and value ElbowPosition**/
-    val elbowmotorID = 9
-    val elevatormotorID = 10
+    val elbowMotorId = 10
+    val elevatorMotorId = 9
 
-
-    //FF vals
-    val elbowkA = 0.0
-    val elbowkG = 0.0
-    val elbowkS = 0.0
-    val eElbowkV = 0.0
-
-    var elbowFeedForward = ArmFeedforward(elbowkS, elbowkG, eElbowkV, elbowkA)
-
-    //PID vals
-    //PID stuff
-    //also needs tuning
-    val elevatorP = 0.1
-    val elevatorI = 0.1
-    val elevatorD = 0.1
-    val elevatorTrapezoidConstraints = TrapezoidProfile.Constraints(3.0, 1.0)
-
-    val elbowP = 0.1
-    val elbowI = 0.1
-    val elbowD = 0.1
-
-    val elevatorMinHeight = 0.0
-    val elevatorMaxHeight = 0.972
-
-
-    //multipliers for unit conversion and stuff
-    // these values obtained from tuning
-    val elevatorEncoderVelocityMultiplier = 0.003010870139 / 60.0 //this should turn revs/min to meters/sec
-    val elevatorEncoderPositionConversionFactor = 0.003010870139 //this should turn revs to meters
+    val topLinebreakerId = 0
+    val bottomLinebreakerId = 1
 
     val elevatorMotorInverted = false
+    val elbowMotorInverted = true
     val intakeMotorInverted = false
 
-    val elbowEncoderVelocityMultiplier = 2.0 //this should turn revs/min to radians/sec (Yay!)
-    val elbowEncoderPosMultiplier = 2.0 //this should turn revs to radians (Yay again!)
+    //PID vals
+    val elevatorP = 500.0 //500
+    val elevatorI = 0.0
+    val elevatorD = 0.0
+    //val elevatorTrapezoidConstraints = TrapezoidProfile.Constraints(50.0, 30.0)
+//tune:
+    val elbowP = 7.0
+    val elbowI = 0.0
+    val elbowD = 0.0
+    val elbowFF = ArmFeedforward(0.13, 2.07, 1.00)
+
+    val wristP = 1.0
+    val wristI = 0.0
+    val wristD = 0.0
+
+    val elevatorMinHeight = 0.0
+    val elevatorMaxHeight = 0.9245
+
+    val elbowMaxRotation = (1.0/2.0) * Math.PI
+    val elbowMinRotation = -(1.0/2.0) * Math.PI
+
+    val wristMaxRotation = (Math.PI/2.0)
+    val wristMinRotation = -(Math.PI/2.0)
+
+    // multipliers for unit conversion and stuff
+    // these values obtained from tuning
+    val elevatorEncoderVelocityConversionFactor = 0.003010870139 / 60.0 //this should turn revs/min to meters/sec
+    val elevatorEncoderPositionConversionFactor = 0.003010870139 //this should turn revs to meters
+
+     val elbowEncoderPosOffset = 0.0
 
     //all those random command values
     //knowing the mechanism, these will end up being really strange values for all the way down.

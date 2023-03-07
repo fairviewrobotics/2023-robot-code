@@ -3,29 +3,37 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot
 
+import com.kauailabs.navx.frc.AHRS
 import com.pathplanner.lib.PathConstraints
 import com.pathplanner.lib.PathPlanner
 import com.pathplanner.lib.PathPlannerTrajectory
 import com.pathplanner.lib.PathPoint
+import com.revrobotics.CANSparkMax
+import com.revrobotics.CANSparkMaxLowLevel
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj2.command.RunCommand
 import edu.wpi.first.wpilibj2.command.button.JoystickButton
 
-
-import frc.robot.subsystems.SwerveSubsystem
-// import frc.robot.subsystems.LEDSubsystem
 
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.math.trajectory.TrajectoryGenerator
 import edu.wpi.first.wpilibj.motorcontrol.Spark
+import edu.wpi.first.wpilibj2.command.Command
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
+import edu.wpi.first.wpilibj2.command.Subsystem
+import edu.wpi.first.wpilibj2.command.SubsystemBase
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController
+import edu.wpi.first.wpilibj2.command.button.Trigger
 
 import frc.robot.commands.*
+import frc.robot.constants.ArmConstants
 import frc.robot.constants.DrivetrainConstants
+import frc.robot.constants.IntakeConstants
 import frc.robot.constants.TrajectoryConstants
-import frc.robot.subsystems.DigitalInputSubsystem
-import frc.robot.subsystems.SparkMaxSubsystem
+import frc.robot.subsystems.*
+import java.nio.file.Path
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -35,12 +43,10 @@ import frc.robot.subsystems.SparkMaxSubsystem
  */
 class RobotContainer {
     val primaryController = XboxController(0)
-
-    val topBreaker = DigitalInputSubsystem(0)
-    val bottomBreaker = DigitalInputSubsystem(1)
-
-    val elevatorMotor = SparkMaxSubsystem(2)
-
+    val secondaryController = CommandXboxController(1)
+    val pickAndPlace = PickAndPlaceSubsystem(ArmConstants.elevatorMotorId, ArmConstants.elbowMotorId, 11, 12, 13, 0, 1)
+    //val swerveSubsystem = SwerveSubsystem()
+    val leds = LEDSubsystem(0)
     /** The container for the robot. Contains subsystems, OI devices, and commands.  */
     init {
         // Configure the button bindings
@@ -48,12 +54,37 @@ class RobotContainer {
 
 
     }
-
-    /**
-     * Use this method to define your button->command mappings. Buttons can be created by
-     * instantiating a [GenericHID] or one of its subclasses ([ ] or [XboxController]), and then passing it to a [ ].
-     */
+    
     private fun configureButtonBindings() {
-        elevatorMotor.defaultCommand = PIDElevatorTuning(bottomBreaker, topBreaker, elevatorMotor, primaryController)
+        //leds.defaultCommand = SetLEDs(leds, LEDSubsystemState.NULL)
+       /*swerveSubsystem.defaultCommand = StandardDrive(swerveSubsystem,
+            { primaryController.leftY * 5.0 },
+            { primaryController.leftX * 5.0 },
+            { primaryController.rightX * 1.0},
+            true,
+            false)*/
+/*
+        JoystickButton(primaryController, XboxController.Button.kA.value).onTrue(
+            AlignToAprilTag(swerveSubsystem, primaryController)
+        )
+
+        var height = 0.5
+        var rotation = Math.PI/4.0
+
+        pickAndPlace.defaultCommand = SetPickAndPlacePosition(true, pickAndPlace,
+            {
+                height = (height + primaryController.leftY / 25.0).coerceIn(0.0, 0.9)
+                height
+            }, // elevator position meters
+            {
+                rotation = (rotation + primaryController.rightY / 25.0).coerceIn(-Math.PI / 2.0, Math.PI / 2.0);
+                rotation
+            }, // elbow radians
+            { 0.0 }, // wrist radians
+            { (primaryController.leftTriggerAxis - primaryController.rightTriggerAxis) * 12.0}
+            )*/
+        pickAndPlace.defaultCommand = VoltageControlPNP(pickAndPlace, primaryController)
     }
+
+    val autonoumousCommand: Command = RunCommand({})
 }
