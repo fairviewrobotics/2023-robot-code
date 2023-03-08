@@ -45,8 +45,8 @@ class SetPickAndPlacePosition(val continuous: Boolean ,val subsystem: PickAndPla
         first = true
 
         elevatorPid.setTolerance(0.03)//might need changing
-        elbowPid.setTolerance(0.03)//might need changing
-        wristPid.setTolerance(0.03)//TODO: Test and change this asap! DONT FORGET
+        elbowPid.setTolerance(0.05)//might need changing
+        wristPid.setTolerance(0.04)//might need changing
     }//This might need to be above the variables
 
     object Telemetry{
@@ -77,11 +77,16 @@ class SetPickAndPlacePosition(val continuous: Boolean ,val subsystem: PickAndPla
             elevatorPid.setGoal(subsystem.elevatorPositionMeters)
             elbowPid.setGoal(subsystem.elbowPositionRadians)
             wristPid.setGoal(subsystem.absoluteWristPosition)
-
+//these could be causing the slow at first run.
             subsystem.elevatorVoltage = elevatorPid.calculate(subsystem.elevatorPositionMeters,elevatorSupplier().coerceIn(ArmConstants.elevatorMinHeight, ArmConstants.elevatorMaxHeight))
             subsystem.elbowVoltage = elbowPid.calculate(subsystem.elbowPositionRadians,elbowSupplier().coerceIn(ArmConstants.elbowMinRotation, ArmConstants.elbowMaxRotation)) + elbowFeedforward.calculate(subsystem.elbowPositionRadians, 0.0)
             subsystem.wristVoltage = wristPid.calculate(subsystem.absoluteWristPosition,wristSupplier().coerceIn(ArmConstants.wristMinRotation, ArmConstants.wristMaxRotation)) + wristFeedforward.calculate(subsystem.absoluteWristPosition, 0.0)
             subsystem.intakesVoltage = intakeSupplier()
+
+//            subsystem.elevatorVoltage = elevatorPid.calculate(subsystem.elevatorPositionMeters)
+//            subsystem.elbowVoltage = elbowPid.calculate(subsystem.elbowPositionRadians) + elbowFeedforward.calculate(subsystem.elbowPositionRadians, 0.0)
+//            subsystem.wristVoltage = wristPid.calculate(subsystem.absoluteWristPosition) + wristFeedforward.calculate(subsystem.absoluteWristPosition, 0.0)
+//            subsystem.intakesVoltage = intakeSupplier()
 
         } else {
             subsystem.elevatorVoltage = elevatorPid.calculate(subsystem.elevatorPositionMeters)
@@ -148,31 +153,10 @@ fun Base(pnp: PickAndPlaceSubsystem): Command {
             pnp,
             { 0.0 }, // elevator
             { Math.toRadians(87.0) }, // elbow
-            { Math.toRadians(70.0) }, // wrist
+            { Math.toRadians(20.0) }, // wrist
             { 2.0 } // intake
         )
-    )
-}
 
-fun LowPlace(pnp: PickAndPlaceSubsystem): Command {
-    return SequentialCommandGroup(
-        SetPickAndPlacePosition(
-            false,
-            pnp,
-            { 0.1 }, // elevator
-            { Math.toRadians(45.0) }, // elbow
-            { Math.toRadians(-90.0) }, // wrist
-            { 1.5 } // intake
-        ),
-
-        SetPickAndPlacePosition(
-            true,
-            pnp,
-            { 0.1 }, // elevator
-            { Math.toRadians(45.0) }, // elbow
-            { Math.toRadians(-90.0) }, // wrist
-            { -2.0 } // intake
-        )
     )
 }
 fun MidPlace(pnp: PickAndPlaceSubsystem): Command {
@@ -206,6 +190,66 @@ fun MidPlace(pnp: PickAndPlaceSubsystem): Command {
     )
 }
 fun HighPlace(pnp: PickAndPlaceSubsystem): Command {
+    return SequentialCommandGroup(
+        SetPickAndPlacePosition(
+            false,
+            pnp,
+            { 0.7 }, // elevator
+            { Math.toRadians(65.0) }, // elbow
+            { Math.toRadians(20.0) }, // wrist
+            { 1.5 }
+        ),
+
+        SetPickAndPlacePosition(
+            false,
+            pnp,
+            { 0.7 }, // elevator
+            { Math.toRadians(20.0) }, // elbow
+            { 0.0 }, // wrist
+            { 1.5 }
+        ),
+
+        SetPickAndPlacePosition(
+            true,
+            pnp,
+            { 0.7 }, // elevator
+            { Math.toRadians(20.0) }, // elbow
+            { 0.0 }, // wrist
+            { -2.0 }
+        )
+    )
+}
+fun MidPlaceSide(pnp: PickAndPlaceSubsystem): Command {
+    return SequentialCommandGroup(
+        SetPickAndPlacePosition(
+            false,
+            pnp,
+            { 0.2 }, // elevator
+            { Math.toRadians(65.0) }, // elbow
+            { Math.toRadians(20.0) }, // wrist
+            { 1.5 } // intake
+        ),
+
+        SetPickAndPlacePosition(
+            false,
+            pnp,
+            { 0.2 }, // elevator
+            { Math.toRadians(25.0) }, // elbow
+            { 0.0 }, // wrist
+            { 1.5 } // intake
+        ),
+
+        SetPickAndPlacePosition(
+            true,
+            pnp,
+            { 0.2 }, // elevator
+            { Math.toRadians(25.0) }, // elbow
+            { 0.0 }, // wrist
+            { -2.0 } // intake
+        )
+    )
+}
+fun HighPlaceSide(pnp: PickAndPlaceSubsystem): Command {
     return SequentialCommandGroup(
         SetPickAndPlacePosition(
             false,
@@ -282,6 +326,87 @@ fun LowPickCube(pnp: PickAndPlaceSubsystem): Command {
             { Math.toRadians(-27.0) }, // elbow
             { 0.0 }, // wrist
             { 4.0 } // intake
+        )
+    )
+}
+fun AutoPick(pnp: PickAndPlaceSubsystem): Command {
+    return SequentialCommandGroup(
+        SetPickAndPlacePosition(
+            false,
+            pnp,
+            { 0.4 }, // elevator
+            { Math.toRadians(-27.0) }, // elbow
+            { 0.0 }, // wrist
+            { 0.0 } // intake
+        ),
+
+        SetPickAndPlacePosition(
+            true,
+            pnp,
+            { 0.2 }, // elevator
+            { Math.toRadians(-27.0) }, // elbow
+            { 0.0 }, // wrist
+            { 4.0 } // intake
+        )
+    )
+}
+fun AutoPlaceMid(pnp: PickAndPlaceSubsystem): Command {
+    return SequentialCommandGroup(
+        SetPickAndPlacePosition(
+            false,
+            pnp,
+            { 0.2 }, // elevator
+            { Math.toRadians(65.0) }, // elbow
+            { Math.toRadians(20.0) }, // wrist
+            { 1.5 } // intake
+        ),
+
+        SetPickAndPlacePosition(
+            false,
+            pnp,
+            { 0.2 }, // elevator
+            { Math.toRadians(25.0) }, // elbow
+            { 0.0 }, // wrist
+            { 1.5 } // intake
+        ),
+
+        SetPickAndPlacePosition(
+            true,
+            pnp,
+            { 0.2 }, // elevator
+            { Math.toRadians(25.0) }, // elbow
+            { 0.0 }, // wrist
+            { -2.0 } // intake
+        )
+    )
+}
+fun AutoPlaceHigh(pnp: PickAndPlaceSubsystem): Command {
+    return SequentialCommandGroup(
+        SetPickAndPlacePosition(
+            false,
+            pnp,
+            { 0.7 }, // elevator
+            { Math.toRadians(65.0) }, // elbow
+            { Math.toRadians(20.0) }, // wrist
+            { 1.5 }
+        ),
+
+        SetPickAndPlacePosition(
+            false,
+            pnp,
+            { 0.7 }, // elevator
+            { Math.toRadians(20.0) }, // elbow
+            { 0.0 }, // wrist
+            { 1.5 }
+        ),
+
+        SetPickAndPlacePosition(
+            true,
+            pnp,
+            { 0.7 }, // elevator
+            { Math.toRadians(20.0) }, // elbow
+            { 0.0 }, // wrist
+            { -2.0 }
         )
     )
 }

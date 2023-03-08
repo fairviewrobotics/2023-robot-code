@@ -29,7 +29,7 @@ object ArmConstants {
     val elbowFF = ArmFeedforward(0.13, 0.50, 1.00)//might need to change kg
 
     //tune:
-    val wristP = 4.5
+    val wristP = 5.0
     val wristI = 0.0
     val wristD = 0.0
     //maybe change:
@@ -50,8 +50,8 @@ object ArmConstants {
     val elevatorEncoderPositionConversionFactor = 0.003010870139 * 2.4 //this should turn revs to meters
 
     //could need small tuning:
-    val elbowEncoderPosOffset = -2.727
-    val wristEncoderPosOffset = -0.0925
+    val elbowEncoderPosOffset = -2.8472
+    val wristEncoderPosOffset = 0.0216
 
     val elevatorZeroingVoltage = -1.0
 }
