@@ -410,3 +410,30 @@ fun AutoPlaceHigh(pnp: PickAndPlaceSubsystem): Command {
         )
     )
 }
+
+class VoltageArm(val subsystem: PickAndPlaceSubsystem,
+                 val elevatorSupplier: ()->Double,
+                 val elbowSupplier: ()->Double,
+                 val wristSupplier:()->Double,
+                 val intakeSupplier: ()->Double) : CommandBase() {
+    init {
+        addRequirements(subsystem)
+    }
+
+    override fun execute() {
+        subsystem.elevatorVoltage = elevatorSupplier()
+        subsystem.elbowVoltage = elbowSupplier()
+        subsystem.wristVoltage = wristSupplier()
+        subsystem.intakesVoltage = intakeSupplier()
+    }
+
+    override fun end(interrupted: Boolean) {
+
+        subsystem.elevatorVoltage = 0.0
+        subsystem.wristVoltage = 0.0
+        subsystem.elbowVoltage = 0.0
+        subsystem.intakesVoltage = 0.0
+    }
+
+
+}

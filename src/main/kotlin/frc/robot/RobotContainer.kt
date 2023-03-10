@@ -45,6 +45,9 @@ class RobotContainer {
     val secondaryController = XboxController(1)
     val pickAndPlace = PickAndPlaceSubsystem(ArmConstants.elevatorMotorId, ArmConstants.elbowMotorId, 11, 12, 13, 0, 1)
     val swerveSubsystem = SwerveSubsystem()
+    val trajectories = Trajectories()
+
+
 
     /** The container for the robot. Contains subsystems, OI devices, and commands.  */
     init {
@@ -55,6 +58,25 @@ class RobotContainer {
     }
     
     private fun configureButtonBindings() {
+
+//       PRIMARY CONTROLLER:
+//       KeyBinds...
+//
+//       SECONDARY CONTROLLER:
+//
+//       Left Stick Up = Elbow Down
+//       Left Stick Down = Elbow Up
+//
+//       Right Stick Up = Wrist Down
+//       Right Stick Down = Wrist Up
+//
+//       Left Trigger = Elevator Down
+//       Right Trigger = Elevator Up
+//
+//       Left Bumper = Intake In
+//       Right Bumper = Intake Out
+
+
 //       swerveSubsystem.defaultCommand = StandardDrive(swerveSubsystem,
 //            { primaryController.leftY * -1.0 },
 //            { primaryController.leftX * -1.0 },
@@ -67,6 +89,8 @@ class RobotContainer {
 //        )
 //TODO: The alignment to apriltag needs to happen before the pick and place command in sequential command order
 //TODO: The alignment to apriltag needs to change to pegs for certain cases, or that needs to be added in in a different way cause right now, it would only place for cube shelves
+
+        //PRIMARY CONtROLLER:
         pickAndPlace.defaultCommand = Base(pickAndPlace)
 
         JoystickButton(primaryController, XboxController.Button.kA.value).whileTrue(
@@ -99,7 +123,51 @@ class RobotContainer {
             LowPickCone(pickAndPlace)
         )
 
-    }
 
-    val autonomousCommand: Command = RunCommand({})
+
+        //SECONDARY CONTROLLER
+
+        JoystickButton(secondaryController, XboxController.Button.kX.value).whileTrue(
+            RunCommand({
+                swerveSubsystem.setX()
+            })
+        )
+
+        JoystickButton(secondaryController, XboxController.Button.kY.value).whileTrue(
+            RunCommand({
+                swerveSubsystem.zeroGyroAndOdometry()
+            })
+
+        )
+        JoystickButton(secondaryController, XboxController.Button.kLeftBumper.value).whileTrue(
+            RunCommand({VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { 0.0 }, { 4.0 })})
+        )
+
+        JoystickButton(secondaryController, XboxController.Button.kRightBumper.value).whileTrue(
+            RunCommand({VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { 0.0 }, { -4.0 })})
+        )
+
+        JoystickButton(secondaryController, XboxController.Axis.kLeftTrigger.value).whileTrue(
+            RunCommand({VoltageArm(pickAndPlace, { primaryController.leftTriggerAxis * -2.0 }, { 0.0 }, { 0.0 }, { 0.0 })})
+        )
+
+        JoystickButton(secondaryController, XboxController.Axis.kRightTrigger.value).whileTrue(
+            RunCommand({VoltageArm(pickAndPlace, { primaryController.rightTriggerAxis * 4.0 }, { 0.0 }, { 0.0 }, { 0.0 })})
+        )
+
+        JoystickButton(secondaryController, XboxController.Axis.kLeftY.value).whileTrue(
+            RunCommand({VoltageArm(pickAndPlace, { 0.0 }, { primaryController.leftX * -4.0 }, { 0.0 }, { 0.0 })})
+        )
+
+        JoystickButton(secondaryController, XboxController.Axis.kRightY.value).whileTrue(
+            RunCommand({VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { primaryController.rightY * -4.0 }, { 0.0 })})
+        )
+
+
+
+
+
+
+    }
+    val autonomousCommand: Command = RunCommand({trajectories.BlueTop1GetBalance()})
 }
