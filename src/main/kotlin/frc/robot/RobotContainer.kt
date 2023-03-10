@@ -44,8 +44,8 @@ import java.nio.file.Path
 class RobotContainer {
     val primaryController = XboxController(0)
     val secondaryController = CommandXboxController(1)
-    val pickAndPlace = PickAndPlaceSubsystem(ArmConstants.elevatorMotorId, ArmConstants.elbowMotorId, 11, 12, 13, 0, 1)
-    //val swerveSubsystem = SwerveSubsystem()
+    //val pickAndPlace = PickAndPlaceSubsystem(ArmConstants.elevatorMotorId, ArmConstants.elbowMotorId, 11, 12, 13, 0, 1)
+    val swerveSubsystem = SwerveSubsystem()
     val leds = LEDSubsystem(0)
     /** The container for the robot. Contains subsystems, OI devices, and commands.  */
     init {
@@ -57,20 +57,27 @@ class RobotContainer {
     
     private fun configureButtonBindings() {
         //leds.defaultCommand = SetLEDs(leds, LEDSubsystemState.NULL)
-       /*swerveSubsystem.defaultCommand = StandardDrive(swerveSubsystem,
-            { primaryController.leftY * 5.0 },
-            { primaryController.leftX * 5.0 },
-            { primaryController.rightX * 1.0},
+       swerveSubsystem.defaultCommand = StandardDrive(swerveSubsystem,
+            { primaryController.leftY * -1.0 },
+            { primaryController.leftX * -1.0 },
+            { primaryController.rightX * -1.0},
             true,
-            false)*/
-/*
-        JoystickButton(primaryController, XboxController.Button.kA.value).onTrue(
+            true)
+
+
+
+
+
+        JoystickButton(primaryController, XboxController.Button.kA.value).whileTrue(
             AlignToAprilTag(swerveSubsystem, primaryController)
+        )
+        JoystickButton(primaryController, XboxController.Button.kY.value).whileTrue(
+            RunCommand({swerveSubsystem.zeroGyroAndOdometry()})
         )
 
         var height = 0.5
         var rotation = Math.PI/4.0
-
+/*
         pickAndPlace.defaultCommand = SetPickAndPlacePosition(true, pickAndPlace,
             {
                 height = (height + primaryController.leftY / 25.0).coerceIn(0.0, 0.9)
@@ -83,7 +90,6 @@ class RobotContainer {
             { 0.0 }, // wrist radians
             { (primaryController.leftTriggerAxis - primaryController.rightTriggerAxis) * 12.0}
             )*/
-        pickAndPlace.defaultCommand = VoltageControlPNP(pickAndPlace, primaryController)
     }
 
     val autonoumousCommand: Command = RunCommand({})
