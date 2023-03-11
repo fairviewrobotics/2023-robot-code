@@ -24,7 +24,7 @@ object ArmConstants {
     val intakeMotorInverted = false
 
     //Need very small tune
-    val elevatorP = 100.0 //500
+    val elevatorP = 100.0 //TODO:Needs tuning
     val elevatorI = 0.0
     val elevatorD = 0.0
     //val elevatorTrapezoidConstraints = TrapezoidProfile.Constraints(50.0, 30.0)

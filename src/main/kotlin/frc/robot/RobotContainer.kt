@@ -45,7 +45,7 @@ class RobotContainer {
     val secondaryController = XboxController(1)
     val pickAndPlace = PickAndPlaceSubsystem()
     val swerveSubsystem = SwerveSubsystem()
-    //val trajectories = Trajectories()
+    val trajectories = Trajectories()
 
 
 
@@ -93,19 +93,10 @@ class RobotContainer {
         //PRIMARY CONtROLLER:
         pickAndPlace.defaultCommand = Base(pickAndPlace)
 
-        JoystickButton(primaryController, XboxController.Button.kA.value).whileTrue(
-//            AlignToAprilTag(swerveSubsystem, primaryController)
-            LowPickCube(pickAndPlace)
-        )
-
         JoystickButton(primaryController, XboxController.Button.kX.value).whileTrue(
             RunCommand({
                 swerveSubsystem.setX()
             })
-        )
-
-        JoystickButton(primaryController, XboxController.Button.kB.value).whileTrue(
-            LowPickCone(pickAndPlace)
         )
 
         JoystickButton(primaryController, XboxController.Button.kY.value).whileTrue(
@@ -114,60 +105,77 @@ class RobotContainer {
             })
 
         )
-        JoystickButton(primaryController, XboxController.Button.kLeftBumper.value).whileTrue(
-//            AlignToAprilTag(swerveSubsystem, primaryController)
-            MidPlace(pickAndPlace)
-        )
-        JoystickButton(primaryController, XboxController.Button.kRightBumper.value).whileTrue(
-//            AlignToAprilTag(swerveSubsystem, primaryController)
-            HighPlace(pickAndPlace)
-        )
-
 
 
         //SECONDARY CONTROLLER
 
         JoystickButton(secondaryController, XboxController.Button.kX.value).whileTrue(
-            RunCommand({
-                swerveSubsystem.setX()
-            })
+//            AlignToAprilTag(swerveSubsystem, secondaryController)
+            LowPickCube(pickAndPlace)
         )
-
-        JoystickButton(secondaryController, XboxController.Button.kY.value).whileTrue(
-            RunCommand({
-                swerveSubsystem.zeroGyroAndOdometry()
-            })
-
+        JoystickButton(secondaryController, XboxController.Button.kB.value).whileTrue(
+            LowPickCone(pickAndPlace)
+        )
+        JoystickButton(secondaryController, XboxController.kDPadLeft.value).whileTrue(
+//            AlignToAprilTag(swerveSubsystem, secondaryController)
+            ShelfPick(pickAndPlace)
+        )
+        JoystickButton(secondaryController, XboxController.Button.kDPadRight.value).whileTrue(
+            ShootPick(pickAndPlace)
         )
         JoystickButton(secondaryController, XboxController.Button.kLeftBumper.value).whileTrue(
-            RunCommand({VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { 0.0 }, { 4.0 })})
+//            AlignToAprilTag(swerveSubsystem, secondaryController)
+            MidPlace(pickAndPlace)
         )
-
         JoystickButton(secondaryController, XboxController.Button.kRightBumper.value).whileTrue(
-            RunCommand({VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { 0.0 }, { -4.0 })})
+//            AlignToAprilTag(swerveSubsystem, secondaryController)
+            HighPlace(pickAndPlace)
         )
-
         JoystickButton(secondaryController, XboxController.Axis.kLeftTrigger.value).whileTrue(
-            RunCommand({VoltageArm(pickAndPlace, { primaryController.leftTriggerAxis * -2.0 }, { 0.0 }, { 0.0 }, { 0.0 })})
+//            AlignToAprilTag(swerveSubsystem, secondaryController)
+            MidPlace(pickAndPlace)
         )
-
         JoystickButton(secondaryController, XboxController.Axis.kRightTrigger.value).whileTrue(
-            RunCommand({VoltageArm(pickAndPlace, { primaryController.rightTriggerAxis * 4.0 }, { 0.0 }, { 0.0 }, { 0.0 })})
+//            AlignToAprilTag(swerveSubsystem, secondaryController)
+            HighPlace(pickAndPlace)
         )
 
-        JoystickButton(secondaryController, XboxController.Axis.kLeftY.value).whileTrue(
-            RunCommand({VoltageArm(pickAndPlace, { 0.0 }, { primaryController.leftX * -4.0 }, { 0.0 }, { 0.0 })})
-        )
-
-        JoystickButton(secondaryController, XboxController.Axis.kRightY.value).whileTrue(
-            RunCommand({VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { primaryController.rightY * -4.0 }, { 0.0 })})
-        )
-
-
-
-
-
+//        JoystickButton(secondaryController, XboxController.Button.kX.value).whileTrue(
+//            RunCommand({
+//                swerveSubsystem.setX()
+//            })
+//        )
+//
+//        JoystickButton(secondaryController, XboxController.Button.kY.value).whileTrue(
+//            RunCommand({
+//                swerveSubsystem.zeroGyroAndOdometry()
+//            })
+//
+//        )
+//        JoystickButton(secondaryController, XboxController.Button.kLeftBumper.value).whileTrue(
+//            RunCommand({VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { 0.0 }, { 4.0 })})
+//        )
+//
+//        JoystickButton(secondaryController, XboxController.Button.kRightBumper.value).whileTrue(
+//            RunCommand({VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { 0.0 }, { -4.0 })})
+//        )
+//
+//        JoystickButton(secondaryController, XboxController.Axis.kLeftTrigger.value).whileTrue(
+//            RunCommand({VoltageArm(pickAndPlace, { primaryController.leftTriggerAxis * -2.0 }, { 0.0 }, { 0.0 }, { 0.0 })})
+//        )
+//
+//        JoystickButton(secondaryController, XboxController.Axis.kRightTrigger.value).whileTrue(
+//            RunCommand({VoltageArm(pickAndPlace, { primaryController.rightTriggerAxis * 4.0 }, { 0.0 }, { 0.0 }, { 0.0 })})
+//        )
+//
+//        JoystickButton(secondaryController, XboxController.Axis.kLeftY.value).whileTrue(
+//            RunCommand({VoltageArm(pickAndPlace, { 0.0 }, { primaryController.leftX * -4.0 }, { 0.0 }, { 0.0 })})
+//        )
+//
+//        JoystickButton(secondaryController, XboxController.Axis.kRightY.value).whileTrue(
+//            RunCommand({VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { primaryController.rightY * -4.0 }, { 0.0 })})
+//        )
 
     }
-    val autonomousCommand: Command = RunCommand({})
+    val autonomousCommand: Command = RunCommand({trajectories.BlueTop1GetBalance()})
 }
