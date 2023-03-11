@@ -43,9 +43,9 @@ import java.nio.file.Path
 class RobotContainer {
     val primaryController = XboxController(0)
     val secondaryController = XboxController(1)
-    val pickAndPlace = PickAndPlaceSubsystem(ArmConstants.elevatorMotorId, ArmConstants.elbowMotorId, 11, 12, 13, 0, 1)
+    val pickAndPlace = PickAndPlaceSubsystem()
     val swerveSubsystem = SwerveSubsystem()
-    val trajectories = Trajectories()
+    //val trajectories = Trajectories()
 
 
 
@@ -77,12 +77,12 @@ class RobotContainer {
 //       Right Bumper = Intake Out
 
 
-//       swerveSubsystem.defaultCommand = StandardDrive(swerveSubsystem,
-//            { primaryController.leftY * -1.0 },
-//            { primaryController.leftX * -1.0 },
-//            { primaryController.rightX * -1.0},
-//            true,
-//            true)
+       swerveSubsystem.defaultCommand = StandardDrive(swerveSubsystem,
+            { primaryController.leftY * -1.0 },
+            { primaryController.leftX * -1.0 },
+            { primaryController.rightX * -1.0},
+            true,
+            true)
 
 //        JoystickButton(primaryController, XboxController.Button.kA.value).onTrue(
 //            AlignToAprilTag(swerveSubsystem, primaryController)
@@ -105,7 +105,7 @@ class RobotContainer {
         )
 
         JoystickButton(primaryController, XboxController.Button.kB.value).whileTrue(
-            HighPlace(pickAndPlace)
+            LowPickCone(pickAndPlace)
         )
 
         JoystickButton(primaryController, XboxController.Button.kY.value).whileTrue(
@@ -120,7 +120,7 @@ class RobotContainer {
         )
         JoystickButton(primaryController, XboxController.Button.kRightBumper.value).whileTrue(
 //            AlignToAprilTag(swerveSubsystem, primaryController)
-            LowPickCone(pickAndPlace)
+            HighPlace(pickAndPlace)
         )
 
 
@@ -169,5 +169,5 @@ class RobotContainer {
 
 
     }
-    val autonomousCommand: Command = RunCommand({trajectories.BlueTop1GetBalance()})
+    val autonomousCommand: Command = RunCommand({})
 }

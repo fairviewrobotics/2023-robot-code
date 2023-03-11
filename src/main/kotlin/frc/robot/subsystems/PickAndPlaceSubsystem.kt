@@ -3,7 +3,9 @@ package frc.robot.subsystems
 import com.revrobotics.CANSparkMax
 import com.revrobotics.CANSparkMaxLowLevel
 import com.revrobotics.SparkMaxAbsoluteEncoder
+import edu.wpi.first.math.controller.ProfiledPIDController
 import edu.wpi.first.math.geometry.Rotation2d
+import edu.wpi.first.math.trajectory.TrapezoidProfile
 import edu.wpi.first.networktables.NetworkTableInstance
 import edu.wpi.first.wpilibj.DigitalInput
 import edu.wpi.first.wpilibj.XboxController
@@ -13,31 +15,23 @@ import frc.robot.commands.SetPickAndPlacePosition
 import frc.robot.constants.ArmConstants
 import frc.robot.constants.IntakeConstants
 
-class PickAndPlaceSubsystem(elevatorMotorId : Int,
-                            elbowMotorId : Int,
-                            wristMotorId : Int,
-                            intakeMotorOneId : Int,
-                            intakeMotorTwoId: Int,
-                            topBreakerID: Int,
-                            bottomBreakerID: Int) : SubsystemBase(){
+class PickAndPlaceSubsystem() : SubsystemBase(){
 
-    val elevatorMotor = CANSparkMax(elevatorMotorId, CANSparkMaxLowLevel.MotorType.kBrushless)
-    val elbowMotor = CANSparkMax(elbowMotorId, CANSparkMaxLowLevel.MotorType.kBrushless)
-    val wristMotor = CANSparkMax(wristMotorId, CANSparkMaxLowLevel.MotorType.kBrushless)
-    val intakeOneMotor = CANSparkMax(12, CANSparkMaxLowLevel.MotorType.kBrushless)
-    val intakeTwoMotor = CANSparkMax(13, CANSparkMaxLowLevel.MotorType.kBrushless)
+    val elevatorMotor = CANSparkMax(ArmConstants.elevatorMotorId, CANSparkMaxLowLevel.MotorType.kBrushless)
+    val elbowMotor = CANSparkMax(ArmConstants.elbowMotorId, CANSparkMaxLowLevel.MotorType.kBrushless)
+    val wristMotor = CANSparkMax(ArmConstants.wristMotorId, CANSparkMaxLowLevel.MotorType.kBrushless)
+    val intakeOneMotor = CANSparkMax(ArmConstants.intakeMotorOneId, CANSparkMaxLowLevel.MotorType.kBrushless)
+    val intakeTwoMotor = CANSparkMax(ArmConstants.intakeMotorTwoId, CANSparkMaxLowLevel.MotorType.kBrushless)
 
     val elevatorEncoder = elevatorMotor.encoder
     val elbowEncoder = elbowMotor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle)
     val wristEncoder = wristMotor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle)
 
-    val forwardLimit = DigitalInput(topBreakerID);
-    val reverseLimit = DigitalInput(bottomBreakerID);
+    val forwardLimit = DigitalInput(ArmConstants.topBreakerId)
+    val reverseLimit = DigitalInput(ArmConstants.bottomBreakerId)
 
 
     var elevatorZeroed = false
-
-
 
     //Is the carriage at the top of the elevator?
 
@@ -194,18 +188,18 @@ class PickAndPlaceSubsystem(elevatorMotorId : Int,
         Telemetry.elevatorVelocity.set(elevatorEncoder.velocity)
 
     }
-    fun NTPnP(pnp: PickAndPlaceSubsystem, controller: XboxController): Command {
-
-        return SetPickAndPlacePosition(
-            true,
-            pnp,
-            {
-                Telemetry.elevatorValue.get()
-            }, // elevator
-            { Telemetry.elbowValue.get() }, // elbow
-            { Telemetry.wristValue.get() }, // wrist
-            { controller.leftTriggerAxis * 12.0 } // intake
-        )
-    }
+//    fun NTPnP(pnp: PickAndPlaceSubsystem, controller: XboxController): Command {
+//
+//        return SetPickAndPlacePosition(
+//            true,
+//            pnp,
+//            {
+//                Telemetry.elevatorValue.get()
+//            }, // elevator
+//            { Telemetry.elbowValue.get() }, // elbow
+//            { Telemetry.wristValue.get() }, // wrist
+//            { controller.leftTriggerAxis * 12.0 } // intake
+//        )
+//    }
 
 }

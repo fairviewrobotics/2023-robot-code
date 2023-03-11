@@ -6,8 +6,15 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile
 
 object ArmConstants {
     /** make a network table value in table Arm and value ElbowPosition**/
-    val elbowMotorId = 10
+
     val elevatorMotorId = 9
+    val elbowMotorId = 10
+    val wristMotorId = 11
+    val intakeMotorOneId = 12
+    val intakeMotorTwoId = 13
+
+    val topBreakerId = 0
+    val bottomBreakerId = 1
 
     val topLinebreakerId = 0
     val bottomLinebreakerId = 1
@@ -17,7 +24,7 @@ object ArmConstants {
     val intakeMotorInverted = false
 
     //Need very small tune
-    val elevatorP = 150.0 //500
+    val elevatorP = 100.0 //500
     val elevatorI = 0.0
     val elevatorD = 0.0
     //val elevatorTrapezoidConstraints = TrapezoidProfile.Constraints(50.0, 30.0)
