@@ -43,10 +43,13 @@ import java.nio.file.Path
  */
 class RobotContainer {
     val primaryController = XboxController(0)
-    val secondaryController = CommandXboxController(1)
-    //val pickAndPlace = PickAndPlaceSubsystem(ArmConstants.elevatorMotorId, ArmConstants.elbowMotorId, 11, 12, 13, 0, 1)
+    val secondaryController = XboxController(1)
+    val pickAndPlace = PickAndPlaceSubsystem()
     val swerveSubsystem = SwerveSubsystem()
-    val leds = LEDSubsystem(0)
+    val trajectories = Trajectories()
+
+
+
     /** The container for the robot. Contains subsystems, OI devices, and commands.  */
     init {
         // Configure the button bindings
@@ -56,7 +59,25 @@ class RobotContainer {
     }
     
     private fun configureButtonBindings() {
-        //leds.defaultCommand = SetLEDs(leds, LEDSubsystemState.NULL)
+
+//       PRIMARY CONTROLLER:
+//       KeyBinds...
+//
+//       SECONDARY CONTROLLER:
+//
+//       Left Stick Up = Elbow Down
+//       Left Stick Down = Elbow Up
+//
+//       Right Stick Up = Wrist Down
+//       Right Stick Down = Wrist Up
+//
+//       Left Trigger = Elevator Down
+//       Right Trigger = Elevator Up
+//
+//       Left Bumper = Intake In
+//       Right Bumper = Intake Out
+
+
        swerveSubsystem.defaultCommand = StandardDrive(swerveSubsystem,
             { primaryController.leftY * -1.0 },
             { primaryController.leftX * -1.0 },
@@ -64,33 +85,101 @@ class RobotContainer {
             true,
             true)
 
+//        JoystickButton(primaryController, XboxController.Button.kA.value).onTrue(
+//            AlignToAprilTag(swerveSubsystem, primaryController)
+//        )
+//TODO: The alignment to apriltag needs to happen before the pick and place command in sequential command order
+//TODO: The alignment to apriltag needs to change to pegs for certain cases, or that needs to be added in in a different way cause right now, it would only place for cube shelves
 
+        //PRIMARY CONtROLLER:
+        pickAndPlace.defaultCommand = Base(pickAndPlace)
 
-
-
-        JoystickButton(primaryController, XboxController.Button.kA.value).whileTrue(
-            AlignToAprilTag(swerveSubsystem, primaryController)
+        JoystickButton(primaryController, XboxController.Button.kX.value).whileTrue(
+            RunCommand({
+                swerveSubsystem.setX()
+            })
         )
         JoystickButton(primaryController, XboxController.Button.kY.value).whileTrue(
             RunCommand({swerveSubsystem.zeroGyroAndOdometry()})
         )
 
-        var height = 0.5
-        var rotation = Math.PI/4.0
-/*
-        pickAndPlace.defaultCommand = SetPickAndPlacePosition(true, pickAndPlace,
-            {
-                height = (height + primaryController.leftY / 25.0).coerceIn(0.0, 0.9)
-                height
-            }, // elevator position meters
-            {
-                rotation = (rotation + primaryController.rightY / 25.0).coerceIn(-Math.PI / 2.0, Math.PI / 2.0);
-                rotation
-            }, // elbow radians
-            { 0.0 }, // wrist radians
-            { (primaryController.leftTriggerAxis - primaryController.rightTriggerAxis) * 12.0}
-            )*/
-    }
+        JoystickButton(primaryController, XboxController.Button.kY.value).whileTrue(
+            RunCommand({
+                swerveSubsystem.zeroGyroAndOdometry()
+            })
 
-    val autonoumousCommand: Command = RunCommand({})
+        )
+
+
+        //SECONDARY CONTROLLER
+
+        JoystickButton(secondaryController, XboxController.Button.kX.value).whileTrue(
+//            AlignToAprilTag(swerveSubsystem, secondaryController)
+            LowPickCube(pickAndPlace)
+        )
+        JoystickButton(secondaryController, XboxController.Button.kB.value).whileTrue(
+            LowPickCone(pickAndPlace)
+        )
+        JoystickButton(secondaryController, XboxController.kDPadLeft.value).whileTrue(
+//            AlignToAprilTag(swerveSubsystem, secondaryController)
+            ShelfPick(pickAndPlace)
+        )
+        JoystickButton(secondaryController, XboxController.Button.kDPadRight.value).whileTrue(
+            ShootPick(pickAndPlace)
+        )
+        JoystickButton(secondaryController, XboxController.Button.kLeftBumper.value).whileTrue(
+//            AlignToAprilTag(swerveSubsystem, secondaryController)
+            MidPlace(pickAndPlace)
+        )
+        JoystickButton(secondaryController, XboxController.Button.kRightBumper.value).whileTrue(
+//            AlignToAprilTag(swerveSubsystem, secondaryController)
+            HighPlace(pickAndPlace)
+        )
+        JoystickButton(secondaryController, XboxController.Axis.kLeftTrigger.value).whileTrue(
+//            AlignToAprilTag(swerveSubsystem, secondaryController)
+            MidPlace(pickAndPlace)
+        )
+        JoystickButton(secondaryController, XboxController.Axis.kRightTrigger.value).whileTrue(
+//            AlignToAprilTag(swerveSubsystem, secondaryController)
+            HighPlace(pickAndPlace)
+        )
+
+//        JoystickButton(secondaryController, XboxController.Button.kX.value).whileTrue(
+//            RunCommand({
+//                swerveSubsystem.setX()
+//            })
+//        )
+//
+//        JoystickButton(secondaryController, XboxController.Button.kY.value).whileTrue(
+//            RunCommand({
+//                swerveSubsystem.zeroGyroAndOdometry()
+//            })
+//
+//        )
+//        JoystickButton(secondaryController, XboxController.Button.kLeftBumper.value).whileTrue(
+//            RunCommand({VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { 0.0 }, { 4.0 })})
+//        )
+//
+//        JoystickButton(secondaryController, XboxController.Button.kRightBumper.value).whileTrue(
+//            RunCommand({VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { 0.0 }, { -4.0 })})
+//        )
+//
+//        JoystickButton(secondaryController, XboxController.Axis.kLeftTrigger.value).whileTrue(
+//            RunCommand({VoltageArm(pickAndPlace, { primaryController.leftTriggerAxis * -2.0 }, { 0.0 }, { 0.0 }, { 0.0 })})
+//        )
+//
+//        JoystickButton(secondaryController, XboxController.Axis.kRightTrigger.value).whileTrue(
+//            RunCommand({VoltageArm(pickAndPlace, { primaryController.rightTriggerAxis * 4.0 }, { 0.0 }, { 0.0 }, { 0.0 })})
+//        )
+//
+//        JoystickButton(secondaryController, XboxController.Axis.kLeftY.value).whileTrue(
+//            RunCommand({VoltageArm(pickAndPlace, { 0.0 }, { primaryController.leftX * -4.0 }, { 0.0 }, { 0.0 })})
+//        )
+//
+//        JoystickButton(secondaryController, XboxController.Axis.kRightY.value).whileTrue(
+//            RunCommand({VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { primaryController.rightY * -4.0 }, { 0.0 })})
+//        )
+
+    }
+    val autonomousCommand: Command = RunCommand({trajectories.BlueTop1GetBalance()})
 }

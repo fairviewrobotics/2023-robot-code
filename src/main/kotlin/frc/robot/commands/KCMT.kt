@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.DigitalInput
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj2.command.CommandBase
 import edu.wpi.first.wpilibj2.command.Subsystem
-
+/*
 fun t(): NetworkTable {
     return NetworkTableInstance.getDefault().getTable("Arm")
 }
@@ -118,3 +118,6 @@ class KCMTMasterArmCommand(val dummySubsystem: Subsystem, val wristMotorID : Int
         wristMotor.setVoltage(outputPW)
     }
 }
+
+
+ */

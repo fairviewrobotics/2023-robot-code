@@ -2,41 +2,44 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 1.0,
-        "y": 3.0
+        "x": 1.9011486026444275,
+        "y": 4.4531276458386255
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.0,
-        "y": 3.0
+        "x": 2.138493336014451,
+        "y": 4.049067518273926
       },
-      "holonomicAngle": 0,
+      "holonomicAngle": 180.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
-        "waitBehavior": "none",
-        "waitTime": 0
+        "names": [
+          "MidPlace",
+          "Base"
+        ],
+        "executionBehavior": "sequential",
+        "waitBehavior": "after",
+        "waitTime": 0.01
       }
     },
     {
       "anchorPoint": {
-        "x": 3.0,
-        "y": 5.0
+        "x": 2.2849129430897754,
+        "y": 2.764228217692547
       },
       "prevControl": {
-        "x": 3.0,
-        "y": 4.0
+        "x": 2.174155933381311,
+        "y": 2.765214013066915
       },
       "nextControl": {
-        "x": 3.0,
-        "y": 4.0
+        "x": 2.562614587591427,
+        "y": 2.7617565276629517
       },
-      "holonomicAngle": 0,
-      "isReversal": true,
+      "holonomicAngle": 180.0,
+      "isReversal": false,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
@@ -49,24 +52,26 @@
     },
     {
       "anchorPoint": {
-        "x": 5.0,
-        "y": 3.0
+        "x": 3.89344105424322,
+        "y": 2.754776179691248
       },
       "prevControl": {
-        "x": 4.0,
-        "y": 3.0
+        "x": 3.6162585901560695,
+        "y": 2.7757098344057805
       },
       "nextControl": null,
-      "holonomicAngle": 0,
+      "holonomicAngle": 180.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
+        "names": [
+          "Balance"
+        ],
+        "executionBehavior": "sequential",
         "waitBehavior": "none",
-        "waitTime": 0
+        "waitTime": 0.01
       }
     }
   ],
