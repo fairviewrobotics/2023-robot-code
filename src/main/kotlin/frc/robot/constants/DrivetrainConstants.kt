@@ -40,7 +40,7 @@ object DrivetrainConstants {
     // FIXME: Right now 0degrees is in the Y-positive direction, when normally 0 rad is in the X-positive direction. Could this be an issue?
     // TUNED
     const val frontLeftChassisAngularOffset = 5.772
-    const val frontRightChassisAngularOffset = 6.09
+    const val frontRightChassisAngularOffset = 6.09 - (Math.PI * 2)
     const val rearLeftChassisAngularOffset = .871 + (Math.PI)
     const val rearRightChassisAngularOffset =  3.650
 

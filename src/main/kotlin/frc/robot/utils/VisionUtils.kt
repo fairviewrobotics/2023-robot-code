@@ -32,7 +32,8 @@ object VisionUtils {
 
     private fun toPose3D(inData: DoubleArray): Pose3d {
         if (inData.size < 6) {
-            System.err.println("Bad LL 3D Pose Data!")
+            System.err.println("Bad LL 3D Pose Data! \n" +
+                    " Input data: ${inData.size}")
             return Pose3d()
         }
         return Pose3d(
@@ -48,7 +49,7 @@ object VisionUtils {
 
     private fun toPose2D(inData: DoubleArray): Pose2d {
         if (inData.size < 6) {
-            System.err.println("Bad LL 2D Pose Data!")
+            System.err.println("Bad LL 2D Pose Data!\n Input data: ${inData}")
             return Pose2d()
         }
         val tran2d = Translation2d(inData[0], inData[1])
@@ -483,7 +484,7 @@ object VisionUtils {
         private val robotPose_FieldSpace: DoubleArray
 
         @JsonProperty("t6r_ts")
-        private val robotPose_TargetSpace: DoubleArray
+        val robotPose_TargetSpace: DoubleArray
 
         @JsonProperty("t6t_cs")
         private val targetPose_CameraSpace: DoubleArray
