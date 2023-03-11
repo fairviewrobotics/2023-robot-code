@@ -275,28 +275,10 @@ fun LowPickCube(pnp: PickAndPlaceSubsystem): Command {
 fun ShelfPick(pnp: PickAndPlaceSubsystem): Command {
     return SequentialCommandGroup(
         SetPickAndPlacePosition(
-            false,
-            pnp,
-            0.7, // elevator
-            Math.toRadians(65.0), // elbow
-            Math.toRadians(20.0), // wrist
-            0.0
-        ),
-
-        SetPickAndPlacePosition(
-            false,
-            pnp,
-            0.7, // elevator
-            Math.toRadians(45.0), // elbow
-            0.0, // wrist
-            0.0
-        ),
-
-        SetPickAndPlacePosition(
             true,
             pnp,
-            0.7, // elevator
-            Math.toRadians(45.0), // elbow
+            0.0, // elevator
+            Math.toRadians(70.0), // elbow
             0.0, // wrist
             5.0
         )
@@ -305,30 +287,12 @@ fun ShelfPick(pnp: PickAndPlaceSubsystem): Command {
 //TODO:Test
 fun ChutePick(pnp: PickAndPlaceSubsystem): Command {
     return SequentialCommandGroup(
-        SetPickAndPlacePosition(
-            false,
-            pnp,
-            0.25, // elevator
-            0.0, // elbow
-            0.0, // wrist
-            0.0 // intake
-        ),
-
-        SetPickAndPlacePosition(
-            false,
-            pnp,
-            0.3, // elevator
-            Math.toRadians(-24.0), // elbow
-            Math.toRadians(-40.0), // wrist
-            0.0 // intake
-        ),
-
-        SetPickAndPlacePosition(
+       SetPickAndPlacePosition(
             true,
             pnp,
-            0.3, // elevator
-            Math.toRadians(-24.0), // elbow
-            Math.toRadians(-40.0), // wrist
+            0.0, // elevator
+            Math.toRadians(70.0), // elbow
+            Math.toRadians(60.0), // wrist
             5.0 // intake
         )
     )

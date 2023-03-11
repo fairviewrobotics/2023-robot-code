@@ -45,8 +45,6 @@ class RobotContainer {
     val pickAndPlace = PickAndPlaceSubsystem()
     val swerveSubsystem = SwerveSubsystem()
     val trajectories = Trajectories(pickAndPlace, swerveSubsystem)
-    //val examplePath = PathPlanner.loadPath("Red Top 1 Get Balance", PathConstraints(2.0, 1.5))
-
 
     /** The container for the robot. Contains subsystems, OI devices, and commands.  */
     init {
@@ -87,10 +85,10 @@ class RobotContainer {
                 swerveSubsystem.zeroGyroAndOdometry()
             })
         )
-        Trigger { primaryController.leftTriggerAxis > 0.2 } .whileTrue(
+        Trigger {primaryController.leftTriggerAxis > 0.2} .whileTrue(
             LowPickCube(pickAndPlace)
         )
-        Trigger { primaryController.rightTriggerAxis > 0.2 } .whileTrue(
+        Trigger {primaryController.rightTriggerAxis > 0.2} .whileTrue(
             LowPickCone(pickAndPlace)
         )
         JoystickButton(primaryController, XboxController.Button.kLeftBumper.value).whileTrue(
@@ -103,15 +101,15 @@ class RobotContainer {
 
         //SECONDARY CONtROLLER
         JoystickButton(secondaryController, XboxController.Button.kLeftBumper.value).whileTrue(
-                MidPlaceCone(pickAndPlace)
+            MidPlaceCone(pickAndPlace)
         )
         JoystickButton(secondaryController, XboxController.Button.kRightBumper.value).whileTrue(
-                MidPlaceCube(pickAndPlace)
+            MidPlaceCube(pickAndPlace)
         )
-        Trigger { secondaryController.leftTriggerAxis > 0.2 } .whileTrue(
+        Trigger {secondaryController.leftTriggerAxis > 0.2} .whileTrue(
             HighPlaceCone(pickAndPlace)
         )
-        Trigger { secondaryController.rightTriggerAxis > 0.2 } .whileTrue(
+        Trigger {secondaryController.rightTriggerAxis > 0.2} .whileTrue(
             HighPlaceCube(pickAndPlace)
         )
     }

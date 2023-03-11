@@ -29,7 +29,7 @@ object ArmConstants {
     val elevatorD = 0.0
     //val elevatorTrapezoidConstraints = TrapezoidProfile.Constraints(50.0, 30.0)
 //tune:
-    val elbowP = 4.0
+    val elbowP = 4.0//TODO:Needs tuning
     val elbowI = 0.0
     val elbowD = 0.0
     //maybe change:
