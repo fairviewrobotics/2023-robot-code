@@ -6,14 +6,14 @@ import com.kauailabs.navx.frc.AHRS
 import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.controller.PIDController
 
-class Balance(val swerveSubsystem: SwerveSubsystem, val gyro: AHRS) : CommandBase() {
+class Balance(val swerveSubsystem: SwerveSubsystem) : CommandBase() {
   val balancePID = PIDController(1.0, 0.0, 0.0)
   init {
     addRequirements(swerveSubsystem)
   }
 
   override fun execute(){
-    var pitch = gyro.pitch.toDouble()
+    var pitch = swerveSubsystem.gyro.pitch.toDouble()
     swerveSubsystem.drive(-balancePID.calculate(pitch, 0.0), 0.0, 0.0, true, true)
   }
 

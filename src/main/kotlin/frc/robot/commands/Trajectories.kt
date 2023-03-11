@@ -3,44 +3,40 @@ package frc.robot.commands
 import com.pathplanner.lib.PathConstraints
 import com.pathplanner.lib.PathPlanner
 import com.pathplanner.lib.PathPlannerTrajectory
+import com.pathplanner.lib.auto.PIDConstants
+import com.pathplanner.lib.auto.SwerveAutoBuilder
 import com.pathplanner.lib.commands.FollowPathWithEvents
-import edu.wpi.first.math.controller.ArmFeedforward
+import com.pathplanner.lib.commands.PPSwerveControllerCommand
 import edu.wpi.first.math.controller.PIDController
+import edu.wpi.first.networktables.NetworkTableInstance
 import edu.wpi.first.wpilibj2.command.Command
-import edu.wpi.first.wpilibj2.command.RunCommand
-import frc.robot.commands.Base
-import frc.robot.commands.TrajectoryDrivePathPlanner
-import frc.robot.constants.ArmConstants
+import edu.wpi.first.wpilibj2.command.PrintCommand
+import edu.wpi.first.wpilibj2.command.Subsystem
+import frc.robot.constants.DrivetrainConstants
+import frc.robot.constants.TrajectoryConstants
 import frc.robot.subsystems.PickAndPlaceSubsystem
 import frc.robot.subsystems.SwerveSubsystem
-import java.lang.ProcessBuilder.Redirect
-import com.kauailabs.navx.frc.AHRS
 
-class Trajectories {
-    val pnp = PickAndPlaceSubsystem()
-    val swerveSubsystem = SwerveSubsystem()
-    val gyro = AHRS();
-    fun base(pathName: String, eventMap: HashMap<String, Command>) {
-        val lambda: () -> Unit = {
-            val examplePath = PathPlanner.loadPath(pathName, PathConstraints(4.0, 3.0))
 
-            val command = FollowPathWithEvents(
-                RunCommand({
-                    TrajectoryDrivePathPlanner(swerveSubsystem, examplePath, false)
-                }),
-                examplePath.markers,
-                eventMap
-            )
-        }
-        lambda
+class Trajectories(val pnp: PickAndPlaceSubsystem, val swerveSubsystem: SwerveSubsystem) {
+    fun base(pathName: String, eventMap: HashMap<String, Command>): Command {
+        val examplePath = PathPlanner.loadPath(pathName, PathConstraints(2.0, 1.5))
+
+        val command = FollowPathWithEvents(
+            TrajectoryDrivePathPlanner(swerveSubsystem, examplePath, true),
+            examplePath.markers,
+            eventMap
+        )
+        return command
     }
 
-    fun BlueTop1(): () -> Unit {
+
+    fun BlueTop1(): Command {
         val eventMap = HashMap<String, Command>()
         eventMap["MidPlace"] = AutoPlaceMid(pnp)
         eventMap["Base"] = Base(pnp)
         eventMap["Base"] = Base(pnp)
-        return {base("Blue Top 1", eventMap)}
+        return base("Blue Top 1", eventMap)
     }
     fun BlueBottom1(): () -> Unit {
         val eventMap = HashMap<String, Command>()
@@ -111,42 +107,42 @@ class Trajectories {
         val eventMap = HashMap<String, Command>()
         eventMap["MidPlace"] = AutoPlaceMid(pnp)
         eventMap["Base"] = Base(pnp)
-        eventMap["Balance"] = Balance(swerveSubsystem, gyro)
+        eventMap["Balance"] = Balance(swerveSubsystem)
         return {base("Blue Center 1 Balance", eventMap)}
     }
     fun RedCenter1Balance(): () -> Unit {
         val eventMap = HashMap<String, Command>()
         eventMap["MidPlace"] = AutoPlaceMid(pnp)
         eventMap["Base"] = Base(pnp)
-        eventMap["Balance"] = Balance(swerveSubsystem, gyro)
+        eventMap["Balance"] = Balance(swerveSubsystem)
         return {base("Red Center 1 Balance", eventMap)}
     }
     fun BlueTop1Balance(): () -> Unit {
         val eventMap = HashMap<String, Command>()
         eventMap["MidPlace"] = AutoPlaceMid(pnp)
         eventMap["Base"] = Base(pnp)
-        eventMap["Balance"] = Balance(swerveSubsystem, gyro)
+        eventMap["Balance"] = Balance(swerveSubsystem)
         return {base("Blue Top 1 Balance", eventMap)}
     }
     fun BlueBottom1Balance(): () -> Unit {
         val eventMap = HashMap<String, Command>()
         eventMap["MidPlace"] = AutoPlaceMid(pnp)
         eventMap["Base"] = Base(pnp)
-        eventMap["Balance"] = Balance(swerveSubsystem, gyro)
+        eventMap["Balance"] = Balance(swerveSubsystem)
         return {base("Blue Bottom 1 Balance", eventMap)}
     }
     fun RedTop1Balance(): () -> Unit {
         val eventMap = HashMap<String, Command>()
         eventMap["MidPlace"] = AutoPlaceMid(pnp)
         eventMap["Base"] = Base(pnp)
-        eventMap["Balance"] = Balance(swerveSubsystem, gyro)
+        eventMap["Balance"] = Balance(swerveSubsystem)
         return {base("Red Top 1 Balance", eventMap)}
     }
     fun RedBottom1Balance(): () -> Unit {
         val eventMap = HashMap<String, Command>()
         eventMap["MidPlace"] = AutoPlaceMid(pnp)
         eventMap["Base"] = Base(pnp)
-        eventMap["Balance"] = Balance(swerveSubsystem, gyro)
+        eventMap["Balance"] = Balance(swerveSubsystem)
         return {base("Red Bottom 1 Balance", eventMap)}
     }
     fun BlueTop1GetBalance(): () -> Unit {
@@ -155,7 +151,7 @@ class Trajectories {
         eventMap["Base"] = Base(pnp)
         eventMap["PickUpCube"] = AutoPick(pnp)
         eventMap["Base"] = Base(pnp)
-        eventMap["Balance"] = Balance(swerveSubsystem, gyro)
+        eventMap["Balance"] = Balance(swerveSubsystem)
         return {base("Blue Top 1 Get Balance", eventMap)}
     }
     fun BlueBottom1GetBalance(): () -> Unit {
@@ -164,43 +160,73 @@ class Trajectories {
         eventMap["Base"] = Base(pnp)
         eventMap["PickUpCube"] = AutoPick(pnp)
         eventMap["Base"] = Base(pnp)
-        eventMap["Balance"] = Balance(swerveSubsystem, gyro)
+        eventMap["Balance"] = Balance(swerveSubsystem)
         return {base("Blue Bottom 1 Get Balance", eventMap)}
     }
-    fun RedTop1GetBalance(): () -> Unit {
+    fun RedTop1GetBalance(): Command {
         val eventMap = HashMap<String, Command>()
-        eventMap["MidPlace"] = AutoPlaceMid(pnp)
+        eventMap["MidPlace"] = MidPlaceCube(pnp)
         eventMap["Base"] = Base(pnp)
-        eventMap["PickUpCube"] = AutoPick(pnp)
+        eventMap["PickUpCube"] = LowPickCube(pnp)
         eventMap["Base"] = Base(pnp)
-        eventMap["Balance"] = Balance(swerveSubsystem, gyro)
-        return {base("Red Top 1 Get Balance", eventMap)}
+        eventMap["Balance"] = Balance(swerveSubsystem)
+        return base("Red Top 1 Get Balance", eventMap)
     }
     fun RedBottom1GetBalance(): () -> Unit {
         val eventMap = HashMap<String, Command>()
-        eventMap["MidPlace"] = AutoPlaceMid(pnp)
+        eventMap["MidPlace"] = MidPlaceCube(pnp)
         eventMap["Base"] = Base(pnp)
         eventMap["PickUpCube"] = AutoPick(pnp)
         eventMap["Base"] = Base(pnp)
-        eventMap["Balance"] = Balance(swerveSubsystem, gyro)
+        eventMap["Balance"] = Balance(swerveSubsystem)
         return {base("Blue Top 1", eventMap)}
     }
-    fun testPath() {
-        val examplePath = PathPlanner.loadPath("Blue Top 1 Get Balance", PathConstraints(4.0, 3.0))
+    fun TestPath(): Command {
+        val examplePath = PathPlanner.loadPath("Red Top 1 Get Balance", PathConstraints(1.00, 0.50))
 
         val eventMap = HashMap<String, Command>()
-        eventMap["MidPlace"] = AutoPlaceMid(pnp)
+        eventMap["MidPlace"] = MidPlaceCube(pnp)
         eventMap["Base"] = Base(pnp)
-        eventMap["PickUpCube"] = AutoPick(pnp)
+        eventMap["PickUpCube"] = LowPickCube(pnp)
         eventMap["Base"] = Base(pnp)
-        eventMap["Balance"] = Balance(swerveSubsystem, gyro)
+        eventMap["Balance"] = Balance(swerveSubsystem)
 
         val command = FollowPathWithEvents(
-            RunCommand({
-                TrajectoryDrivePathPlanner(swerveSubsystem, examplePath, false)
-            }),
+            TrajectoryDrivePathPlanner(swerveSubsystem, examplePath, true),
             examplePath.markers,
             eventMap
         )
+        return command
     }
+}
+
+fun TestPathAutoBuilder(swerveSubsystem: SwerveSubsystem, pnp: PickAndPlaceSubsystem): Command {
+    var thetaController = PIDController(
+        TrajectoryConstants.kPThetaController, 0.0, TrajectoryConstants.kDThetaController
+    )
+    thetaController.enableContinuousInput(-Math.PI, Math.PI)
+
+    val path = PathPlanner.loadPath("Red Top 1 Get Balance", PathConstraints(1.0, 0.5))
+
+    val eventMap = HashMap<String, Command>()
+    eventMap["MidPlace"] = MidPlaceCube(pnp)
+    eventMap["Base"] = Base(pnp)
+    eventMap["PickUpCube"] = LowPickCube(pnp)
+    eventMap["Base"] = Base(pnp)
+    eventMap["Balance"] = Balance(swerveSubsystem)
+
+    val autoBuilder = SwerveAutoBuilder(
+        swerveSubsystem::pose,
+        swerveSubsystem::resetOdometry,
+        DrivetrainConstants.driveKinematics,
+        PIDConstants(TrajectoryConstants.kPXController, 0.0, 0.0),
+        PIDConstants(TrajectoryConstants.kPThetaController, 0.0, TrajectoryConstants.kDThetaController),
+        swerveSubsystem::setModuleStates,
+        eventMap,
+        false,
+        swerveSubsystem
+    )
+
+    val fullAuto: Command = autoBuilder.fullAuto(path)
+    return fullAuto
 }

@@ -97,7 +97,8 @@ fun TrajectoryDrivePathPlanner(swerveSubsystem: SwerveSubsystem, trajectory: Pat
     )
     thetaController.enableContinuousInput(-Math.PI, Math.PI)
 
-    var thetaControllerError = NetworkTableInstance.getDefault().getTable("Swerve").getDoubleTopic("TurningError2").getEntry(0.0)
+    var thetaControllerError =
+        NetworkTableInstance.getDefault().getTable("Swerve").getDoubleTopic("TurningError2").getEntry(0.0)
 
     var swerveControllerCommand = PPSwerveControllerCommand(
         trajectory,
@@ -119,14 +120,14 @@ fun TrajectoryDrivePathPlanner(swerveSubsystem: SwerveSubsystem, trajectory: Pat
     return SequentialCommandGroup(
         InstantCommand({
             // Reset odometry for the first path you run during auto
-            if(isFirstPath){
+            if (isFirstPath) {
                 swerveSubsystem.resetOdometry(trajectory.initialHolonomicPose)
             }
         }),
         swerveControllerCommand,
-        RunCommand({thetaControllerError.set(thetaController.positionError)}),
+        RunCommand({ thetaControllerError.set(thetaController.positionError) }),
         RunCommand({
-            swerveSubsystem.drive(0.0,0.0,0.0,true, false)
+            swerveSubsystem.drive(0.0, 0.0, 0.0, true, false)
         })
     )
 }

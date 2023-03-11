@@ -15,7 +15,7 @@ import frc.robot.commands.SetPickAndPlacePosition
 import frc.robot.constants.ArmConstants
 import frc.robot.constants.IntakeConstants
 
-class PickAndPlaceSubsystem() : SubsystemBase(){
+class PickAndPlaceSubsystem : SubsystemBase(){
 
     val elevatorMotor = CANSparkMax(ArmConstants.elevatorMotorId, CANSparkMaxLowLevel.MotorType.kBrushless)
     val elbowMotor = CANSparkMax(ArmConstants.elbowMotorId, CANSparkMaxLowLevel.MotorType.kBrushless)
@@ -24,8 +24,8 @@ class PickAndPlaceSubsystem() : SubsystemBase(){
     val intakeTwoMotor = CANSparkMax(ArmConstants.intakeMotorTwoId, CANSparkMaxLowLevel.MotorType.kBrushless)
 
     val elevatorEncoder = elevatorMotor.encoder
-    val sprocketEncoder = elbowMotor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle)
-    val axleEncoder = wristMotor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle)
+    val elbowEncoder = elbowMotor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle)
+    val wristEncoder = wristMotor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle)
 
     val forwardLimit = DigitalInput(ArmConstants.topBreakerId)
     val reverseLimit = DigitalInput(ArmConstants.bottomBreakerId)
@@ -166,14 +166,14 @@ class PickAndPlaceSubsystem() : SubsystemBase(){
         }
         else if(topHit)
         {
-            elevatorEncoder.position = ArmConstants.elevatorMaxHeight
+            //elevatorEncoder.position = ArmConstants.elevatorMaxHeight
         }
 
         // Telemetry setting.
         Telemetry.elevatorZeroed.set(elevatorZeroed)
         Telemetry.elbowPosition.set(elbowPositionRadians)
         Telemetry.elevatorPosition.set(elevatorEncoder.position)
-        Telemetry.elbowVelocity.set(sprocketEncoder.velocity)
+        Telemetry.elbowVelocity.set(elbowEncoder.velocity)
         Telemetry.topHit.set(topHit)
         Telemetry.bottomHit.set(bottomHit)
         Telemetry.wristVoltage.set(wristVoltage)
