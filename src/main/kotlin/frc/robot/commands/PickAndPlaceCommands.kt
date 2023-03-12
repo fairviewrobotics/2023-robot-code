@@ -310,7 +310,7 @@ fun AutoPick(pnp: PickAndPlaceSubsystem): Command {
         ),
 
         SetPickAndPlacePosition(
-            true,
+            false,
             pnp,
             0.2, // elevator
             Math.toRadians(-27.0), // elbow
@@ -340,7 +340,7 @@ fun AutoPlaceMid(pnp: PickAndPlaceSubsystem): Command {
         ),
 
         SetPickAndPlacePosition(
-            true,
+            false,
             pnp,
             0.2, // elevator
             Math.toRadians(60.0), // elbow
@@ -371,7 +371,7 @@ fun AutoPlaceHigh(pnp: PickAndPlaceSubsystem): Command {
         ),
 
         SetPickAndPlacePosition(
-            true,
+            false,
             pnp,
             0.75, // elevator
             Math.toRadians(20.0), // elbow

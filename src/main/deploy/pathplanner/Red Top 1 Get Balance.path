@@ -94,24 +94,27 @@
       "isLocked": false,
       "isStopPoint": true,
       "stopEvent": {
-        "names": [],
+        "names": [
+          "PickUpCube",
+          "Base"
+        ],
         "executionBehavior": "sequential",
-        "waitBehavior": "none",
+        "waitBehavior": "after",
         "waitTime": 0.01
       }
     },
     {
       "anchorPoint": {
-        "x": 10.044630226413231,
-        "y": 2.6992237109474213
+        "x": 10.322566534021957,
+        "y": 2.6564865820703862
       },
       "prevControl": {
-        "x": 9.989542187805506,
-        "y": 3.6393929031857284
+        "x": 10.267478495414233,
+        "y": 3.5966557743086933
       },
       "nextControl": {
-        "x": 10.045500045861203,
-        "y": 2.6843787923686957
+        "x": 10.32343635346993,
+        "y": 2.6416416634916606
       },
       "holonomicAngle": 180.0,
       "isReversal": false,
