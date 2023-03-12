@@ -206,7 +206,7 @@ fun TestPathAutoBuilder(swerveSubsystem: SwerveSubsystem, pnp: PickAndPlaceSubsy
     )
     thetaController.enableContinuousInput(-Math.PI, Math.PI)
 
-    val path = PathPlanner.loadPath("Red Top 1 Get Balance", PathConstraints(1.0, 0.5))
+    val path = PathPlanner.loadPathGroup("Red Top 1 Get Balance", PathConstraints(1.0, 0.5))
 
     val eventMap = HashMap<String, Command>()
     eventMap["MidPlace"] = MidPlaceCube(pnp)
