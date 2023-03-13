@@ -113,5 +113,5 @@ class RobotContainer {
             HighPlaceCube(pickAndPlace)
         )
     }
-    val autonomousCommand: Command = trajectories.TestPath()
+    val autonomousCommand: Command = RunCommand({trajectories.AutoBuilder()})
 }

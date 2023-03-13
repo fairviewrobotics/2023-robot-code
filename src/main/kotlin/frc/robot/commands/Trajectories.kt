@@ -198,6 +198,34 @@ class Trajectories(val pnp: PickAndPlaceSubsystem, val swerveSubsystem: SwerveSu
         )
         return command
     }
+    fun AutoBuilder(){
+        val pathGroup: List<PathPlannerTrajectory> = PathPlanner.loadPathGroup("Red Top 1 Get Balance", PathConstraints(1.0, 0.5))
+        //It might be this for the line above: val pathGroup: ArrayList<PathPlannerTrajectory> = arrayListOf()
+        // PathPlanner.loadPathGroup("Red Top 1 Get Balance", PathConstraints(1.0, 0.5)).toCollection(pathGroup)
+
+        val eventMap: HashMap<String, Command> = hashMapOf(
+            "MidPlace" to MidPlaceCube(pnp),
+            "Base" to Base(pnp),
+            "PickUpCube" to LowPickCube(pnp),
+            "Base" to Base(pnp),
+            "Balance" to Balance(swerveSubsystem)
+        )
+
+        val autoBuilder = SwerveAutoBuilder(
+            swerveSubsystem::pose,
+            swerveSubsystem::resetOdometry,
+            DrivetrainConstants.driveKinematics,
+            PIDConstants(TrajectoryConstants.kPXController, 0.0, 0.0),
+            PIDConstants(TrajectoryConstants.kPThetaController, 0.0, TrajectoryConstants.kDThetaController),
+            swerveSubsystem::setModuleStates,
+            eventMap,
+            false,
+            swerveSubsystem
+        )
+        val fullAuto: Command = autoBuilder.fullAuto(pathGroup)
+
+        fullAuto.schedule()
+    }
 }
 
 fun TestPathAutoBuilder(swerveSubsystem: SwerveSubsystem, pnp: PickAndPlaceSubsystem): Command {
