@@ -93,6 +93,7 @@ class RobotContainer {
                 swerveSubsystem.zeroGyroAndOdometry()
             })
         )
+        //Place:
         Trigger {primaryController.leftTriggerAxis > 0.2} .whileTrue(
             RunCommand ({
                 pickUp = false
@@ -106,12 +107,13 @@ class RobotContainer {
                 } else if (!middlePlace && highPlace && !cube && cone && place && !pickUp) {
                     HighPlaceCone(pickAndPlace)
                 } else if (place){
-                    MidPlaceCone(pickAndPlace)
+                    MidPlaceCube(pickAndPlace)
                 } else {
                     Base(pickAndPlace)
                 }
             })
         )
+        //Pickup:
         Trigger {primaryController.rightTriggerAxis > 0.2} .whileTrue(
            RunCommand({
                pickUp = true
