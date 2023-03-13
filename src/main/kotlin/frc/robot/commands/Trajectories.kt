@@ -198,11 +198,12 @@ class Trajectories(val pnp: PickAndPlaceSubsystem, val swerveSubsystem: SwerveSu
         )
         return command
     }
-    fun AutoBuilder(){
-        val pathGroup: List<PathPlannerTrajectory> = PathPlanner.loadPathGroup("Red Top 1 Get Balance", PathConstraints(1.5, 1.0))
+    fun AutoBuilder(): Command {
+        val pathGroup: List<PathPlannerTrajectory> = PathPlanner.loadPathGroup("Red Top 1 Get Balance", PathConstraints(1.50, 1.00))
         //It might be this for the line above: val pathGroup: ArrayList<PathPlannerTrajectory> = arrayListOf()
         // PathPlanner.loadPathGroup("Red Top 1 Get Balance", PathConstraints(1.0, 0.5)).toCollection(pathGroup)
 
+        //The way these are called may need to change
         val eventMap: HashMap<String, Command> = hashMapOf(
             "MidPlace" to MidPlaceCube(pnp),
             "Base" to Base(pnp),
@@ -210,21 +211,29 @@ class Trajectories(val pnp: PickAndPlaceSubsystem, val swerveSubsystem: SwerveSu
             "Base" to Base(pnp),
             "Balance" to Balance(swerveSubsystem)
         )
+//        val eventMap = HashMap<String, Command>()
+//        eventMap["MidPlace"] = MidPlaceCube(pnp)
+//        eventMap["Base"] = Base(pnp)
+//        eventMap["PickUpCube"] = LowPickCube(pnp)
+//        eventMap["Base"] = Base(pnp)
+//        eventMap["Balance"] = Balance(swerveSubsystem)
 
         val autoBuilder = SwerveAutoBuilder(
             swerveSubsystem::pose,
             swerveSubsystem::resetOdometry,
             DrivetrainConstants.driveKinematics,
-            PIDConstants(TrajectoryConstants.kPXController, 0.0, 0.0),
-            PIDConstants(TrajectoryConstants.kPThetaController, 0.0, TrajectoryConstants.kDThetaController),
+            //Might need tuning or changing:
+            PIDConstants(0.0, 0.0, 0.0),
+            PIDConstants(0.0, 0.0, 0.0),
             swerveSubsystem::setModuleStates,
             eventMap,
             false,
             swerveSubsystem
         )
-        val fullAuto: Command = autoBuilder.fullAuto(pathGroup)
-
-        fullAuto.schedule()
+        var fullAuto: Command = autoBuilder.fullAuto(pathGroup)
+        //TODO: I don't get how this works. We already schedule the whole function in robot, but I guess we need to schedule fullAuto. We need to figure it out.
+        //fullAuto.schedule()
+        return fullAuto
     }
 }
 
@@ -234,7 +243,7 @@ fun TestPathAutoBuilder(swerveSubsystem: SwerveSubsystem, pnp: PickAndPlaceSubsy
     )
     thetaController.enableContinuousInput(-Math.PI, Math.PI)
 
-    val path = PathPlanner.loadPathGroup("Red Top 1 Get Balance", PathConstraints(1.5, 1.0))
+    val pathGroup = PathPlanner.loadPathGroup("Red Top 1 Get Balance", PathConstraints(1.50, 1.00))
 
     val eventMap = HashMap<String, Command>()
     eventMap["MidPlace"] = MidPlaceCube(pnp)
@@ -255,6 +264,31 @@ fun TestPathAutoBuilder(swerveSubsystem: SwerveSubsystem, pnp: PickAndPlaceSubsy
         swerveSubsystem
     )
 
-    val fullAuto: Command = autoBuilder.fullAuto(path)
+    val fullAuto: Command = autoBuilder.fullAuto(pathGroup)
+    return fullAuto
+}
+fun TestAutoBuilder(swerveSubsystem: SwerveSubsystem, pnp: PickAndPlaceSubsystem): Command {
+    val pathGroup = PathPlanner.loadPathGroup("Red Top 1 Get Balance", PathConstraints(1.50, 1.00))
+
+    val eventMap = HashMap<String, Command>()
+    eventMap["MidPlace"] = MidPlaceCube(pnp)
+    eventMap["Base"] = Base(pnp)
+    eventMap["PickUpCube"] = LowPickCube(pnp)
+    eventMap["Base"] = Base(pnp)
+    eventMap["Balance"] = Balance(swerveSubsystem)
+
+    val autoBuilder = SwerveAutoBuilder(
+        swerveSubsystem::pose,
+        swerveSubsystem::resetOdometry,
+        DrivetrainConstants.driveKinematics,
+        PIDConstants(TrajectoryConstants.kPXController, 0.0, 0.0),
+        PIDConstants(TrajectoryConstants.kPThetaController, 0.0, TrajectoryConstants.kDThetaController),
+        swerveSubsystem::setModuleStates,
+        eventMap,
+        false,
+        swerveSubsystem
+    )
+
+    val fullAuto: Command = autoBuilder.fullAuto(pathGroup)
     return fullAuto
 }
