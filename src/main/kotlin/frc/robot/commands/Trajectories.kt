@@ -199,7 +199,11 @@ class Trajectories(val pnp: PickAndPlaceSubsystem, val swerveSubsystem: SwerveSu
         return command
     }
     fun AutoBuilder(): Command {
-        val pathGroup: List<PathPlannerTrajectory> = PathPlanner.loadPathGroup("Red Top 1 Get Balance", PathConstraints(1.50, 1.00))
+        val pathGroup: List<PathPlannerTrajectory> = PathPlanner.loadPathGroup(
+            "Test Path",
+            PathConstraints(1.00,0.50),
+            PathConstraints(4.00, 3.00)
+        )
         //It might be this for the line above: val pathGroup: ArrayList<PathPlannerTrajectory> = arrayListOf()
         // PathPlanner.loadPathGroup("Red Top 1 Get Balance", PathConstraints(1.0, 0.5)).toCollection(pathGroup)
 
@@ -211,7 +215,7 @@ class Trajectories(val pnp: PickAndPlaceSubsystem, val swerveSubsystem: SwerveSu
             "Base" to Base(pnp),
             "Balance" to Balance(swerveSubsystem)
         )
-//        val eventMap = HashMap<String, Command>()
+//        val eventMap = hashMapOf<String, Command>()
 //        eventMap["MidPlace"] = MidPlaceCube(pnp)
 //        eventMap["Base"] = Base(pnp)
 //        eventMap["PickUpCube"] = LowPickCube(pnp)

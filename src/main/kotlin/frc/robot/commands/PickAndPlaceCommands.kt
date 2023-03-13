@@ -7,9 +7,11 @@ import edu.wpi.first.networktables.NetworkTableInstance
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandBase
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
 import frc.robot.constants.ArmConstants
 import frc.robot.subsystems.PickAndPlaceSubsystem
+import frc.robot.subsystems.SwerveSubsystem
 
 class SetPickAndPlacePosition(val continuous: Boolean ,val subsystem: PickAndPlaceSubsystem,
                           val elevatorPos: Double,
@@ -154,16 +156,20 @@ fun Base(pnp: PickAndPlaceSubsystem): Command {
     )
 }
 fun MidPlaceCube(pnp: PickAndPlaceSubsystem): Command {
+    val secondaryController = XboxController(1)
+    val swerveSubsystem = SwerveSubsystem()
     return SequentialCommandGroup(
-        SetPickAndPlacePosition(
+         ParallelCommandGroup(
+            SetPickAndPlacePosition(
             false,
-            pnp,
-            0.2, // elevator
-            Math.toRadians(60.0), // elbow
-            0.0, // wrist
-            2.0 // intake
+                pnp,
+                0.2, // elevator
+                Math.toRadians(60.0), // elbow
+                0.0, // wrist
+                2.0 // intake
+            ),
+            AlignToAprilTag(swerveSubsystem, secondaryController)
         ),
-
         SetPickAndPlacePosition(
             true,
             pnp,
@@ -173,7 +179,8 @@ fun MidPlaceCube(pnp: PickAndPlaceSubsystem): Command {
             -3.0 // intake
         )
     )
-    println("running")
+
+    //println("running")
 }
 fun HighPlaceCube(pnp: PickAndPlaceSubsystem): Command {
     return SequentialCommandGroup(
