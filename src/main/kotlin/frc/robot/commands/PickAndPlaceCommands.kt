@@ -152,7 +152,6 @@ fun Base(pnp: PickAndPlaceSubsystem): Command {
             Math.toRadians(70.0), // wrist
         2.0 // intake
     )
-
     )
 }
 fun MidPlaceCube(pnp: PickAndPlaceSubsystem): Command {

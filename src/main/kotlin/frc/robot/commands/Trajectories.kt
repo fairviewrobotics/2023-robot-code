@@ -181,23 +181,6 @@ class Trajectories(val pnp: PickAndPlaceSubsystem, val swerveSubsystem: SwerveSu
         eventMap["Balance"] = Balance(swerveSubsystem)
         return {base("Blue Top 1", eventMap)}
     }
-    fun TestPath(): Command {
-        val examplePath = PathPlanner.loadPath("Red Top 1 Get Balance", PathConstraints(1.50, 1.00))
-
-        val eventMap = HashMap<String, Command>()
-        eventMap["MidPlace"] = MidPlaceCube(pnp)
-        eventMap["Base"] = Base(pnp)
-        eventMap["PickUpCube"] = LowPickCube(pnp)
-        eventMap["Base"] = Base(pnp)
-        eventMap["Balance"] = Balance(swerveSubsystem)
-
-        val command = FollowPathWithEvents(
-            TrajectoryDrivePathPlanner(swerveSubsystem, examplePath, true),
-            examplePath.markers,
-            eventMap
-        )
-        return command
-    }
     fun AutoBuilder(): Command {
         val pathGroup: List<PathPlannerTrajectory> = PathPlanner.loadPathGroup(
             "Test Path",
@@ -234,10 +217,10 @@ class Trajectories(val pnp: PickAndPlaceSubsystem, val swerveSubsystem: SwerveSu
             false,
             swerveSubsystem
         )
-        var fullAuto: Command = autoBuilder.fullAuto(pathGroup)
+        val fullAuto: Command = autoBuilder.fullAuto(pathGroup)
+        return fullAuto
         //TODO: I don't get how this works. We already schedule the whole function in robot, but I guess we need to schedule fullAuto. We need to figure it out.
         //fullAuto.schedule()
-        return fullAuto
     }
 }
 
@@ -247,7 +230,10 @@ fun TestPathAutoBuilder(swerveSubsystem: SwerveSubsystem, pnp: PickAndPlaceSubsy
     )
     thetaController.enableContinuousInput(-Math.PI, Math.PI)
 
-    val pathGroup = PathPlanner.loadPathGroup("Red Top 1 Get Balance", PathConstraints(1.50, 1.00))
+    val pathGroup = PathPlanner.loadPathGroup("Test Path",
+        PathConstraints(1.00,0.50),
+        PathConstraints(4.00, 3.00)
+    )
 
     val eventMap = HashMap<String, Command>()
     eventMap["MidPlace"] = MidPlaceCube(pnp)
@@ -272,7 +258,10 @@ fun TestPathAutoBuilder(swerveSubsystem: SwerveSubsystem, pnp: PickAndPlaceSubsy
     return fullAuto
 }
 fun TestAutoBuilder(swerveSubsystem: SwerveSubsystem, pnp: PickAndPlaceSubsystem): Command {
-    val pathGroup = PathPlanner.loadPathGroup("Red Top 1 Get Balance", PathConstraints(1.50, 1.00))
+    val pathGroup = PathPlanner.loadPathGroup("Test Path",
+        PathConstraints(1.00,0.50),
+        PathConstraints(4.00, 3.00)
+    )
 
     val eventMap = HashMap<String, Command>()
     eventMap["MidPlace"] = MidPlaceCube(pnp)
