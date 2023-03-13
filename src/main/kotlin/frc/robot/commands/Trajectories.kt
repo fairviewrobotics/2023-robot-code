@@ -182,7 +182,7 @@ class Trajectories(val pnp: PickAndPlaceSubsystem, val swerveSubsystem: SwerveSu
         return {base("Blue Top 1", eventMap)}
     }
     fun TestPath(): Command {
-        val examplePath = PathPlanner.loadPath("Red Top 1 Get Balance", PathConstraints(1.00, 0.50))
+        val examplePath = PathPlanner.loadPath("Red Top 1 Get Balance", PathConstraints(1.50, 1.00))
 
         val eventMap = HashMap<String, Command>()
         eventMap["MidPlace"] = MidPlaceCube(pnp)
@@ -199,7 +199,7 @@ class Trajectories(val pnp: PickAndPlaceSubsystem, val swerveSubsystem: SwerveSu
         return command
     }
     fun AutoBuilder(){
-        val pathGroup: List<PathPlannerTrajectory> = PathPlanner.loadPathGroup("Red Top 1 Get Balance", PathConstraints(1.0, 0.5))
+        val pathGroup: List<PathPlannerTrajectory> = PathPlanner.loadPathGroup("Red Top 1 Get Balance", PathConstraints(1.5, 1.0))
         //It might be this for the line above: val pathGroup: ArrayList<PathPlannerTrajectory> = arrayListOf()
         // PathPlanner.loadPathGroup("Red Top 1 Get Balance", PathConstraints(1.0, 0.5)).toCollection(pathGroup)
 
@@ -234,7 +234,7 @@ fun TestPathAutoBuilder(swerveSubsystem: SwerveSubsystem, pnp: PickAndPlaceSubsy
     )
     thetaController.enableContinuousInput(-Math.PI, Math.PI)
 
-    val path = PathPlanner.loadPathGroup("Red Top 1 Get Balance", PathConstraints(1.0, 0.5))
+    val path = PathPlanner.loadPathGroup("Red Top 1 Get Balance", PathConstraints(1.5, 1.0))
 
     val eventMap = HashMap<String, Command>()
     eventMap["MidPlace"] = MidPlaceCube(pnp)

@@ -137,14 +137,6 @@ fun Base(pnp: PickAndPlaceSubsystem): Command {
         SetPickAndPlacePosition(
             false,
             pnp,
-            0.0, // elevator//needs fixing
-            Math.toRadians(80.0), // elbow
-            Math.toRadians(60.0), // wrist
-            5.0 // intake
-        ),
-        SetPickAndPlacePosition(
-            false,
-            pnp,
             0.0, // elevator
             Math.toRadians(80.0), // elbow
             Math.toRadians(70.0), // wrist
@@ -280,7 +272,7 @@ fun ShelfPick(pnp: PickAndPlaceSubsystem): Command {
             0.0, // elevator
             Math.toRadians(70.0), // elbow
             0.0, // wrist
-            5.0
+            7.0
         )
     )
 }
@@ -293,7 +285,7 @@ fun ChutePick(pnp: PickAndPlaceSubsystem): Command {
             0.0, // elevator
             Math.toRadians(70.0), // elbow
             Math.toRadians(60.0), // wrist
-            5.0 // intake
+            7.0 // intake
         )
     )
 }
