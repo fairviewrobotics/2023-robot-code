@@ -11,19 +11,19 @@ class Balancer(
     private val targetAngle = 0.0
     private val balanceSpeed = 0.2
 
-    private fun isBalanced(): Boolean {
-        val gyroAngle = gyro.angle
-        return gyroAngle in (targetAngle - toleranceDegrees)..(targetAngle + toleranceDegrees)
-    }
-
     fun balance() {
         while (!isBalanced()) {
             val gyroAngle = gyro.angle
             val error = targetAngle - gyroAngle
             val correction = error * balanceSpeed
-            swerveDrive.drive(0.0, 0.0, correction, false, true)
+            swerveDrive.drive(correction, 0.0, 0.0, false, true)
             Timer.delay(0.01)
         }
         swerveDrive.setX()
+    }
+
+    private fun isBalanced(): Boolean {
+        val gyroAngle = gyro.angle
+        return gyroAngle in (targetAngle - toleranceDegrees)..(targetAngle + toleranceDegrees)
     }
 }
