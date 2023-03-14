@@ -45,7 +45,7 @@ class RobotContainer {
     val pickAndPlace = PickAndPlaceSubsystem()
     val swerveSubsystem = SwerveSubsystem()
     val trajectories = Trajectories(pickAndPlace, swerveSubsystem)
-    val testTrajectories = AutoTrajectories(pickAndPlace, swerveSubsystem)
+    //val testTrajectories = AutoTrajectories(pickAndPlace, swerveSubsystem)
 
     /** The container for the robot. Contains subsystems, OI devices, and commands.  */
     init {
