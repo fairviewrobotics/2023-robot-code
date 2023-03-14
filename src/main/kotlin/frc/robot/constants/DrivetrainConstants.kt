@@ -10,7 +10,7 @@ import edu.wpi.first.networktables.NetworkTableInstance
 object DrivetrainConstants {
 
 
-    const val maxSpeedMetersPerSecond = 2.0
+    const val maxSpeedMetersPerSecond = 4.0
     const val maxAngularSpeed = Math.PI
 
     const val directionSlewRate = 4.0 // rads/sec   - turning
@@ -24,7 +24,7 @@ object DrivetrainConstants {
 
 
     const val drivingSpeedScalar = -1.0
-    const val rotationSpeedScalar = -1.0
+    const val rotationSpeedScalar = -2.0
 
     // TUNED
     val trackWidth = Units.inchesToMeters(26.5)
@@ -105,7 +105,7 @@ object DrivetrainConstants {
     const val turningMaxOutput = 1.0
 
     // Idle mode for driving and turning motor
-    val drivingMotorIdleMode = CANSparkMax.IdleMode.kBrake
+    val drivingMotorIdleMode = CANSparkMax.IdleMode.kCoast
     val turningMotorIdleMode = CANSparkMax.IdleMode.kBrake
 
     // Current limits for motors, set using smartcurrentlimits in swervemodulecontroller

@@ -11,7 +11,6 @@ import com.pathplanner.lib.PathPoint
 import com.revrobotics.CANSparkMax
 import com.revrobotics.CANSparkMaxLowLevel
 import edu.wpi.first.wpilibj.XboxController
-import edu.wpi.first.wpilibj2.command.RunCommand
 import edu.wpi.first.wpilibj2.command.button.JoystickButton
 
 
@@ -19,11 +18,10 @@ import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.math.trajectory.TrajectoryGenerator
+import edu.wpi.first.wpilibj.Joystick
+import edu.wpi.first.wpilibj.XboxController.Axis
 import edu.wpi.first.wpilibj.motorcontrol.Spark
-import edu.wpi.first.wpilibj2.command.Command
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
-import edu.wpi.first.wpilibj2.command.Subsystem
-import edu.wpi.first.wpilibj2.command.SubsystemBase
+import edu.wpi.first.wpilibj2.command.*
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController
 import edu.wpi.first.wpilibj2.command.button.Trigger
 
@@ -46,48 +44,32 @@ class RobotContainer {
     val secondaryController = XboxController(1)
     val pickAndPlace = PickAndPlaceSubsystem()
     val swerveSubsystem = SwerveSubsystem()
-    val trajectories = Trajectories()
-
-
+    val trajectories = Trajectories(pickAndPlace, swerveSubsystem)
+    val testTrajectories = AutoTrajectories(pickAndPlace, swerveSubsystem)
 
     /** The container for the robot. Contains subsystems, OI devices, and commands.  */
     init {
         // Configure the button bindings
         configureButtonBindings()
-
-
     }
-    
+
     private fun configureButtonBindings() {
 
-//       PRIMARY CONTROLLER:
-//       KeyBinds...
-//
-//       SECONDARY CONTROLLER:
-//
-//       Left Stick Up = Elbow Down
-//       Left Stick Down = Elbow Up
-//
-//       Right Stick Up = Wrist Down
-//       Right Stick Down = Wrist Up
-//
-//       Left Trigger = Elevator Down
-//       Right Trigger = Elevator Up
-//
-//       Left Bumper = Intake In
-//       Right Bumper = Intake Out
-
-
-       swerveSubsystem.defaultCommand = StandardDrive(swerveSubsystem,
-            { primaryController.leftY * -1.0 },
-            { primaryController.leftX * -1.0 },
-            { primaryController.rightX * -1.0},
+        swerveSubsystem.defaultCommand = StandardDrive(swerveSubsystem,
+            { primaryController.leftY * DrivetrainConstants.drivingSpeedScalar / 2.0 },
+            { primaryController.leftX * DrivetrainConstants.drivingSpeedScalar / 2.0},
+            { primaryController.rightX * DrivetrainConstants.rotationSpeedScalar  / 2.0},
             true,
             true)
 
-//        JoystickButton(primaryController, XboxController.Button.kA.value).onTrue(
-//            AlignToAprilTag(swerveSubsystem, primaryController)
-//        )
+        JoystickButton(primaryController, XboxController.Button.kB.value).whileTrue(
+            StandardDrive(swerveSubsystem,
+                { primaryController.leftY * DrivetrainConstants.drivingSpeedScalar },
+                { primaryController.leftX * DrivetrainConstants.drivingSpeedScalar },
+                { primaryController.rightX * DrivetrainConstants.rotationSpeedScalar },
+                true,
+                true
+            ))
 //TODO: The alignment to apriltag needs to happen before the pick and place command in sequential command order
 //TODO: The alignment to apriltag needs to change to pegs for certain cases, or that needs to be added in in a different way cause right now, it would only place for cube shelves
 
@@ -100,86 +82,37 @@ class RobotContainer {
             })
         )
         JoystickButton(primaryController, XboxController.Button.kY.value).whileTrue(
-            RunCommand({swerveSubsystem.zeroGyroAndOdometry()})
-        )
-
-        JoystickButton(primaryController, XboxController.Button.kY.value).whileTrue(
             RunCommand({
                 swerveSubsystem.zeroGyroAndOdometry()
             })
-
         )
-
-
-        //SECONDARY CONTROLLER
-
-        JoystickButton(secondaryController, XboxController.Button.kX.value).whileTrue(
-//            AlignToAprilTag(swerveSubsystem, secondaryController)
+        Trigger {primaryController.leftTriggerAxis > 0.2} .whileTrue(
             LowPickCube(pickAndPlace)
         )
-        JoystickButton(secondaryController, XboxController.Button.kB.value).whileTrue(
+        Trigger {primaryController.rightTriggerAxis > 0.2} .whileTrue(
             LowPickCone(pickAndPlace)
         )
-        JoystickButton(secondaryController, XboxController.kDPadLeft.value).whileTrue(
-//            AlignToAprilTag(swerveSubsystem, secondaryController)
+        JoystickButton(primaryController, XboxController.Button.kLeftBumper.value).whileTrue(
             ShelfPick(pickAndPlace)
+
         )
-        JoystickButton(secondaryController, XboxController.Button.kDPadRight.value).whileTrue(
-            ShootPick(pickAndPlace)
+        JoystickButton(primaryController, XboxController.Button.kRightBumper.value).whileTrue(
+            ChutePick(pickAndPlace)
         )
+
+        //SECONDARY CONtROLLER
         JoystickButton(secondaryController, XboxController.Button.kLeftBumper.value).whileTrue(
-//            AlignToAprilTag(swerveSubsystem, secondaryController)
-            MidPlace(pickAndPlace)
+            MidPlaceCone(pickAndPlace)
         )
         JoystickButton(secondaryController, XboxController.Button.kRightBumper.value).whileTrue(
-//            AlignToAprilTag(swerveSubsystem, secondaryController)
-            HighPlace(pickAndPlace)
+            MidPlaceCube(pickAndPlace)
         )
-        JoystickButton(secondaryController, XboxController.Axis.kLeftTrigger.value).whileTrue(
-//            AlignToAprilTag(swerveSubsystem, secondaryController)
-            MidPlace(pickAndPlace)
+        Trigger {secondaryController.leftTriggerAxis > 0.2} .whileTrue(
+            HighPlaceCone(pickAndPlace)
         )
-        JoystickButton(secondaryController, XboxController.Axis.kRightTrigger.value).whileTrue(
-//            AlignToAprilTag(swerveSubsystem, secondaryController)
-            HighPlace(pickAndPlace)
+        Trigger {secondaryController.rightTriggerAxis > 0.2} .whileTrue(
+            HighPlaceCube(pickAndPlace)
         )
-
-//        JoystickButton(secondaryController, XboxController.Button.kX.value).whileTrue(
-//            RunCommand({
-//                swerveSubsystem.setX()
-//            })
-//        )
-//
-//        JoystickButton(secondaryController, XboxController.Button.kY.value).whileTrue(
-//            RunCommand({
-//                swerveSubsystem.zeroGyroAndOdometry()
-//            })
-//
-//        )
-//        JoystickButton(secondaryController, XboxController.Button.kLeftBumper.value).whileTrue(
-//            RunCommand({VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { 0.0 }, { 4.0 })})
-//        )
-//
-//        JoystickButton(secondaryController, XboxController.Button.kRightBumper.value).whileTrue(
-//            RunCommand({VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { 0.0 }, { -4.0 })})
-//        )
-//
-//        JoystickButton(secondaryController, XboxController.Axis.kLeftTrigger.value).whileTrue(
-//            RunCommand({VoltageArm(pickAndPlace, { primaryController.leftTriggerAxis * -2.0 }, { 0.0 }, { 0.0 }, { 0.0 })})
-//        )
-//
-//        JoystickButton(secondaryController, XboxController.Axis.kRightTrigger.value).whileTrue(
-//            RunCommand({VoltageArm(pickAndPlace, { primaryController.rightTriggerAxis * 4.0 }, { 0.0 }, { 0.0 }, { 0.0 })})
-//        )
-//
-//        JoystickButton(secondaryController, XboxController.Axis.kLeftY.value).whileTrue(
-//            RunCommand({VoltageArm(pickAndPlace, { 0.0 }, { primaryController.leftX * -4.0 }, { 0.0 }, { 0.0 })})
-//        )
-//
-//        JoystickButton(secondaryController, XboxController.Axis.kRightY.value).whileTrue(
-//            RunCommand({VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { primaryController.rightY * -4.0 }, { 0.0 })})
-//        )
-
     }
-    val autonomousCommand: Command = RunCommand({trajectories.BlueTop1GetBalance()})
+    val autonomousCommand: Command = RunCommand({trajectories.AutoBuilder()})
 }
