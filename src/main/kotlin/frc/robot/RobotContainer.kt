@@ -46,23 +46,16 @@ class RobotContainer {
     val swerveSubsystem = SwerveSubsystem()
     val trajectories = Trajectories(pickAndPlace, swerveSubsystem)
     val testTrajectories = AutoTrajectories(pickAndPlace, swerveSubsystem)
-    var cube: Boolean = false
-    var cone: Boolean = false
-    var middlePlace: Boolean = false
-    var highPlace: Boolean = false
-    var pickUp: Boolean = false
-    var place: Boolean = false
-
 
     /** The container for the robot. Contains subsystems, OI devices, and commands.  */
     init {
         // Configure the button bindings
         configureButtonBindings()
     }
-    
+
     private fun configureButtonBindings() {
 
-       swerveSubsystem.defaultCommand = StandardDrive(swerveSubsystem,
+        swerveSubsystem.defaultCommand = StandardDrive(swerveSubsystem,
             { primaryController.leftY * DrivetrainConstants.drivingSpeedScalar / 2.0 },
             { primaryController.leftX * DrivetrainConstants.drivingSpeedScalar / 2.0},
             { primaryController.rightX * DrivetrainConstants.rotationSpeedScalar  / 2.0},
@@ -76,7 +69,7 @@ class RobotContainer {
                 { primaryController.rightX * DrivetrainConstants.rotationSpeedScalar },
                 true,
                 true
-        ))
+            ))
 //TODO: The alignment to apriltag needs to happen before the pick and place command in sequential command order
 //TODO: The alignment to apriltag needs to change to pegs for certain cases, or that needs to be added in in a different way cause right now, it would only place for cube shelves
 
@@ -93,44 +86,15 @@ class RobotContainer {
                 swerveSubsystem.zeroGyroAndOdometry()
             })
         )
-        //Place:
         Trigger {primaryController.leftTriggerAxis > 0.2} .whileTrue(
-            RunCommand ({
-                pickUp = false
-                place = true
-                if (middlePlace && !highPlace && cube && !cone && place && !pickUp) {
-                    MidPlaceCube(pickAndPlace)
-                } else if (middlePlace && !highPlace && !cube && cone && place && !pickUp) {
-                    MidPlaceCone(pickAndPlace)
-                } else if (!middlePlace && highPlace && cube && !cone && place && !pickUp) {
-                    HighPlaceCube(pickAndPlace)
-                } else if (!middlePlace && highPlace && !cube && cone && place && !pickUp) {
-                    HighPlaceCone(pickAndPlace)
-                } else if (place){
-                    MidPlaceCube(pickAndPlace)
-                } else {
-                    Base(pickAndPlace)
-                }
-            })
+            LowPickCube(pickAndPlace)
         )
-        //Pickup:
         Trigger {primaryController.rightTriggerAxis > 0.2} .whileTrue(
-           RunCommand({
-               pickUp = true
-               place = false
-               if (cube && !cone && pickUp && !place){
-                   LowPickCube(pickAndPlace)
-               } else if (!cube && cone && pickUp && !place) {
-                   LowPickCone(pickAndPlace)
-               } else if (pickUp) {
-                   LowPickCone(pickAndPlace)
-               } else {
-                   Base(pickAndPlace)
-               }
-           })
+            LowPickCone(pickAndPlace)
         )
         JoystickButton(primaryController, XboxController.Button.kLeftBumper.value).whileTrue(
             ShelfPick(pickAndPlace)
+
         )
         JoystickButton(primaryController, XboxController.Button.kRightBumper.value).whileTrue(
             ChutePick(pickAndPlace)
@@ -148,35 +112,6 @@ class RobotContainer {
         )
         Trigger {secondaryController.rightTriggerAxis > 0.2} .whileTrue(
             HighPlaceCube(pickAndPlace)
-        )
-        JoystickButton(secondaryController, XboxController.Button.kX.value).whileTrue(
-            RunCommand({
-                cube = true
-                cone = false
-            })
-        )
-        JoystickButton(secondaryController, XboxController.Button.kB.value).whileTrue(
-            RunCommand({
-                cube = false
-                cone = true
-            })
-        )
-        JoystickButton(secondaryController, XboxController.Button.kA.value).whileTrue(
-            RunCommand({
-                middlePlace = true
-                highPlace = false
-                pickUp = false
-                place = true
-            })
-        )
-        JoystickButton(secondaryController, XboxController.Button.kY.value).whileTrue(
-            RunCommand({
-                middlePlace = false
-                highPlace = true
-                pickUp = false
-                place = true
-
-            })
         )
     }
     val autonomousCommand: Command = RunCommand({trajectories.AutoBuilder()})
