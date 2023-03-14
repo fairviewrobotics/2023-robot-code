@@ -3,35 +3,19 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot
 
-import com.kauailabs.navx.frc.AHRS
-import com.pathplanner.lib.PathConstraints
-import com.pathplanner.lib.PathPlanner
-import com.pathplanner.lib.PathPlannerTrajectory
-import com.pathplanner.lib.PathPoint
-import com.revrobotics.CANSparkMax
-import com.revrobotics.CANSparkMaxLowLevel
+import edu.wpi.first.networktables.NetworkTableInstance
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj2.command.button.JoystickButton
 
 
-import edu.wpi.first.math.geometry.Pose2d
-import edu.wpi.first.math.geometry.Rotation2d
-import edu.wpi.first.math.geometry.Translation2d
-import edu.wpi.first.math.trajectory.TrajectoryGenerator
-import edu.wpi.first.wpilibj.Joystick
 import edu.wpi.first.wpilibj.XboxController.Axis
-import edu.wpi.first.wpilibj.motorcontrol.Spark
 import edu.wpi.first.wpilibj2.command.*
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController
 import edu.wpi.first.wpilibj2.command.button.Trigger
 
 import frc.robot.commands.*
-import frc.robot.constants.ArmConstants
 import frc.robot.constants.DrivetrainConstants
-import frc.robot.constants.IntakeConstants
-import frc.robot.constants.TrajectoryConstants
 import frc.robot.subsystems.*
-import java.nio.file.Path
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -56,10 +40,149 @@ class RobotContainer {
 
     /** The container for the robot. Contains subsystems, OI devices, and commands.  */
     init {
-        // Configure the button bindings
+        // change this variable if youd like to use competition bindings (final tuning, driver practice), or test bindings
+        // for (individual tuning and what not)
         configureButtonBindings()
     }
 
+    // Do not modify.
+    enum class Piece(val x: Int) {
+        CONE(0),
+        CUBE(1);
+
+        companion object {
+            fun fromInt(value: Int) = Piece.values().first { it.x == value }
+        }
+    }
+
+    enum class Place(val x: Int) {
+        HIGH(0),
+        MID(1),
+        LOW(2);
+
+        companion object {
+            fun fromInt(value: Int) = Place.values().first { it.x == value }
+        }
+    }
+
+    /**
+     * The Columbia controlscheme.
+     *
+     * **DO NOT MODIFY!** This is an official controlscheme and should not be modified unless debugging. To test your own
+     * systems or controls, write another function.
+     *
+     * The primary controller has a high level control of the robot (Left joystick). They can drive the robot, and run
+     * either a pick (X) or a place (Y) command. They can vary the speed of the robot's drivetrain (A).
+     *
+     * The secondary controller has the control to decide how a pick or place wants to be done. They can control whether
+     * cones or cubes be picked up (A), where the cone or cube is placed (B), and whether to use vision (X).
+     *
+     * Should be used with a networktables utility to inspect the modes chosen.
+     */
+    private fun Columbia() {
+
+        val nt = NetworkTableInstance.getDefault().getTable("DriverControl")
+
+        var piece: Piece = Piece.CUBE
+        var place: Place = Place.LOW
+        var vision: Boolean = false
+
+        val pieceNT = nt.getIntegerTopic("Piece").publish()
+        val placeNT = nt.getIntegerTopic("Place").publish()
+        val visionNT = nt.getBooleanTopic("Vision").publish()
+
+        var lockDrive: () -> Command = {
+            StandardDrive(swerveSubsystem,
+                { primaryController.leftY * DrivetrainConstants.maxSpeedMetersPerSecond / (if (primaryController.aButton) 1.0 else 2.0) },
+                { 0.0 },
+                { 0.0 },
+                false,
+                false)
+        }
+
+        pickAndPlace.defaultCommand = Base(pickAndPlace)
+
+        val pickCommand: () -> Command = { ->
+            val pnpCommand = if (piece == Piece.CONE) {
+                LowPickCone(pickAndPlace)
+            } else {
+                LowPickCone(pickAndPlace)
+            }
+
+            val visionCommand = if (piece == Piece.CONE) {
+                AlignToCone(swerveSubsystem, primaryController)
+            } else {
+                AlignToCube(swerveSubsystem, secondaryController)
+            }
+
+            ParallelCommandGroup(
+                SequentialCommandGroup(
+                    if (vision) visionCommand else InstantCommand({}),
+                    lockDrive()
+                ),
+                pnpCommand
+            )
+        }
+
+        val placeCommand: () -> Command = { ->
+            val pnpCommand = if (piece == Piece.CONE) {
+                when (place) {
+                    Place.HIGH -> HighPlaceCone(pickAndPlace)
+                    Place.MID -> MidPlaceCone(pickAndPlace)
+                    Place.LOW -> FloorPlace(pickAndPlace)
+                }
+            } else {
+                when (place) {
+                    Place.HIGH -> HighPlaceCube(pickAndPlace)
+                    Place.MID -> MidPlaceCone(pickAndPlace)
+                    Place.LOW -> FloorPlace(pickAndPlace)
+                }
+            }
+
+            val visionCommand = if (piece == Piece.CONE) {
+                AlignToRetroreflective(swerveSubsystem, primaryController)
+            } else {
+                AlignToAprilTag(swerveSubsystem, secondaryController)
+            }
+
+            ParallelCommandGroup(
+                SequentialCommandGroup(
+                    if (vision) visionCommand else InstantCommand({}),
+                    lockDrive()
+                ),
+                pnpCommand
+            )
+        }
+        // Primary: Left joystick drives, A button enables faster speed, X button picks, Y button places, left and right triggers control intake speed.
+        swerveSubsystem.defaultCommand = StandardDrive(swerveSubsystem,
+            { primaryController.leftY * DrivetrainConstants.maxSpeedMetersPerSecond / (if (primaryController.aButton) 1.0 else 2.0) },
+            { primaryController.leftX * DrivetrainConstants.maxSpeedMetersPerSecond / (if (primaryController.aButton) 1.0 else 2.0) },
+            { primaryController.rightX * DrivetrainConstants.maxAngularSpeed / (if (primaryController.aButton) 1.0 else 2.0)},
+            true,
+            true)
+
+        JoystickButton(primaryController, XboxController.Button.kX.value).whileTrue(pickCommand())
+        JoystickButton(primaryController, XboxController.Button.kY.value).whileTrue(placeCommand())
+
+        // Secondary: A button changes piece mode, B button changes place mode, X button changes vision mode.
+        JoystickButton(primaryController, XboxController.Button.kA.value).whileTrue(InstantCommand({
+            piece = Piece.fromInt((piece.ordinal + 1) % (Piece.values().size))
+            pieceNT.set(piece.ordinal.toLong())
+        }))
+
+        JoystickButton(primaryController, XboxController.Button.kB.value).whileTrue(InstantCommand({
+            place = Place.fromInt((place.ordinal + 1) % (Place.values().size))
+            placeNT.set(place.ordinal.toLong())
+        }))
+
+        JoystickButton(primaryController, XboxController.Button.kX.value).whileTrue(InstantCommand({
+            vision = !vision
+            visionNT.set(vision)
+        }))
+
+    }
+
+    // Modify.
     private fun configureButtonBindings() {
 
         swerveSubsystem.defaultCommand = StandardDrive(swerveSubsystem,

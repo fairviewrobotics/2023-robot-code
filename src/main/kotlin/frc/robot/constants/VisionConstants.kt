@@ -6,7 +6,8 @@ object VisionConstants {
     enum class Pipelines(x: Int) {
         APRILTAG(0),
         CONE(1),
-        RETROREFLECTIVE(2)
+        RETROREFLECTIVE(2),
+        CUBE(3)
     }
 
     /** This value is to compensate when the camera is not on the center axis of the robot. To set, open up the

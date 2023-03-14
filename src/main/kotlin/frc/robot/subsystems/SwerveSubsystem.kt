@@ -1,6 +1,7 @@
 package frc.robot.subsystems
 
 import com.kauailabs.navx.frc.AHRS
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.filter.SlewRateLimiter
 import edu.wpi.first.math.geometry.Rotation2d
@@ -14,7 +15,9 @@ import edu.wpi.first.networktables.DoubleEntry
 import edu.wpi.first.networktables.NetworkTableInstance
 import edu.wpi.first.util.WPIUtilJNI
 import edu.wpi.first.wpilibj2.command.SubsystemBase
+import frc.robot.VisionUtils
 import frc.robot.constants.DrivetrainConstants
+import frc.robot.constants.VisionConstants
 import frc.robot.controllers.SwerveModuleControlller
 import frc.robot.utils.NetworkTableUtils
 import frc.robot.utils.SwerveUtils
@@ -69,10 +72,11 @@ class SwerveSubsystem: SubsystemBase() {
     val heading: Double get() = (Units.degreesToRadians(-1 * gyro.angle.IEEErem(360.0)))
 
     //Swerve Odometry
-    val odometry = SwerveDriveOdometry(
+    val odometry = SwerveDrivePoseEstimator(
         DrivetrainConstants.driveKinematics,
         Rotation2d.fromRadians(heading),
-        arrayOf(frontLeft.position, frontRight.position, rearLeft.position, rearRight.position)
+        arrayOf(frontLeft.position, frontRight.position, rearLeft.position, rearRight.position),
+        pose
     )
 
     //Network Tables Telemetry
@@ -88,6 +92,9 @@ class SwerveSubsystem: SubsystemBase() {
             Rotation2d.fromRadians(heading),
             arrayOf(frontLeft.position, frontRight.position, rearLeft.position, rearRight.position)
         )
+        if(VisionUtils.getTV("") && VisionUtils.getCurrentPipelineIndex("").toInt() == VisionConstants.Pipelines.APRILTAG.ordinal){
+            odometry.addVisionMeasurement(VisionUtils.getBotPose2d(""), WPIUtilJNI.now().toDouble())
+        }
 
         //Coen's Vision Lineup Thing:
         // find the botpose network table id thingy, construct a pose2d, feed it into resetodometry
@@ -117,7 +124,7 @@ class SwerveSubsystem: SubsystemBase() {
     }
 
     //Define robot pose
-    val pose: Pose2d get() = odometry.poseMeters * 1.0
+    val pose: Pose2d get() = odometry.estimatedPosition * 1.0
 
     //Reset odometry function
     fun resetOdometry(pose: Pose2d) {
