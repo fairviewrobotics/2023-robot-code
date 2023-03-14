@@ -210,8 +210,8 @@ class Trajectories(val pnp: PickAndPlaceSubsystem, val swerveSubsystem: SwerveSu
             swerveSubsystem::resetOdometry,
             DrivetrainConstants.driveKinematics,
             //Might need tuning or changing:
-            PIDConstants(0.0, 0.0, 0.0),
-            PIDConstants(0.0, 0.0, 0.0),
+            PIDConstants(TrajectoryConstants.kPXController, 0.0, 0.0),
+            PIDConstants(TrajectoryConstants.kPThetaController, 0.0, TrajectoryConstants.kDThetaController),
             swerveSubsystem::setModuleStates,
             eventMap,
             false,

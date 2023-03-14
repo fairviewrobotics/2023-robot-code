@@ -11,17 +11,18 @@ import frc.robot.constants.DrivetrainConstants
 import frc.robot.constants.TrajectoryConstants
 import frc.robot.subsystems.PickAndPlaceSubsystem
 import frc.robot.subsystems.SwerveSubsystem
+import java.nio.file.Path
 
 
 class AutoTrajectories(val pnp: PickAndPlaceSubsystem, val swerveSubsystem: SwerveSubsystem) {
-    fun base(pathName: String, pathConstraints: PathConstraints, pathConstraints2: PathConstraints, pathConstraints3: PathConstraints, pathConstraints4: PathConstraints): Command {
+    fun base(pathName: String, firstConstraint: PathConstraints, vararg pathConstraints: PathConstraints): Command {
         var thetaController = PIDController(
             TrajectoryConstants.kPThetaController, 0.0, TrajectoryConstants.kDThetaController
         )
         thetaController.enableContinuousInput(-Math.PI, Math.PI)
 
         val pathGroup: List<PathPlannerTrajectory> = PathPlanner.loadPathGroup(
-            pathName, pathConstraints, pathConstraints2, pathConstraints3, pathConstraints4
+            pathName, firstConstraint, *pathConstraints
         )
         //It might be this for the line above: val pathGroup: ArrayList<PathPlannerTrajectory> = arrayListOf()
         // PathPlanner.loadPathGroup("Red Top 1 Get Balance", PathConstraints(1.0, 0.5)).toCollection(pathGroup)
