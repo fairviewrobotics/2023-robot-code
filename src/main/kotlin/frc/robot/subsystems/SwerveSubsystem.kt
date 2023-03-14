@@ -89,13 +89,13 @@ class SwerveSubsystem: SubsystemBase() {
             arrayOf(frontLeft.position, frontRight.position, rearLeft.position, rearRight.position)
         )
 
-        //Coen's Vision Lineup Thing:
-        // find the botpose network table id thingy, construct a pose2d, feed it into resetodometry
-//        val botpose: DoubleArray = limelightTable.getDoubleArray("botpose", DoubleArray(0))
-//        if (!botpose.contentEquals(DoubleArray(0))) {
-//            val pose = Pose2d(Translation2d(botpose[0], botpose[2]), Rotation2d(botpose[3], botpose[5]))
-//            resetOdometry(pose)
-//        }
+       //Coen's Vision Lineup Thing:
+       find the botpose network table id thingy, construct a pose2d, feed it into resetodometry
+       val botpose: DoubleArray = limelightTable.getDoubleArray("botpose", DoubleArray(0))
+       if (!botpose.contentEquals(DoubleArray(0))) {
+           val pose = Pose2d(Translation2d(botpose[0], botpose[2]), Rotation2d(botpose[3], botpose[5]))
+           resetOdometry(pose)
+       }
 
         //Set Network Tables Telemetry
         actualTelemetry.set(doubleArrayOf(
