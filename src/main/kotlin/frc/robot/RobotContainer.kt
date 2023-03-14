@@ -131,6 +131,9 @@ class RobotContainer {
         JoystickButton(primaryController, XboxController.Button.kRightBumper.value).whileTrue(
             ChutePick(pickAndPlace)
         )
+        JoystickButton(primaryController, XboxController.Button.kB.value).whileTrue(
+            FloorPlace(pickAndPlace)
+        )
 
         //SECONDARY CONtROLLER
         //sets cube
