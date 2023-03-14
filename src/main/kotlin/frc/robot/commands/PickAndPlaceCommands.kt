@@ -154,20 +154,37 @@ fun Base(pnp: PickAndPlaceSubsystem): Command {
     )
     )
 }
-fun MidPlaceCube(pnp: PickAndPlaceSubsystem): Command {
-    val secondaryController = XboxController(1)
-    val swerveSubsystem = SwerveSubsystem()
+fun FloorPlace(pnp: PickAndPlaceSubsystem): Command {
     return SequentialCommandGroup(
-         ParallelCommandGroup(
-            SetPickAndPlacePosition(
-            false,
+        SetPickAndPlacePosition(
+                false,
                 pnp,
-                0.2, // elevator
-                Math.toRadians(60.0), // elbow
-                0.0, // wrist
-                2.0 // intake
+                0.0, // elevator
+                Math.toRadians(70.0), // elbow
+            Math.toRadians(-70.0), // wrist
+                1.0 // intake
             ),
-            AlignToAprilTag(swerveSubsystem, secondaryController)
+        SetPickAndPlacePosition(
+            true,
+            pnp,
+            0.0, // elevator
+            Math.toRadians(70.0), // elbow
+            Math.toRadians(-70.0), // wrist
+            -3.0 // intake
+        )
+    )
+
+    //println("running")
+}
+fun MidPlaceCube(pnp: PickAndPlaceSubsystem): Command {
+    return SequentialCommandGroup(
+        SetPickAndPlacePosition(
+            false,
+            pnp,
+            0.2, // elevator
+            Math.toRadians(60.0), // elbow
+            0.0, // wrist
+            2.0 // intake
         ),
         SetPickAndPlacePosition(
             true,

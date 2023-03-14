@@ -231,10 +231,10 @@ class SwerveSubsystem: SubsystemBase() {
 
     //Sets the wheels to an X configuration
     fun setX() {
-        frontLeft.setDesiredState(SwerveModuleState(0.0, Rotation2d.fromDegrees(-45.0)))
-        frontRight.setDesiredState(SwerveModuleState(0.0, Rotation2d.fromDegrees(45.0)))
-        rearLeft.setDesiredState(SwerveModuleState(0.0, Rotation2d.fromDegrees(45.0)))
-        rearRight.setDesiredState(SwerveModuleState(0.0, Rotation2d.fromDegrees(-45.0)))
+        frontLeft.setDesiredState(SwerveModuleState(0.0, Rotation2d.fromDegrees(45.0)))
+        frontRight.setDesiredState(SwerveModuleState(0.0, Rotation2d.fromDegrees(-45.0)))
+        rearLeft.setDesiredState(SwerveModuleState(0.0, Rotation2d.fromDegrees(-45.0)))
+        rearRight.setDesiredState(SwerveModuleState(0.0, Rotation2d.fromDegrees(45.0)))
     }
 
     //Sets the wheels to a zeroed configuration
