@@ -290,8 +290,6 @@ class RobotContainer {
                     middlePlace = true // Place
                     floor = false // Place
                     chute = false // Pickup
-
-                    // THESE ARE ONLY FOR DRIVERS(Network Tables), NOT USED IN CODE
                     ground = true // Pickup
                     cone = false // Both
                     highPlace = false
