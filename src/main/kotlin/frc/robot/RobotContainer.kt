@@ -188,7 +188,6 @@ class RobotContainer {
     private fun Challenger() {
 
 
-
         swerveSubsystem.defaultCommand = StandardDrive(swerveSubsystem,
             { primaryController.leftY * DrivetrainConstants.drivingSpeedScalar / 2.0 },
             { primaryController.leftX * DrivetrainConstants.drivingSpeedScalar / 2.0},
@@ -254,7 +253,6 @@ class RobotContainer {
         JoystickButton(secondaryController, XboxController.Button.kA.value).whileTrue(
             RunCommand({
                 middlePlace = true
-
             })
         )
         //sets high place
@@ -273,18 +271,13 @@ class RobotContainer {
         JoystickButton(secondaryController, XboxController.Button.kB.value).whileTrue(
             RunCommand({
                 cube = false
-
             })
         )
-
         POVButton(primaryController, 180).whileTrue(
             RunCommand({
                 floor = true
-
             })
         )
-
-
         JoystickButton(secondaryController, XboxController.Button.kLeftBumper.value).whileTrue(
             VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { 0.0 }, { 4.0 })
         )
@@ -303,132 +296,9 @@ class RobotContainer {
         JoystickButton(secondaryController, Axis.kRightY.value).whileTrue(
             VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { primaryController.rightY * -4.0 }, { 0.0 })
         )
-
-
-
-
-
-        //Alternative:
-        //PRIMARY CONtROLLER:
-//        pickAndPlace.defaultCommand = Base(pickAndPlace)
-//
-//        JoystickButton(primaryController, XboxController.Button.kX.value).whileTrue(
-//            RunCommand({
-//                swerveSubsystem.setX()
-//            })
-//        )
-//        JoystickButton(primaryController, XboxController.Button.kY.value).whileTrue(
-//            RunCommand({
-//                swerveSubsystem.zeroGyroAndOdometry()
-//            })
-//        )
-//        //Pickup:
-//        Trigger {primaryController.rightTriggerAxis > 0.2} .whileTrue(
-//            RunCommand({
-//                pickUp = true
-//                place = false
-//                if (cube && !cone && pickUp && !place){
-//                    LowPickCube(pickAndPlace)
-//                } else if (!cube && cone && pickUp && !place) {
-//                    LowPickCone(pickAndPlace)
-//                } else {
-//                    LowPickCone(pickAndPlace)
-//                }
-//            })
-//        )
-//        JoystickButton(primaryController, XboxController.Button.kLeftBumper.value).whileTrue(
-//            ShelfPick(pickAndPlace)
-//        )
-//        JoystickButton(primaryController, XboxController.Button.kRightBumper.value).whileTrue(
-//            ChutePick(pickAndPlace)
-//        )
-//
-//        //SECONDARY CONtROLLER
-//        //sets cube
-//        JoystickButton(secondaryController, XboxController.Button.kX.value).whileTrue(
-//            RunCommand({
-//                cube = true
-//                cone = false
-//            })
-//        )
-//        //sets cone
-//        JoystickButton(secondaryController, XboxController.Button.kB.value).whileTrue(
-//            RunCommand({
-//                cube = false
-//                cone = true
-//            })
-//        )
-//        //sets middle place
-//        JoystickButton(secondaryController, XboxController.Button.kA.value).whileTrue(
-//            RunCommand({
-//                middlePlace = true
-//                highPlace = false
-//                pickUp = false
-//                place = true
-//                if (middlePlace && !highPlace && cube && !cone && place && !pickUp) {
-//                    MidPlaceCube(pickAndPlace)
-//                } else if (middlePlace && !highPlace && !cube && cone && place && !pickUp) {
-//                    MidPlaceCone(pickAndPlace)
-//                } else {
-//                    MidPlaceCube(pickAndPlace)
-//                }
-//            })
-//        )
-//        //sets high place
-//        JoystickButton(secondaryController, XboxController.Button.kY.value).whileTrue(
-//            RunCommand({
-//                middlePlace = false
-//                highPlace = true
-//                pickUp = false
-//                place = true
-//                if (!middlePlace && highPlace && cube && !cone && place && !pickUp) {
-//                    HighPlaceCube(pickAndPlace)
-//                } else if (!middlePlace && highPlace && !cube && cone && place && !pickUp) {
-//                    HighPlaceCone(pickAndPlace)
-//                } else {
-//                    MidPlaceCube(pickAndPlace)
-//                }
-//            })
-//        )
-//        JoystickButton(secondaryController, XboxController.Button.kLeftBumper.value).whileTrue(
-//            RunCommand({VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { 0.0 }, { 4.0 })})
-//        )
-//        JoystickButton(secondaryController, XboxController.Button.kRightBumper.value).whileTrue(
-//            RunCommand({VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { 0.0 }, { -4.0 })})
-//        )
-//        Trigger {primaryController.leftTriggerAxis > 0.2} .whileTrue(
-//            RunCommand({VoltageArm(pickAndPlace, { primaryController.leftTriggerAxis * -2.0 }, { 0.0 }, { 0.0 }, { 0.0 })})
-//        )
-//        Trigger {primaryController.rightTriggerAxis > 0.2} .whileTrue(
-//            RunCommand({VoltageArm(pickAndPlace, { primaryController.rightTriggerAxis * 4.0 }, { 0.0 }, { 0.0 }, { 0.0 })})
-//        )
-//        JoystickButton(secondaryController, Axis.kLeftY.value).whileTrue(
-//            RunCommand({VoltageArm(pickAndPlace, { 0.0 }, { primaryController.leftX * -4.0 }, { 0.0 }, { 0.0 })})
-//        )
-//        JoystickButton(secondaryController, Axis.kRightY.value).whileTrue(
-//            RunCommand({VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { primaryController.rightY * -4.0 }, { 0.0 })})
-//        )
     }
 
     private fun configureButtonBindings() {
-        JoystickButton(secondaryController, XboxController.Button.kLeftBumper.value).whileTrue(
-            VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { 0.0 }, { 4.0 })
-        )
-        JoystickButton(secondaryController, XboxController.Button.kRightBumper.value).whileTrue(
-            VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { 0.0 }, { -4.0 })
-        )
-        Trigger {primaryController.leftTriggerAxis > 0.2} .whileTrue(
-            VoltageArm(pickAndPlace, { primaryController.leftTriggerAxis * -2.0 }, { 0.0 }, { 0.0 }, { 0.0 })
-        )
-        Trigger {primaryController.rightTriggerAxis > 0.2} .whileTrue(
-            VoltageArm(pickAndPlace, { primaryController.rightTriggerAxis * 4.0 }, { 0.0 }, { 0.0 }, { 0.0 })
-        )
-        JoystickButton(secondaryController, Axis.kLeftY.value).whileTrue(
-            VoltageArm(pickAndPlace, { 0.0 }, { primaryController.leftX * -4.0 }, { 0.0 }, { 0.0 })
-        )
-        JoystickButton(secondaryController, Axis.kRightY.value).whileTrue(
-            VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { primaryController.rightY * -4.0 }, { 0.0 })
-        )
     }
 
     val autonomousCommand: Command = RunCommand({trajectories.AutoBuilder()})
