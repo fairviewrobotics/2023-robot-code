@@ -22,7 +22,6 @@ class Balancer(val swerveDrive: SwerveSubsystem): CommandBase() {
             var error = targetAngle - gyroAngle
             var correction = error * balanceSpeed
             swerveDrive.drive(correction, 0.0, 0.0, false, true)
-            Timer.delay(0.01)
         } else {
             swerveDrive.setX()
         }
