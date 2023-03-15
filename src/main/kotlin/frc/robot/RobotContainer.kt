@@ -272,14 +272,31 @@ class RobotContainer {
                 true
             )
         )
+        POVButton(primaryController, 180).whileTrue(
+
+        )
 
         //Pickup:
         Trigger {primaryController.leftTriggerAxis > 0.2} .whileTrue(
             ControllerCommands(true, cube, middlePlace, floor, chute, pickAndPlace)
+
         )
         //Place:
         Trigger {primaryController.rightTriggerAxis > 0.2} .whileTrue(
-            ControllerCommands(false, cube, middlePlace, floor, chute, pickAndPlace)
+            ParallelCommandGroup(
+                ControllerCommands(false, cube, middlePlace, floor, chute, pickAndPlace),
+                RunCommand({
+                    cube = true // Both
+                    middlePlace = true // Place
+                    floor = false // Place
+                    chute = false // Pickup
+
+                    // THESE ARE ONLY FOR DRIVERS(Network Tables), NOT USED IN CODE
+                    ground = true // Pickup
+                    cone = false // Both
+                    highPlace = false
+                })
+            )
         )
 
 
