@@ -286,6 +286,18 @@ fun LowPickCube(pnp: PickAndPlaceSubsystem): Command {
         )
     )
 }
+fun LowPickConeSide(pnp: PickAndPlaceSubsystem): Command {
+    return SequentialCommandGroup(
+        SetPickAndPlacePosition(
+            true,
+            pnp,
+            0.4, // elevator
+            Math.toRadians(-30.0), // elbow
+            Math.toRadians(-70.0), // wrist
+            7.0 // intake
+        )
+    )
+}
 //TODO:Test
 fun ShelfPick(pnp: PickAndPlaceSubsystem): Command {
     return SequentialCommandGroup(

@@ -3,6 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot
 
+import edu.wpi.first.networktables.BooleanEntry
 import edu.wpi.first.networktables.NetworkTableInstance
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj2.command.button.JoystickButton
@@ -32,17 +33,24 @@ class RobotContainer {
     val swerveSubsystem = SwerveSubsystem()
     val trajectories = Trajectories(pickAndPlace, swerveSubsystem)
     val testTrajectories = AutoTrajectories(pickAndPlace, swerveSubsystem)
-    var cube: Boolean = false
-    var middlePlace: Boolean = false
-    var floor: Boolean = false
-    var chute: Boolean = false
-    //var pickup: Boolean = false
+
+    //Starting Config: Cube, with Middle Place, and Ground Pickup
+    var cube: Boolean = true // Both
+    var middlePlace: Boolean = true // Place
+    var floor: Boolean = false // Place
+    var chute: Boolean = false // Pickup
+
+    // THESE ARE ONLY FOR DRIVERS(Network Tables), NOT USED IN CODE
+    var ground: Boolean = true // Pickup
+    var cone: Boolean = false // Both
+    var highPlace: Boolean = false // Place
+
 
 
 
     /** The container for the robot. Contains subsystems, OI devices, and commands.  */
     init {
-        // change this variable if youd like to use competition bindings (final tuning, driver practice), or test bindings
+        // change this variable if you would like to use competition bindings (final tuning, driver practice), or test bindings
         // for (individual tuning and what not)
         configureButtonBindings()
     }
@@ -68,9 +76,9 @@ class RobotContainer {
     }
 
     /**
-     * The Columbia controlscheme.
+     * The Columbia control scheme.
      *
-     * **DO NOT MODIFY!** This is an official controlscheme and should not be modified unless debugging. To test your own
+     * **DO NOT MODIFY!** This is an official control scheme and should not be modified unless debugging. To test your own
      * systems or controls, write another function.
      *
      * The primary controller has a high level control of the robot (Left joystick). They can drive the robot, and run
@@ -186,14 +194,74 @@ class RobotContainer {
 
     // Modify.
     private fun Challenger() {
+        /**
+        BUTTON BINDINGS:
+        //PRIMARY CONtROLLER:
+        //Left Trigger = Execute Pickup
+        //Right Trigger = Execute Place
+        //X = Set X
+        //Y = Zero Gyro
+        //B = Fast Drive
+        //SECONDARY CONtROLLER
+        //A = Set Middle Place
+        //Y = Set High place
+        //X = Set Cube
+        //B = Set Cone
+        //Bottom D-Pad = Set Floor Pickup
+        //Top D-Pad = Set Chute Pickup
+        //Left D-Pad = Set Ground Pickup
+        //Voltage Controls:
+        //Left Bumper = Intake In
+        //Right Bumper = Intake Out
+        //Left Trigger = Elevator Down
+        //Right Trigger = Elevator Up
+        //Left Joystick = Elbow(Arm)
+        //Right Joystick = Wrist
+         */
+        //Network Tables
+        val nt = NetworkTableInstance.getDefault().getTable("DriverControl")
 
 
+        var cubeNT = nt.getBooleanTopic("Cube").publish()
+        var middlePlaceNT = nt.getBooleanTopic("Middle Place").publish()
+        var floorNT = nt.getBooleanTopic("Floor Pickup").publish()
+        var chuteNT = nt.getBooleanTopic("Chute Pickup").publish()
+
+        // THESE ARE ONLY FOR DRIVERS(Network Tables), NOT USED IN CODE
+        var groundNT = nt.getBooleanTopic("Ground Pickup").publish()
+        var coneNT = nt.getBooleanTopic("Cone Pickup").publish()
+        var highPlaceNT = nt.getBooleanTopic("High Place").publish()
+
+        //Default Commands
         swerveSubsystem.defaultCommand = StandardDrive(swerveSubsystem,
             { primaryController.leftY * DrivetrainConstants.drivingSpeedScalar / 2.0 },
             { primaryController.leftX * DrivetrainConstants.drivingSpeedScalar / 2.0},
             { primaryController.rightX * DrivetrainConstants.rotationSpeedScalar  / 2.0},
             true,
             true)
+
+        pickAndPlace.defaultCommand = Base(pickAndPlace)
+
+        //PRIMARY CONtROLLER:
+
+        //Left Trigger = Execute Pickup
+        //Right Trigger = Execute Place
+        //X = Set X
+        //Y = Zero Gyro
+        //B = Fast Drive
+
+
+        JoystickButton(primaryController, XboxController.Button.kX.value).whileTrue(
+            RunCommand({
+                swerveSubsystem.setX()
+            }, swerveSubsystem)
+        )
+
+        JoystickButton(primaryController, XboxController.Button.kY.value).whileTrue(
+            RunCommand({
+                swerveSubsystem.zeroGyroAndOdometry()
+            }, swerveSubsystem)
+        )
 
         JoystickButton(primaryController, XboxController.Button.kB.value).whileTrue(
             StandardDrive(swerveSubsystem,
@@ -202,82 +270,130 @@ class RobotContainer {
                 { primaryController.rightX * DrivetrainConstants.rotationSpeedScalar },
                 true,
                 true
-            ))
-//TODO: The alignment to apriltag needs to happen before the pick and place command in sequential command order
-//TODO: The alignment to apriltag needs to change to pegs for certain cases, or that needs to be added in in a different way cause right now, it would only place for cube shelves
-
-
-        //PRIMARY CONtROLLER:
-
-        //left trigger = pickup
-        //right trigger = place
-
-        //SECONDARY CONtROLLER
-        //a = mid place
-        //y = high place
-        //x = cube
-        //b = cone
-        //bottom dpad = floor place
-        //top dpad = chute pickup
-        pickAndPlace.defaultCommand = Base(pickAndPlace)
-
-        JoystickButton(primaryController, XboxController.Button.kX.value).whileTrue(
-            RunCommand({
-                swerveSubsystem.setX()
-            }, swerveSubsystem)
+            )
         )
-        JoystickButton(primaryController, XboxController.Button.kY.value).whileTrue(
-            RunCommand({
-                swerveSubsystem.zeroGyroAndOdometry()
-            }, swerveSubsystem)
-        )
-        //Place:
+
+        //Pickup:
         Trigger {primaryController.leftTriggerAxis > 0.2} .whileTrue(
             ControllerCommands(true, cube, middlePlace, floor, chute, pickAndPlace)
         )
-        //Pickup:
+        //Place:
         Trigger {primaryController.rightTriggerAxis > 0.2} .whileTrue(
             ControllerCommands(false, cube, middlePlace, floor, chute, pickAndPlace)
         )
 
 
         //SECONDARY CONtROLLER
-        //a = mid place
-        //y = high place
-        //x = cube
-        //b = cone
-        //bottom dpad = floor place
-        //top dpad = chute pickup
 
-        //set middle place
+        //A = Set Middle Place
+        //Y = Set High place
+        //X = Set Cube
+        //B = Set Cone
+        //Bottom D-Pad = Set Floor Place
+        //Top D-Pad = Set Chute Pickup
+        //Left D-Pad = Set Ground Pickup
+
+        //Voltage Controls
+        //Left Bumper = Intake In
+        //Right Bumper = Intake Out
+        //Left Trigger = Elevator Down
+        //Right Trigger = Elevator Up
+        //Left Joystick = Elbow(Arm)
+        //Right Joystick = Wrist
+
+        //Set Middle Place
         JoystickButton(secondaryController, XboxController.Button.kA.value).whileTrue(
             RunCommand({
                 middlePlace = true
+                middlePlaceNT.set(true)
+
+                highPlace = false
+                highPlaceNT.set(false)
             })
         )
-        //sets high place
+
+        //Set High Place
         JoystickButton(secondaryController, XboxController.Button.kY.value).whileTrue(
             RunCommand({
                 middlePlace = false
+                middlePlaceNT.set(false)
+
+                highPlace = true
+                highPlaceNT.set(true)
             })
         )
-        //sets cube
+
+        //Set Cube
         JoystickButton(secondaryController, XboxController.Button.kX.value).whileTrue(
             RunCommand({
                 cube = true
+                cubeNT.set(true)
+
+                cone = false
+                coneNT.set(false)
             })
         )
-        //sets cone
+
+        //Set Cone
         JoystickButton(secondaryController, XboxController.Button.kB.value).whileTrue(
             RunCommand({
                 cube = false
+                cubeNT.set(false)
+
+                cone = true
+                coneNT.set(true)
             })
         )
+
+        //Set Floor Place
         POVButton(primaryController, 180).whileTrue(
             RunCommand({
                 floor = true
+                floorNT.set(true)
+
+                middlePlace = false
+                middlePlaceNT.set(false)
+
+                highPlace = false
+                highPlaceNT.set(false)
             })
         )
+
+        //Set Chute Pickup
+        POVButton(primaryController, 0).whileTrue(
+            RunCommand({
+                chute = true
+                chuteNT.set(true)
+
+                ground = false
+                groundNT.set(false)
+
+                cone = true
+                coneNT.set(true)
+
+                cube = false
+                cubeNT.set(false)
+            })
+        )
+
+        //Set Ground Pickup
+        POVButton(primaryController, 270).whileTrue(
+            RunCommand({
+                chute = false
+                chuteNT.set(false)
+
+                ground = true
+                groundNT.set(true)
+            })
+        )
+
+        //Voltage Controls
+        //Left Bumper = Intake In
+        //Right Bumper = Intake Out
+        //Left Trigger = Elevator Down
+        //Right Trigger = Elevator Up
+        //Left Joystick = Elbow(Arm)
+        //Right Joystick = Wrist
         JoystickButton(secondaryController, XboxController.Button.kLeftBumper.value).whileTrue(
             VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { 0.0 }, { 4.0 })
         )
@@ -291,7 +407,7 @@ class RobotContainer {
             VoltageArm(pickAndPlace, { primaryController.rightTriggerAxis * 4.0 }, { 0.0 }, { 0.0 }, { 0.0 })
         )
         JoystickButton(secondaryController, Axis.kLeftY.value).whileTrue(
-           VoltageArm(pickAndPlace, { 0.0 }, { primaryController.leftX * -4.0 }, { 0.0 }, { 0.0 })
+            VoltageArm(pickAndPlace, { 0.0 }, { primaryController.leftX * -4.0 }, { 0.0 }, { 0.0 })
         )
         JoystickButton(secondaryController, Axis.kRightY.value).whileTrue(
             VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { primaryController.rightY * -4.0 }, { 0.0 })
@@ -299,6 +415,49 @@ class RobotContainer {
     }
 
     private fun configureButtonBindings() {
+        //TESTING CONTROLS:
+
+        swerveSubsystem.defaultCommand = StandardDrive(swerveSubsystem,
+            { primaryController.leftY * DrivetrainConstants.drivingSpeedScalar / 2.0 },
+            { primaryController.leftX * DrivetrainConstants.drivingSpeedScalar / 2.0},
+            { primaryController.rightX * DrivetrainConstants.rotationSpeedScalar  / 2.0},
+            true,
+            true)
+
+
+        //PRIMARY CONtROLLER:
+        pickAndPlace.defaultCommand = Base(pickAndPlace)
+
+        JoystickButton(primaryController, XboxController.Button.kX.value).whileTrue(
+            RunCommand({
+                swerveSubsystem.setX()
+            })
+        )
+        JoystickButton(primaryController, XboxController.Button.kY.value).whileTrue(
+            RunCommand({
+                swerveSubsystem.zeroGyroAndOdometry()
+            })
+        )
+        Trigger {primaryController.leftTriggerAxis > 0.2} .whileTrue(
+            HighPlaceCone(pickAndPlace)
+        )
+        Trigger {primaryController.rightTriggerAxis > 0.2} .whileTrue(
+            ChutePick(pickAndPlace)
+        )
+        JoystickButton(primaryController, XboxController.Button.kLeftBumper.value).whileTrue(
+            MidPlaceCone(pickAndPlace)
+
+        )
+        JoystickButton(primaryController, XboxController.Button.kRightBumper.value).whileTrue(
+            LowPickCone(pickAndPlace)
+        )
+        JoystickButton(primaryController, XboxController.Button.kB.value).whileTrue(
+            ShelfPick(pickAndPlace)
+        )
+        JoystickButton(primaryController, XboxController.Button.kA.value).whileTrue(
+            FloorPlace(pickAndPlace)
+            //LowPickConeSide(pickAndPlace)
+        )
     }
 
     val autonomousCommand: Command = RunCommand({trajectories.AutoBuilder()})
