@@ -460,5 +460,5 @@ class RobotContainer {
         )
     }
 
-    val autonomousCommand: Command = RunCommand({trajectories.AutoBuilder()})
+    val autonomousCommand: Command = RunCommand({testTrajectories.RedCenter1Balance()})
 }
