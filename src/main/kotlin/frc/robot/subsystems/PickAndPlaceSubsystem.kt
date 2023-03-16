@@ -182,6 +182,7 @@ class PickAndPlaceSubsystem : SubsystemBase(){
         Telemetry.intakeVoltage.set(intakesVoltage)
         Telemetry.elevatorPosition.set(elevatorPositionMeters)
         Telemetry.elevatorVelocity.set(elevatorEncoder.velocity)
+        Telemetry.wristPosition.set(absoluteWristPosition)
 
     }
 //    fun NTPnP(pnp: PickAndPlaceSubsystem, controller: XboxController): Command {

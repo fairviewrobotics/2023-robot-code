@@ -272,9 +272,9 @@ class RobotContainer {
                 true
             )
         )
-        POVButton(primaryController, 180).whileTrue(
-
-        )
+//        POVButton(primaryController, 180).whileTrue(
+//
+//        )
 
         //Pickup:
         Trigger {primaryController.leftTriggerAxis > 0.2} .whileTrue(
@@ -433,9 +433,9 @@ class RobotContainer {
         //TESTING CONTROLS:
 
         swerveSubsystem.defaultCommand = StandardDrive(swerveSubsystem,
-            { primaryController.leftY * DrivetrainConstants.drivingSpeedScalar / 2.0 },
-            { primaryController.leftX * DrivetrainConstants.drivingSpeedScalar / 2.0},
-            { primaryController.rightX * DrivetrainConstants.rotationSpeedScalar  / 2.0},
+            { secondaryController.leftY * DrivetrainConstants.drivingSpeedScalar / 4.0 },
+            { secondaryController.leftX * DrivetrainConstants.drivingSpeedScalar / 4.0},
+            { secondaryController.rightX * DrivetrainConstants.rotationSpeedScalar  / 4.0},
             true,
             true)
 
@@ -443,35 +443,38 @@ class RobotContainer {
         //PRIMARY CONtROLLER:
         pickAndPlace.defaultCommand = Base(pickAndPlace)
 
-        JoystickButton(primaryController, XboxController.Button.kX.value).whileTrue(
+        JoystickButton(secondaryController, XboxController.Button.kX.value).whileTrue(
             RunCommand({
                 swerveSubsystem.setX()
             })
         )
-        JoystickButton(primaryController, XboxController.Button.kY.value).whileTrue(
+        JoystickButton(secondaryController, XboxController.Button.kY.value).whileTrue(
             RunCommand({
                 swerveSubsystem.zeroGyroAndOdometry()
             })
         )
+        //TODO: Tune
         Trigger {primaryController.leftTriggerAxis > 0.2} .whileTrue(
             HighPlaceCone(pickAndPlace)
         )
         Trigger {primaryController.rightTriggerAxis > 0.2} .whileTrue(
-            ChutePick(pickAndPlace)
+            VoltageArm(pickAndPlace, { 1.0 }, { 0.0 }, { 0.0 }, { 0.0 })
         )
+        //TODO: Tune
         JoystickButton(primaryController, XboxController.Button.kLeftBumper.value).whileTrue(
             MidPlaceCone(pickAndPlace)
-
         )
+        //TODO: Tune
         JoystickButton(primaryController, XboxController.Button.kRightBumper.value).whileTrue(
             LowPickCone(pickAndPlace)
         )
+        //Ready
         JoystickButton(primaryController, XboxController.Button.kB.value).whileTrue(
-            ShelfPick(pickAndPlace)
+            ChutePick(pickAndPlace)
         )
+        //TODO: Tune
         JoystickButton(primaryController, XboxController.Button.kA.value).whileTrue(
             FloorPlace(pickAndPlace)
-            //LowPickConeSide(pickAndPlace)
         )
     }
 
