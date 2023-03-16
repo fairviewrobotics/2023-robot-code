@@ -226,18 +226,18 @@ fun MidPlaceCone(pnp: PickAndPlaceSubsystem): Command {
         SetPickAndPlacePosition(
             false,
             pnp,
-            0.0404, // elevator
-            0.9127, // elbow
-            0.818, // wrist
+            0.0394, // elevator
+            0.9527, // elbow
+            0.868, // wrist
             0.5 // intake
         ),
 
         SetPickAndPlacePosition(
             true,
             pnp,
-            0.0404, // elevator
-            0.9127, // elbow
-            0.818, // wrist
+            0.0394, // elevator
+            0.9527, // elbow
+            0.868, // wrist
             -6.0 // intake
         )
     )
@@ -249,8 +249,8 @@ fun HighPlaceCone(pnp: PickAndPlaceSubsystem): Command {
             false,
             pnp,
             0.7, // elevator
-            Math.toRadians(0.0), // elbow
-            Math.toRadians(0.0), // wrist
+            Math.toRadians(10.0), // elbow
+            Math.toRadians(10.0), // wrist
             0.5
         ),
 
@@ -258,8 +258,8 @@ fun HighPlaceCone(pnp: PickAndPlaceSubsystem): Command {
             true,
             pnp,
             0.7, // elevator
-            Math.toRadians(0.0), // elbow
-            Math.toRadians(0.0), // wrist
+            Math.toRadians(10.0), // elbow
+            Math.toRadians(10.0), // wrist
             -7.0
         )
     )
