@@ -228,7 +228,7 @@ fun MidPlaceCone(pnp: PickAndPlaceSubsystem): Command {
             pnp,
             0.0394, // elevator
             0.9527, // elbow
-            0.868, // wrist
+            0.908, // wrist
             0.5 // intake
         ),
 
@@ -237,7 +237,7 @@ fun MidPlaceCone(pnp: PickAndPlaceSubsystem): Command {
             pnp,
             0.0394, // elevator
             0.9527, // elbow
-            0.868, // wrist
+            0.908, // wrist
             -6.0 // intake
         )
     )
@@ -249,8 +249,8 @@ fun HighPlaceCone(pnp: PickAndPlaceSubsystem): Command {
             false,
             pnp,
             0.7, // elevator
-            Math.toRadians(10.0), // elbow
-            Math.toRadians(10.0), // wrist
+            Math.toRadians(20.0), // elbow
+            Math.toRadians(26.0), // wrist
             0.5
         ),
 
@@ -258,8 +258,8 @@ fun HighPlaceCone(pnp: PickAndPlaceSubsystem): Command {
             true,
             pnp,
             0.7, // elevator
-            Math.toRadians(10.0), // elbow
-            Math.toRadians(10.0), // wrist
+            Math.toRadians(20.0), // elbow
+            Math.toRadians(26.0), // wrist
             -7.0
         )
     )
@@ -270,8 +270,8 @@ fun HighPlaceCone(pnp: PickAndPlaceSubsystem): Command {
 //            true,
 //            pnp,
 //            0.4, // elevator
-//            Math.toRadians(-30.0), // elbow
-//            Math.toRadians(-70.0), // wrist
+//            Math.toRadians(-31.0), // elbow
+//            Math.toRadians(-60.0), // wrist
 //            7.0 // intake
 //        )
 //    )
@@ -317,7 +317,7 @@ fun ChutePick(pnp: PickAndPlaceSubsystem): Command {
             0.0, // elevator
             1.03475, // elbow
             0.92208, // wrist
-            5.0 // intake
+            2.0 // intake
         )
     )
 }

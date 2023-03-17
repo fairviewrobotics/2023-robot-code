@@ -34,6 +34,8 @@ class RobotContainer {
     val trajectories = Trajectories(pickAndPlace, swerveSubsystem)
     val testTrajectories = AutoTrajectories(pickAndPlace, swerveSubsystem)
 
+    // val ledsubsystem = yadda yadad
+
     //Starting Config: Cube, with Middle Place, and Ground Pickup
     var cube: Boolean = true // Both
     var middlePlace: Boolean = true // Place
@@ -42,7 +44,7 @@ class RobotContainer {
 
     // THESE ARE ONLY FOR DRIVERS(Network Tables), NOT USED IN CODE
     var ground: Boolean = true // Pickup
-    var cone: Boolean = false // Both
+    var cone: Boolean = true // Both
     var highPlace: Boolean = false // Place
 
 
