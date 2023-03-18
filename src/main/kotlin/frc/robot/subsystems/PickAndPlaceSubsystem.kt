@@ -69,6 +69,9 @@ class PickAndPlaceSubsystem : SubsystemBase(){
         //intake
         elbowMotor.setSmartCurrentLimit(38)
         wristMotor.setSmartCurrentLimit(38)
+        intakeOneMotor.setSmartCurrentLimit(28)
+        intakeTwoMotor.setSmartCurrentLimit(28)
+        elevatorMotor.setSmartCurrentLimit(38)
         elbowMotor.inverted = ArmConstants.elbowMotorInverted
         wristMotor.idleMode = CANSparkMax.IdleMode.kBrake
         //intakeOneMotor.idleMode = CANSparkMax.IdleMode.kBrake
@@ -77,27 +80,33 @@ class PickAndPlaceSubsystem : SubsystemBase(){
         elbowMotor.idleMode = CANSparkMax.IdleMode.kBrake
         elevatorMotor.idleMode = CANSparkMax.IdleMode.kBrake
 
-        //intakeOneMotor.inverted = IntakeConstants.intakeMotorRInverted
-        //intakeTwoMotor.inverted = IntakeConstants.intakeMotorLInverted
-
+        intakeOneMotor.inverted = false
+        intakeTwoMotor.inverted = true
 
         //intakeOneMotor.setSmartCurrentLimit(IntakeConstants.intakeMotorsCurrentLimit)
         //intakeTwoMotor.setSmartCurrentLimit(IntakeConstants.intakeMotorsCurrentLimit)
         wristMotor.setSmartCurrentLimit(IntakeConstants.pitchMotorCurrentLimit)
 
-        //intakeOneMotor.burnFlash()
-        //intakeTwoMotor.burnFlash()
+        intakeOneMotor.burnFlash()
+        intakeTwoMotor.burnFlash()
         wristMotor.burnFlash()
+        elbowMotor.burnFlash()
+        elevatorMotor.burnFlash()
         //everything else:
         // TODO: Elevator conversion factors have been tuned
         elbowEncoder.positionConversionFactor = 2.0 * Math.PI
         elbowEncoder.velocityConversionFactor = (2.0 *Math.PI)/60
+        elbowEncoder.inverted = true
 
         elevatorEncoder.positionConversionFactor = ArmConstants.elevatorEncoderPositionConversionFactor
         elevatorEncoder.velocityConversionFactor = ArmConstants.elevatorEncoderVelocityConversionFactor
 
         wristEncoder.positionConversionFactor = 2.0 * Math.PI
         wristEncoder.velocityConversionFactor = (2.0 * Math.PI)/ 60.0
+        wristEncoder.inverted = false
+
+
+
         // TODO: wristEncoder position and velocity conversion factor
     }
 
@@ -108,7 +117,7 @@ class PickAndPlaceSubsystem : SubsystemBase(){
     val elevatorPositionMeters get() = elevatorEncoder.position
 
     //intake
-    val absoluteWristPosition get() = Rotation2d(wristEncoder.position).minus(Rotation2d(ArmConstants.wristEncoderPosOffset)).radians
+    val absoluteWristPosition get() = Rotation2d(-wristEncoder.position).minus(Rotation2d(ArmConstants.wristEncoderPosOffset)).radians
 
 
     /** This is the pitch with taking consideration to the position of the elbow.

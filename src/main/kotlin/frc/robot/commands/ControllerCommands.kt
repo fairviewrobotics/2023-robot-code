@@ -22,7 +22,7 @@ fun ControllerCommands(pickup: Boolean, cube: Boolean, middlePlace: Boolean, flo
         command =  HighPlaceCone(pnp)
     } else if (pickup && cube) {
         command =  LowPickCube(pnp)
-    } else if (pickup && cube) {
+    } else if (pickup && !cube) { //pickup && !cube
         command =  LowPickCone(pnp)
     } else {
         command =  Base(pnp)
