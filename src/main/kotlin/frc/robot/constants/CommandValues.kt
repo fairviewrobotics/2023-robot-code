@@ -10,6 +10,6 @@ object CommandValues {
 
     // THESE ARE ONLY FOR DRIVERS(Network Tables), NOT USED IN CODE
     var ground: Boolean = true // Pickup
-    var cone: Boolean = true // Both
+    var cone: Boolean = false // Both
     var highPlace: Boolean = false // Place
 }

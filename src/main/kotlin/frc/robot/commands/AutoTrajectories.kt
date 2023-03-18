@@ -24,15 +24,16 @@ class AutoTrajectories(val pnp: PickAndPlaceSubsystem, val swerveSubsystem: Swer
         val pathGroup: List<PathPlannerTrajectory> = PathPlanner.loadPathGroup(
             pathName, firstConstraint, *pathConstraints
         )
+        println("Running")
         //It might be this for the line above: val pathGroup: ArrayList<PathPlannerTrajectory> = arrayListOf()
         // PathPlanner.loadPathGroup("Red Top 1 Get Balance", PathConstraints(1.0, 0.5)).toCollection(pathGroup)
 
         //The way these are called may need to change
         val eventMap: HashMap<String, Command> = hashMapOf(
-            "MidPlace" to MidPlaceCone(pnp),
+            "MidPlace" to AutoPlaceMid(pnp),
             "Base" to Base(pnp),
-            "PickUpCube" to LowPickCube(pnp),
-            "HighPlace" to HighPlaceCube(pnp),
+            "PickUpCube" to AutoPickCube(pnp),
+            "HighPlace" to AutoPlaceHigh(pnp),
             "Balance" to Balancer(swerveSubsystem)
         )
 //        val eventMap = hashMapOf<String, Command>()
@@ -163,17 +164,16 @@ class AutoTrajectories(val pnp: PickAndPlaceSubsystem, val swerveSubsystem: Swer
     fun RedTop1Balance(): Command {
         return base("Red Top 1 Balance",
             PathConstraints(1.00,0.50),
-            PathConstraints(4.00, 3.00),
-            PathConstraints(4.00, 3.00),
-            PathConstraints(4.00, 3.00)
+            PathConstraints(1.00, 0.50),
+            PathConstraints(1.00, 0.50)
         )
     }
     fun RedBottom1Balance(): Command {
+        println("Running The Path")
         return base("Red Bottom 1 Balance",
             PathConstraints(1.00,0.50),
-            PathConstraints(4.00, 3.00),
-            PathConstraints(4.00, 3.00),
-            PathConstraints(4.00, 3.00)
+            PathConstraints(2.00, 1.00),
+            PathConstraints(1.00, 0.50)
         )
     }
     fun BlueTop1GetBalance(): Command {

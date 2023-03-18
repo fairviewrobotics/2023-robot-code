@@ -13,7 +13,7 @@ object TrajectoryConstants {
 
     val kPXController:Double = 0.05
     val kPYController:Double = 0.05
-    val kPThetaController:Double = 1.0 // Old values: 0.075
+    val kPThetaController:Double = 2.0 // Old values: 0.075
     val kDThetaController:Double = 0.0 // Old values: 0.4
 
     // Constraint for the motion profiled robot angle controller

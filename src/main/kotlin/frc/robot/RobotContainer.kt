@@ -33,7 +33,7 @@ class RobotContainer {
     val secondaryController = XboxController(1)
     val pickAndPlace = PickAndPlaceSubsystem()
     val swerveSubsystem = SwerveSubsystem()
-    val trajectories = Trajectories(pickAndPlace, swerveSubsystem)
+    //val trajectories = Trajectories(pickAndPlace, swerveSubsystem)
     val testTrajectories = AutoTrajectories(pickAndPlace, swerveSubsystem)
 
     // val ledsubsystem = yadda yadad
@@ -121,7 +121,7 @@ class RobotContainer {
                 CommandSelector.BASE to Base(pickAndPlace),
                 CommandSelector.CHUTEPICK to ChutePick(pickAndPlace),
                 CommandSelector.FLOORPLACE to FloorPlace(pickAndPlace),
-                CommandSelector.HIGHPLACECONE to HighPlaceCone(pickAndPlace),
+                CommandSelector.HIGHPLACECONE to HighPlaceCone(pickAndPlace,primaryController),
                 CommandSelector.HIGHPLACECUBE to HighPlaceCube(pickAndPlace),
                 CommandSelector.LOWPICKCONE to LowPickCone(pickAndPlace),
                 CommandSelector.LOWPICKCUBE to LowPickCube(pickAndPlace),
@@ -147,130 +147,7 @@ class RobotContainer {
      *
      * Should be used with a networktables utility to inspect the modes chosen.
      */
-    private fun Columbia() {
 
-        val nt = NetworkTableInstance.getDefault().getTable("DriverControl")
-
-        var piece: Piece = Piece.CUBE
-        var place: Place = Place.LOW
-        var vision = false
-
-        val pieceNT = nt.getIntegerTopic("Piece").publish()
-        val placeNT = nt.getIntegerTopic("Place").publish()
-        val visionNT = nt.getBooleanTopic("Vision").publish()
-
-        val lockDrive: () -> Command = {
-            StandardDrive(swerveSubsystem,
-                { primaryController.leftY * DrivetrainConstants.maxSpeedMetersPerSecond / (if (primaryController.aButton) 1.0 else 2.0) },
-                { 0.0 },
-                { 0.0 },
-                false,
-                true)
-        }
-
-        pickAndPlace.defaultCommand = Base(pickAndPlace)
-
-        val pickCommand: () -> Command = { ->
-            val pnpCommand = if (piece == Piece.CONE) {
-                LowPickCone(pickAndPlace)
-            } else {
-                LowPickCube(pickAndPlace)
-            }
-
-            val visionCommand = if (piece == Piece.CONE) {
-                AlignToCone(swerveSubsystem, primaryController)
-            } else {
-                AlignToCube(swerveSubsystem, secondaryController)
-            }
-
-            ParallelCommandGroup(
-                SequentialCommandGroup(
-                    if (vision) visionCommand else InstantCommand({}),
-                    lockDrive()
-                ),
-                pnpCommand
-            )
-        }
-
-        val placeCommand: () -> Command = { ->
-            val pnpCommand = if (piece == Piece.CONE) {
-                when (place) {
-                    Place.HIGH -> HighPlaceCone(pickAndPlace)
-                    Place.MID -> MidPlaceCone(pickAndPlace)
-                    Place.LOW -> FloorPlace(pickAndPlace)
-                }
-            } else {
-                when (place) {
-                    Place.HIGH -> HighPlaceCube(pickAndPlace)
-                    Place.MID -> MidPlaceCube(pickAndPlace)
-                    Place.LOW -> FloorPlace(pickAndPlace)
-                }
-            }
-
-            val visionCommand = if (piece == Piece.CONE) {
-                AlignToRetroreflective(swerveSubsystem, primaryController)
-            } else {
-                AlignToAprilTag(swerveSubsystem, secondaryController)
-            }
-
-            ParallelCommandGroup(
-                SequentialCommandGroup(
-                    if (vision) visionCommand else InstantCommand({}),
-                    lockDrive()
-                ),
-                pnpCommand
-            )
-        }
-        // Primary: Left joystick drives, A button enables faster speed, B button picks, Y button places, left and right triggers control intake speed.
-        swerveSubsystem.defaultCommand = StandardDrive(swerveSubsystem,
-            { primaryController.leftY * DrivetrainConstants.maxSpeedMetersPerSecond / (if (primaryController.aButton) 1.0 else 2.0) },
-            { primaryController.leftX * DrivetrainConstants.maxSpeedMetersPerSecond / (if (primaryController.aButton) 1.0 else 2.0) },
-            { primaryController.rightX * DrivetrainConstants.maxAngularSpeed / (if (primaryController.aButton) 1.0 else 2.0)},
-            true,
-            true)
-
-        JoystickButton(primaryController, XboxController.Button.kB.value).whileTrue(pickCommand())
-        JoystickButton(primaryController, XboxController.Button.kY.value).whileTrue(placeCommand())
-
-        // Secondary: A button changes piece mode, B button changes place mode, X button changes vision mode.
-        JoystickButton(secondaryController, XboxController.Button.kA.value).whileTrue(InstantCommand({
-            piece = Piece.fromInt((piece.ordinal + 1) % (Piece.values().size))
-            pieceNT.set(piece.ordinal.toLong())
-        }))
-
-        JoystickButton(secondaryController, XboxController.Button.kB.value).whileTrue(InstantCommand({
-            place = Place.fromInt((place.ordinal + 1) % (Place.values().size))
-            placeNT.set(place.ordinal.toLong())
-        }))
-
-        JoystickButton(secondaryController, XboxController.Button.kX.value).whileTrue(InstantCommand({
-            vision = !vision
-            visionNT.set(vision)
-        }))
-
-    }
-
-    // Modify.
-    private fun Venezuela() {
-        JoystickButton(secondaryController, XboxController.Button.kLeftBumper.value).whileTrue(
-            VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { 0.0 }, { 4.0 })
-        )
-        JoystickButton(secondaryController, XboxController.Button.kRightBumper.value).whileTrue(
-            VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { 0.0 }, { -4.0 })
-        )
-        Trigger {primaryController.leftTriggerAxis > 0.2} .whileTrue(
-            VoltageArm(pickAndPlace, { primaryController.leftTriggerAxis * -2.0 }, { 0.0 }, { 0.0 }, { 0.0 })
-        )
-        Trigger {primaryController.rightTriggerAxis > 0.2} .whileTrue(
-            VoltageArm(pickAndPlace, { primaryController.rightTriggerAxis * 4.0 }, { 0.0 }, { 0.0 }, { 0.0 })
-        )
-        JoystickButton(secondaryController, Axis.kLeftY.value).whileTrue(
-            VoltageArm(pickAndPlace, { 0.0 }, { primaryController.leftX * -4.0 }, { 0.0 }, { 0.0 })
-        )
-        JoystickButton(secondaryController, Axis.kRightY.value).whileTrue(
-            VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { primaryController.rightY * -4.0 }, { 0.0 })
-        )
-    }
 
     private fun Discovery() {
         swerveSubsystem.defaultCommand = StandardDrive(swerveSubsystem,
@@ -296,19 +173,45 @@ class RobotContainer {
         //PRIMARY CONTROLLER
         Trigger { primaryController.leftTriggerAxis > 0.2 }.whileTrue(
             SequentialCommandGroup(
-                RunCommand({
+                InstantCommand({
                     CommandValues.pickup = true
                 }),
-                { commandMapping }
+                SelectCommand(
+                    mapOf(
+                        CommandSelector.BASE to Base(pickAndPlace),
+                        CommandSelector.CHUTEPICK to ChutePick(pickAndPlace),
+                        CommandSelector.FLOORPLACE to FloorPlace(pickAndPlace),
+                        CommandSelector.HIGHPLACECONE to HighPlaceCone(pickAndPlace, primaryController),
+                        CommandSelector.HIGHPLACECUBE to HighPlaceCube(pickAndPlace),
+                        CommandSelector.LOWPICKCONE to LowPickCone(pickAndPlace),
+                        CommandSelector.LOWPICKCUBE to LowPickCube(pickAndPlace),
+                        CommandSelector.MIDPLACECONE to MidPlaceCone(pickAndPlace),
+                        CommandSelector.MIDPLACECUBE to MidPlaceCube(pickAndPlace)
+                    ),
+                    this::select
+                )
             )
         )
 
         Trigger { primaryController.rightTriggerAxis > 0.2 }.whileTrue(
             SequentialCommandGroup(
-                RunCommand({
+                InstantCommand({
                     CommandValues.pickup = false
                 }),
-                { commandMapping }
+                SelectCommand(
+                    mapOf(
+                        CommandSelector.BASE to Base(pickAndPlace),
+                        CommandSelector.CHUTEPICK to ChutePick(pickAndPlace),
+                        CommandSelector.FLOORPLACE to FloorPlace(pickAndPlace),
+                        CommandSelector.HIGHPLACECONE to HighPlaceCone(pickAndPlace, primaryController),
+                        CommandSelector.HIGHPLACECUBE to HighPlaceCube(pickAndPlace),
+                        CommandSelector.LOWPICKCONE to LowPickCone(pickAndPlace),
+                        CommandSelector.LOWPICKCUBE to LowPickCube(pickAndPlace),
+                        CommandSelector.MIDPLACECONE to MidPlaceCone(pickAndPlace),
+                        CommandSelector.MIDPLACECUBE to MidPlaceCube(pickAndPlace)
+                    ),
+                    this::select
+                )
             )
         )
 
@@ -332,10 +235,10 @@ class RobotContainer {
         JoystickButton(secondaryController, XboxController.Button.kRightBumper.value).whileTrue(
             VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { 0.0 }, { -4.0 })
         )
-        Trigger {primaryController.leftTriggerAxis > 0.2} .whileTrue(
+        Trigger {secondaryController.leftTriggerAxis > 0.2} .whileTrue(
             VoltageArm(pickAndPlace, { primaryController.leftTriggerAxis * -2.0 }, { 0.0 }, { 0.0 }, { 0.0 })
         )
-        Trigger {primaryController.rightTriggerAxis > 0.2} .whileTrue(
+        Trigger {secondaryController.rightTriggerAxis > 0.2} .whileTrue(
             VoltageArm(pickAndPlace, { primaryController.rightTriggerAxis * 4.0 }, { 0.0 }, { 0.0 }, { 0.0 })
         )
         JoystickButton(secondaryController, Axis.kLeftY.value).whileTrue(
@@ -345,28 +248,28 @@ class RobotContainer {
             VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { primaryController.rightY * -4.0 }, { 0.0 })
         )
 
-        JoystickButton(secondaryController, XboxController.Button.kX.value).whileTrue(
-            RunCommand({
+        JoystickButton(secondaryController, XboxController.Button.kX.value).onTrue(
+            InstantCommand({
                 CommandValues.cube = !CommandValues.cube
                 CommandValues.cone = !CommandValues.cone
             })
         )
 
-        JoystickButton(secondaryController, XboxController.Button.kA.value).whileTrue(
-            RunCommand({
+        JoystickButton(secondaryController, XboxController.Button.kA.value).onTrue(
+            InstantCommand({
                 CommandValues.floor = !CommandValues.floor
             })
         )
 
-        JoystickButton(secondaryController, XboxController.Button.kB.value).whileTrue(
-            RunCommand({
+        JoystickButton(secondaryController, XboxController.Button.kB.value).onTrue(
+            InstantCommand({
                 CommandValues.highPlace = !CommandValues.highPlace
                 CommandValues.middlePlace = !CommandValues.middlePlace
             })
         )
 
-        JoystickButton(secondaryController, XboxController.Button.kY.value).whileTrue(
-            RunCommand({
+        JoystickButton(secondaryController, XboxController.Button.kY.value).onTrue(
+            InstantCommand({
                 CommandValues.ground = !CommandValues.ground
                 CommandValues.chute = !CommandValues.chute
             })
@@ -413,7 +316,7 @@ class RobotContainer {
         )
         //TODO: Tune
         Trigger {secondaryController.leftTriggerAxis > 0.2} .whileTrue(
-            HighPlaceCone(pickAndPlace)
+            HighPlaceCone(pickAndPlace, primaryController)
         )
         Trigger {secondaryController.rightTriggerAxis > 0.2} .whileTrue(
             VoltageArm(pickAndPlace, { 2.0 }, { 0.0 }, { 0.0 }, { 0.0 })
@@ -437,5 +340,22 @@ class RobotContainer {
 
     }
 
-    val autonomousCommand: Command = RunCommand({})
+    val autonomousCommand: Command = testTrajectories.RedTop1GetBalance()
+
+
+
+
+//        SequentialCommandGroup(
+//            AutoPlaceHigh(pickAndPlace).withTimeout(4.0),
+//            ParallelCommandGroup(
+//                Base(pickAndPlace),
+//                RunCommand({swerveSubsystem.drive(-0.2, 0.0, 0.0, false, true)}, swerveSubsystem)
+//            ).withTimeout(2.0),
+//            ParallelCommandGroup(
+//                Base(pickAndPlace),
+//                Balancer(swerveSubsystem)
+//            )
+//
+//        )
+
 }

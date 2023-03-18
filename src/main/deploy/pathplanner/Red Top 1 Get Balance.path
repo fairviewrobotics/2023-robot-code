@@ -21,8 +21,8 @@
           "Base"
         ],
         "executionBehavior": "sequential",
-        "waitBehavior": "after",
-        "waitTime": 5.0
+        "waitBehavior": "none",
+        "waitTime": 0.01
       }
     },
     {
@@ -38,7 +38,7 @@
         "x": 10.835288940750484,
         "y": 4.580572225995304
       },
-      "holonomicAngle": 180.0,
+      "holonomicAngle": 0.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
@@ -74,7 +74,7 @@
           "Base"
         ],
         "executionBehavior": "sequential",
-        "waitBehavior": "after",
+        "waitBehavior": "none",
         "waitTime": 0.01
       }
     },
@@ -122,7 +122,7 @@
         "names": [
           "Balance"
         ],
-        "executionBehavior": "sequential",
+        "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0.01
       }
