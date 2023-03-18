@@ -45,7 +45,7 @@ object ArmConstants {
     val elevatorMinHeight = 0.0
     val elevatorMaxHeight = 0.9245
 
-    val elbowMaxRotation = Math.toRadians(100.0)
+    val elbowMaxRotation = Math.toRadians(130.0)
     val elbowMinRotation = -(1.0/2.0) * Math.PI
 
     val wristMaxRotation = (Math.PI/2.0)

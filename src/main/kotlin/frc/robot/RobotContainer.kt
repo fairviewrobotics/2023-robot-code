@@ -56,8 +56,8 @@ class RobotContainer {
     init {
         // change this variable if you would like to use competition bindings (final tuning, driver practice), or test bindings
         // for (individual tuning and what not)
-        configureButtonBindings()
-        //Discovery()
+        //configureButtonBindings()
+        Discovery()
     }
 
     // Do not modify.
@@ -274,9 +274,9 @@ class RobotContainer {
 
     private fun Discovery() {
         swerveSubsystem.defaultCommand = StandardDrive(swerveSubsystem,
-            { primaryController.leftY * DrivetrainConstants.drivingSpeedScalar / 4.0 },
-            { primaryController.leftX * DrivetrainConstants.drivingSpeedScalar / 4.0},
-            { primaryController.rightX * DrivetrainConstants.rotationSpeedScalar  / 4.0},
+            { primaryController.leftY * DrivetrainConstants.drivingSpeedScalar / 2.0 },
+            { primaryController.leftX * DrivetrainConstants.drivingSpeedScalar / 2.0},
+            { primaryController.rightX * DrivetrainConstants.rotationSpeedScalar  / 2.0},
             true,
             true
         )
@@ -299,7 +299,7 @@ class RobotContainer {
                 RunCommand({
                     CommandValues.pickup = true
                 }),
-                commandMapping
+                { commandMapping }
             )
         )
 
@@ -308,7 +308,7 @@ class RobotContainer {
                 RunCommand({
                     CommandValues.pickup = false
                 }),
-                commandMapping
+                { commandMapping }
             )
         )
 
@@ -381,11 +381,21 @@ class RobotContainer {
         //TESTING CONTROLS:
 
         swerveSubsystem.defaultCommand = StandardDrive(swerveSubsystem,
-            { primaryController.leftY * DrivetrainConstants.drivingSpeedScalar / 4.0 },
-            { primaryController.leftX * DrivetrainConstants.drivingSpeedScalar / 4.0},
-            { primaryController.rightX * DrivetrainConstants.rotationSpeedScalar  / 4.0},
+            { primaryController.leftY * DrivetrainConstants.drivingSpeedScalar / 2.0 },
+            { primaryController.leftX * DrivetrainConstants.drivingSpeedScalar / 2.0},
+            { primaryController.rightX * DrivetrainConstants.rotationSpeedScalar  / 2.0},
             true,
             true)
+
+        JoystickButton(primaryController, XboxController.Button.kB.value).whileTrue(
+            StandardDrive(swerveSubsystem,
+                { primaryController.leftY * DrivetrainConstants.drivingSpeedScalar },
+                { primaryController.leftX * DrivetrainConstants.drivingSpeedScalar },
+                { primaryController.rightX * DrivetrainConstants.rotationSpeedScalar },
+                true,
+                true
+            )
+        )
 
 
         //PRIMARY CONtROLLER:
@@ -406,7 +416,7 @@ class RobotContainer {
             HighPlaceCone(pickAndPlace)
         )
         Trigger {secondaryController.rightTriggerAxis > 0.2} .whileTrue(
-            VoltageArm(pickAndPlace, { 1.0 }, { 0.0 }, { 0.0 }, { 0.0 })
+            VoltageArm(pickAndPlace, { 2.0 }, { 0.0 }, { 0.0 }, { 0.0 })
         )
         //TODO: Tune
         JoystickButton(secondaryController, XboxController.Button.kLeftBumper.value).whileTrue(
@@ -417,7 +427,7 @@ class RobotContainer {
             LowPickCone(pickAndPlace)
         )
         //Ready
-        JoystickButton(secondaryController, XboxController.Button.kB.value).whileTrue(
+        JoystickButton(secondaryController, XboxController.Button.kX.value).whileTrue(
             ChutePick(pickAndPlace)
         )
         //TODO: Tune
