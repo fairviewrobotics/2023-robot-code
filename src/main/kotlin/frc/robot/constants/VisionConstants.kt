@@ -16,9 +16,10 @@ object VisionConstants {
      *
      * If this value is 0, that means the camera is perfectly centered on the robot.
      */
-    const val alignmentTxOffset = 0
+    const val alignmentTxOffset = 0.0
 
     const val targetZ = 4.0
+
     const val lineupXP = 0.05
     const val lineupXI = 0.0
     const val lineupXD = 0.0
@@ -28,7 +29,11 @@ object VisionConstants {
     const val lineupRotP = 0.1
     const val lineupRotI = 0.0
     const val lineupRotD = 0.0
+    const val lineupRotApriltagP = 0.1
+    const val lineupRotApriltagI = 0.0
+    const val lineupRotApriltagD = 0.0
     val lineupXConstraints = TrapezoidProfile.Constraints(1.0, 10.0)
     val lineupZConstraints = TrapezoidProfile.Constraints(5.0, 10.0)
     val lineupRotConstraints = TrapezoidProfile.Constraints(5.0, 10.0)
+    val lineupRotApriltagConstraints = TrapezoidProfile.Constraints(5.0, 10.0)
 }

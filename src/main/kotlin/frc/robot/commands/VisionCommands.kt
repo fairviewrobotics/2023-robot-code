@@ -1,6 +1,9 @@
 package frc.robot.commands
 
 import edu.wpi.first.math.controller.ProfiledPIDController
+import edu.wpi.first.networktables.DoubleEntry
+import edu.wpi.first.networktables.DoubleTopic
+import edu.wpi.first.networktables.NetworkTableInstance
 import edu.wpi.first.wpilibj.GenericHID.RumbleType
 import edu.wpi.first.wpilibj.XboxController
 import frc.robot.VisionUtils
@@ -8,6 +11,9 @@ import frc.robot.constants.VisionConstants
 import frc.robot.subsystems.SwerveSubsystem
 import edu.wpi.first.wpilibj2.command.*
 
+fun NT(x: String): DoubleEntry {
+    return NetworkTableInstance.getDefault().getTable("Vision").getDoubleTopic(x).getEntry(0.0)
+}
 fun SetPipeline(pipeline: VisionConstants.Pipelines) : Command {
     return InstantCommand({
         VisionUtils.setPipelineIndex("", pipeline.ordinal)
@@ -18,7 +24,7 @@ class RumbleCheck(val controller: XboxController, val check: () -> Boolean): Com
         controller.setRumble(RumbleType.kBothRumble, (if (check()) 1.0 else 0.0));
     }
 
-    override fun end(interrupted: Boolean) {
+    override fun end(int2errupted: Boolean) {
         controller.setRumble(RumbleType.kBothRumble, 0.0)
     }
 
@@ -32,18 +38,18 @@ class XAlign(val driveSubsystem: SwerveSubsystem) : CommandBase() {
 
     init {
         lineupXPID.setTolerance(1.0)
-        lineupXPID.setGoal(0.0)
+        lineupXPID.setGoal(VisionConstants.alignmentTxOffset)
     }
 
     override fun execute() {
-        val out = lineupXPID.calculate(VisionUtils.getTX("") - VisionConstants.alignmentTxOffset)
+        val out = lineupXPID.calculate(VisionUtils.getTX(""))
 
         driveSubsystem.drive(0.0, out, 0.0, false, false)
         println(lineupXPID.atSetpoint())
     }
 
     override fun isFinished(): Boolean {
-        return !VisionUtils.getTV("") || lineupXPID.atSetpoint()
+        return lineupXPID.atSetpoint()
     }
 }
 class ZAlign(val driveSubsystem: SwerveSubsystem) : CommandBase() {
@@ -65,6 +71,25 @@ class ZAlign(val driveSubsystem: SwerveSubsystem) : CommandBase() {
     }
 }
 
+class RotationAlignApriltag(val driveSubsystem: SwerveSubsystem) : CommandBase() {
+    val lineupRotApriltagPID = ProfiledPIDController(VisionConstants.lineupRotApriltagP, VisionConstants.lineupRotApriltagI, VisionConstants.lineupRotApriltagD, VisionConstants.lineupRotApriltagConstraints)
+
+    init {
+        lineupRotApriltagPID.setTolerance(0.1)
+        lineupRotApriltagPID.setGoal(0.0)
+    }
+
+    override fun execute() {
+        val out = lineupRotApriltagPID.calculate(VisionUtils.getLatestResults("").targetingResults.targets_Fiducials[0]?.robotPose_TargetSpace!![5])
+
+        driveSubsystem.drive(0.0, 0.0, -out, false, false)
+    }
+
+    override fun isFinished(): Boolean {
+        return lineupRotApriltagPID.atSetpoint()
+    }
+}
+
 class RotationAlign(val driveSubsystem: SwerveSubsystem) : CommandBase() {
     val lineupRotPID = ProfiledPIDController(VisionConstants.lineupRotP, VisionConstants.lineupRotI, VisionConstants.lineupRotD, VisionConstants.lineupRotConstraints)
 
@@ -74,13 +99,13 @@ class RotationAlign(val driveSubsystem: SwerveSubsystem) : CommandBase() {
     }
 
     override fun execute() {
-        val out = lineupRotPID.calculate(VisionUtils.getLatestResults("").targetingResults.targets_Fiducials[0]?.robotPose_TargetSpace!![5])
+        val out = lineupRotPID.calculate(VisionUtils.getTX(""))
 
-        driveSubsystem.drive(0.0, 0.0, -out, false, false)
+        driveSubsystem.drive(0.0, 0.0, out, false, false)
     }
 
     override fun isFinished(): Boolean {
-        return !VisionUtils.getTV("") || lineupRotPID.atSetpoint()
+        return lineupRotPID.atSetpoint()
     }
 }
 
@@ -88,7 +113,7 @@ fun AlignToAprilTag(driveSubsystem: SwerveSubsystem, controller: XboxController)
   return(SequentialCommandGroup(
     SetPipeline(VisionConstants.Pipelines.APRILTAG),
     RumbleCheck(controller) { !VisionUtils.getTV("") },
-      RotationAlign(driveSubsystem),
+      RotationAlignApriltag(driveSubsystem),
       XAlign(driveSubsystem)
   ))
 }
