@@ -299,7 +299,20 @@ class RobotContainer {
                 RunCommand({
                     CommandValues.pickup = true
                 }),
-                { commandMapping }
+                SelectCommand(
+                    mapOf(
+                        CommandSelector.BASE to Base(pickAndPlace),
+                        CommandSelector.CHUTEPICK to ChutePick(pickAndPlace),
+                        CommandSelector.FLOORPLACE to FloorPlace(pickAndPlace),
+                        CommandSelector.HIGHPLACECONE to HighPlaceCone(pickAndPlace),
+                        CommandSelector.HIGHPLACECUBE to HighPlaceCube(pickAndPlace),
+                        CommandSelector.LOWPICKCONE to LowPickCone(pickAndPlace),
+                        CommandSelector.LOWPICKCUBE to LowPickCube(pickAndPlace),
+                        CommandSelector.MIDPLACECONE to MidPlaceCone(pickAndPlace),
+                        CommandSelector.MIDPLACECUBE to MidPlaceCube(pickAndPlace)
+                    ),
+                    this::select
+                )
             )
         )
 
@@ -308,7 +321,20 @@ class RobotContainer {
                 RunCommand({
                     CommandValues.pickup = false
                 }),
-                { commandMapping }
+                SelectCommand(
+                    mapOf(
+                        CommandSelector.BASE to Base(pickAndPlace),
+                        CommandSelector.CHUTEPICK to ChutePick(pickAndPlace),
+                        CommandSelector.FLOORPLACE to FloorPlace(pickAndPlace),
+                        CommandSelector.HIGHPLACECONE to HighPlaceCone(pickAndPlace),
+                        CommandSelector.HIGHPLACECUBE to HighPlaceCube(pickAndPlace),
+                        CommandSelector.LOWPICKCONE to LowPickCone(pickAndPlace),
+                        CommandSelector.LOWPICKCUBE to LowPickCube(pickAndPlace),
+                        CommandSelector.MIDPLACECONE to MidPlaceCone(pickAndPlace),
+                        CommandSelector.MIDPLACECUBE to MidPlaceCube(pickAndPlace)
+                    ),
+                    this::select
+                )
             )
         )
 
