@@ -182,6 +182,26 @@ fun Base(pnp: PickAndPlaceSubsystem): Command {
     )
     )
 }
+fun AutoBase(pnp: PickAndPlaceSubsystem): Command {
+    return SequentialCommandGroup(
+        SetPickAndPlacePosition(
+            false,
+            pnp,
+            0.0, // elevator
+            Math.toRadians(80.0), // elbow
+            Math.toRadians(70.0), // wrist
+            { 1.0 } // intake
+        ),
+        SetPickAndPlacePosition(
+            false,
+            pnp,
+            0.0, // elevator
+            Math.toRadians(80.0), // elbow
+            Math.toRadians(70.0), // wrist
+            { 0.5 } // intake
+        )
+    )
+}
 //TODO:Test
 fun FloorPlace(pnp: PickAndPlaceSubsystem): Command {
     return SequentialCommandGroup(
@@ -296,7 +316,7 @@ fun HighPlaceCone(pnp: PickAndPlaceSubsystem, controller: XboxController): Comma
             0.88, // elevator
             Math.toRadians(33.0), // elbow
             Math.toRadians(-26.0), // wrist
-            { if (controller.rightTriggerAxis < 0.8) 0.0 else -5.0  }
+            { if (controller.rightBumper) -5.0 else 0.0  }
         )
     )
 }
@@ -409,6 +429,27 @@ fun AutoPlaceHigh(pnp: PickAndPlaceSubsystem): Command {
             Math.toRadians(60.0), // elbow
             Math.toRadians(-5.0), // wrist
             { -3.0 }
+        )
+    )
+}
+fun ShootItem(pnp: PickAndPlaceSubsystem): Command {
+    return SequentialCommandGroup(
+        SetPickAndPlacePosition(
+            false,
+            pnp,
+            0.0, // elevator
+            Math.toRadians(45.0), // elbow
+            Math.toRadians(45.0), // wrist
+            { 1.0 }
+        ),
+
+        SetPickAndPlacePosition(
+            false,
+            pnp,
+            0.6, // elevator
+            Math.toRadians(45.0), // elbow
+            Math.toRadians(45.0), // wrist
+            { -11.0 }
         )
     )
 }

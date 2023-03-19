@@ -21,7 +21,7 @@
           "Base"
         ],
         "executionBehavior": "sequential",
-        "waitBehavior": "none",
+        "waitBehavior": "after",
         "waitTime": 0.01
       }
     },

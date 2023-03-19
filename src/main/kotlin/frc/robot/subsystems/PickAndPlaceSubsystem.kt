@@ -72,11 +72,11 @@ class PickAndPlaceSubsystem : SubsystemBase(){
         intakeOneMotor.setSmartCurrentLimit(28)
         intakeTwoMotor.setSmartCurrentLimit(28)
         elevatorMotor.setSmartCurrentLimit(38)
-        elbowMotor.inverted = ArmConstants.elbowMotorInverted
+        //elbowMotor.inverted = ArmConstants.elbowMotorInverted
         wristMotor.idleMode = CANSparkMax.IdleMode.kBrake
         //intakeOneMotor.idleMode = CANSparkMax.IdleMode.kBrake
         //intakeTwoMotor.idleMode = CANSparkMax.IdleMode.kBrake
-        intakeTwoMotor.inverted = false
+        //intakeTwoMotor.inverted = false
         elbowMotor.idleMode = CANSparkMax.IdleMode.kBrake
         elevatorMotor.idleMode = CANSparkMax.IdleMode.kBrake
 
@@ -117,7 +117,7 @@ class PickAndPlaceSubsystem : SubsystemBase(){
     val elevatorPositionMeters get() = elevatorEncoder.position
 
     //intake
-    val absoluteWristPosition get() = Rotation2d(-wristEncoder.position).minus(Rotation2d(ArmConstants.wristEncoderPosOffset)).radians
+    val absoluteWristPosition get() = Rotation2d(wristEncoder.position).minus(Rotation2d(ArmConstants.wristEncoderPosOffset)).radians
 
 
     /** This is the pitch with taking consideration to the position of the elbow.
