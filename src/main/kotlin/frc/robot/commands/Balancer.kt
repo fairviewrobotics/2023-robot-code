@@ -12,7 +12,7 @@ class Balancer(val swerveDrive: SwerveSubsystem): CommandBase() {
     val balanceSpeed = 0.15 //TODO: TUNE
 
     var coerceIn = 1.0
-    var cutCoerce = 1.0
+    var cutCoerce = 1
 
     init {
         addRequirements(swerveDrive)
@@ -21,16 +21,16 @@ class Balancer(val swerveDrive: SwerveSubsystem): CommandBase() {
     override fun execute() {
         pitch = gyro.pitch.toDouble()
         if (!isBalanced()) {
-            cutCoerce = 1.0
+            cutCoerce = 1
             var gyroAngle = pitch
             var error = (targetAngle-gyroAngle).coerceIn(-coerceIn,coerceIn)
             var correction = error * balanceSpeed
             swerveDrive.drive(-correction, 0.0, 0.0, false, true)
         } else {
             swerveDrive.setX()
-            if (cutCoerce == 1.0){
+            if (cutCoerce == 1){
                 coerceIn = coerceIn/1.5
-                cutCoerce = 0.0
+                cutCoerce = 0
             }
 
         }

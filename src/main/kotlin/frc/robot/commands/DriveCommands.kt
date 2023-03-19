@@ -9,6 +9,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController
 import edu.wpi.first.math.trajectory.Trajectory
 import edu.wpi.first.networktables.NetworkTableInstance
 import edu.wpi.first.wpilibj2.command.*
+import frc.robot.constants.CommandValues
 import frc.robot.constants.DrivetrainConstants
 import frc.robot.constants.TrajectoryConstants
 import frc.robot.subsystems.SwerveSubsystem
@@ -21,6 +22,8 @@ import frc.robot.subsystems.SwerveSubsystem
  */
 class StandardDrive(val swerveSubsystem: SwerveSubsystem, val forward: () -> Double, val sideways: () -> Double, val radians: () -> Double, val fieldRelative: Boolean, val limited: Boolean) : CommandBase() {
 
+
+    val fieldRelativeFromButton = CommandValues.fieldOriented
     init {
         addRequirements(swerveSubsystem)
     }
@@ -30,7 +33,7 @@ class StandardDrive(val swerveSubsystem: SwerveSubsystem, val forward: () -> Dou
         val sidewaysDesired = MathUtil.applyDeadband(sideways(), 0.06)
         val radiansDesired = MathUtil.applyDeadband(radians(), 0.06)
 
-        swerveSubsystem.drive(forwardDesired, sidewaysDesired, radiansDesired, fieldRelative, limited)
+        swerveSubsystem.drive(forwardDesired, sidewaysDesired, radiansDesired, fieldRelativeFromButton, limited)
     }
 
     override fun end(interrupted: Boolean) {
