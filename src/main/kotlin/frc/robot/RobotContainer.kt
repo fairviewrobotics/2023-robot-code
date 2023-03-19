@@ -56,8 +56,9 @@ class RobotContainer {
     init {
         // change this variable if you would like to use competition bindings (final tuning, driver practice), or test bindings
         // for (individual tuning and what not)
-        //configureButtonBindings()
-        Discovery()
+        //Venezuela()
+        configureButtonBindings()
+        //Discovery()
     }
 
     // Do not modify.
@@ -252,24 +253,34 @@ class RobotContainer {
 
     // Modify.
     private fun Venezuela() {
-        JoystickButton(secondaryController, XboxController.Button.kLeftBumper.value).whileTrue(
-            VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { 0.0 }, { 4.0 })
+
+        JoystickButton(primaryController, XboxController.Button.kRightBumper.value).whileTrue(
+            VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { 2.0 }, { 0.0 })
         )
-        JoystickButton(secondaryController, XboxController.Button.kRightBumper.value).whileTrue(
-            VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { 0.0 }, { -4.0 })
+
+        JoystickButton(primaryController, XboxController.Button.kLeftBumper.value).whileTrue(
+            VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { -2.0 }, { 0.0 })
         )
-        Trigger {primaryController.leftTriggerAxis > 0.2} .whileTrue(
-            VoltageArm(pickAndPlace, { primaryController.leftTriggerAxis * -2.0 }, { 0.0 }, { 0.0 }, { 0.0 })
+
+        Trigger {primaryController.rightTriggerAxis > 0.2}.whileTrue(
+            VoltageArm(pickAndPlace, {0.0}, {2.0}, {0.0}, {0.0})
         )
-        Trigger {primaryController.rightTriggerAxis > 0.2} .whileTrue(
-            VoltageArm(pickAndPlace, { primaryController.rightTriggerAxis * 4.0 }, { 0.0 }, { 0.0 }, { 0.0 })
+
+        Trigger {primaryController.leftTriggerAxis > 0.2}.whileTrue(
+            VoltageArm(pickAndPlace, {0.0}, {-2.0}, {0.0}, {0.0})
         )
-        JoystickButton(secondaryController, Axis.kLeftY.value).whileTrue(
-            VoltageArm(pickAndPlace, { 0.0 }, { primaryController.leftX * -4.0 }, { 0.0 }, { 0.0 })
-        )
-        JoystickButton(secondaryController, Axis.kRightY.value).whileTrue(
-            VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { primaryController.rightY * -4.0 }, { 0.0 })
-        )
+//        Trigger {primaryController.leftTriggerAxis > 0.2} .whileTrue(
+//            VoltageArm(pickAndPlace, { primaryController.leftTriggerAxis * -2.0 }, { 0.0 }, { 0.0 }, { 0.0 })
+//        )
+//        Trigger {primaryController.rightTriggerAxis > 0.2} .whileTrue(
+//            VoltageArm(pickAndPlace, { primaryController.rightTriggerAxis * 4.0 }, { 0.0 }, { 0.0 }, { 0.0 })
+//        )
+//        JoystickButton(primaryController, Axis.kLeftY.value).whileTrue(
+//            VoltageArm(pickAndPlace, { 0.0 }, { primaryController.leftY * -4.0 }, { 0.0 }, { 0.0 })
+//        )
+//        JoystickButton(primaryController, Axis.kRightY.value).whileTrue(
+//            VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { primaryController.rightY * -4.0 }, { 0.0 })
+//        )
     }
 
     private fun Discovery() {
