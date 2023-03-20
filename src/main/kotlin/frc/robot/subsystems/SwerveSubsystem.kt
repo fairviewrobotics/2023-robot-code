@@ -69,7 +69,7 @@ class SwerveSubsystem: SubsystemBase() {
     val limelightTable = NetworkTableUtils("limelight")
 
     //Convert Gyro angle to radians(-2pi to 2pi)
-    val heading: Double get() = (Units.degreesToRadians(-1 * gyro.angle.IEEErem(360.0)))+Math.PI
+    val heading: Double get() = (Units.degreesToRadians(-1 * (gyro.angle + 180.0).IEEErem(360.0)))
 
     //Swerve Odometry
     val odometry = SwerveDriveOdometry(
