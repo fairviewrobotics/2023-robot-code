@@ -68,7 +68,7 @@ class PickAndPlaceSubsystem : SubsystemBase(){
     init {
         //intake
         elbowMotor.setSmartCurrentLimit(38)
-        wristMotor.setSmartCurrentLimit(38)
+        wristMotor.setSmartCurrentLimit(28)
         elbowMotor.inverted = ArmConstants.elbowMotorInverted
         wristMotor.idleMode = CANSparkMax.IdleMode.kBrake
         //intakeOneMotor.idleMode = CANSparkMax.IdleMode.kBrake
@@ -76,7 +76,7 @@ class PickAndPlaceSubsystem : SubsystemBase(){
         intakeTwoMotor.inverted = false
         elbowMotor.idleMode = CANSparkMax.IdleMode.kBrake
         elevatorMotor.idleMode = CANSparkMax.IdleMode.kBrake
-
+        elevatorMotor.setSmartCurrentLimit(38)
         //intakeOneMotor.inverted = IntakeConstants.intakeMotorRInverted
         //intakeTwoMotor.inverted = IntakeConstants.intakeMotorLInverted
 
