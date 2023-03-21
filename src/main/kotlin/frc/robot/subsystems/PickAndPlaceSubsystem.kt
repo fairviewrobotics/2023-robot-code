@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.robot.commands.SetPickAndPlacePosition
 import frc.robot.constants.ArmConstants
+import frc.robot.constants.CommandValues
 import frc.robot.constants.IntakeConstants
 
 class PickAndPlaceSubsystem : SubsystemBase(){
@@ -62,6 +63,21 @@ class PickAndPlaceSubsystem : SubsystemBase(){
         var elbowValue = table.getDoubleTopic("Elbow").subscribe(0.0)
         var wristValue = table.getDoubleTopic("Wrist").subscribe(0.0)
 
+        val nt = NetworkTableInstance.getDefault().getTable("DriverControl")
+
+        var cubeNT = nt.getBooleanTopic("Cube").publish() // Both
+        var middlePlaceNT = nt.getBooleanTopic("Middle Place").publish() // Place
+        var floorNT = nt.getBooleanTopic("Floor").publish() // Place
+        var chuteNT = nt.getBooleanTopic("Chute Pickup").publish() // Pickup
+        var pickupNT = nt.getBooleanTopic("Pickup").publish()
+
+        // THESE ARE ONLY FOR DRIVERS(Network Tables), NOT USED IN CODE
+        var groundNT = nt.getBooleanTopic("Ground Pickup").publish() // Pickup
+        var coneNT = nt.getBooleanTopic("Cone").publish() // Both
+        var highPlaceNT = nt.getBooleanTopic("High Place").publish() // Place
+
+        var visionNT = nt.getBooleanTopic("Vision").publish()
+
     }
 
 
@@ -69,35 +85,45 @@ class PickAndPlaceSubsystem : SubsystemBase(){
         //intake
         elbowMotor.setSmartCurrentLimit(38)
         wristMotor.setSmartCurrentLimit(38)
+        intakeOneMotor.setSmartCurrentLimit(28)
+        intakeTwoMotor.setSmartCurrentLimit(28)
+        elevatorMotor.setSmartCurrentLimit(38)
         elbowMotor.inverted = ArmConstants.elbowMotorInverted
         wristMotor.idleMode = CANSparkMax.IdleMode.kBrake
+        wristMotor.inverted = true
         //intakeOneMotor.idleMode = CANSparkMax.IdleMode.kBrake
         //intakeTwoMotor.idleMode = CANSparkMax.IdleMode.kBrake
         intakeTwoMotor.inverted = false
         elbowMotor.idleMode = CANSparkMax.IdleMode.kBrake
         elevatorMotor.idleMode = CANSparkMax.IdleMode.kBrake
 
-        //intakeOneMotor.inverted = IntakeConstants.intakeMotorRInverted
-        //intakeTwoMotor.inverted = IntakeConstants.intakeMotorLInverted
-
+        intakeOneMotor.inverted = false
+        intakeTwoMotor.inverted = true
 
         //intakeOneMotor.setSmartCurrentLimit(IntakeConstants.intakeMotorsCurrentLimit)
         //intakeTwoMotor.setSmartCurrentLimit(IntakeConstants.intakeMotorsCurrentLimit)
         wristMotor.setSmartCurrentLimit(IntakeConstants.pitchMotorCurrentLimit)
 
-        //intakeOneMotor.burnFlash()
-        //intakeTwoMotor.burnFlash()
+        intakeOneMotor.burnFlash()
+        intakeTwoMotor.burnFlash()
         wristMotor.burnFlash()
+        elbowMotor.burnFlash()
+        elevatorMotor.burnFlash()
         //everything else:
         // TODO: Elevator conversion factors have been tuned
         elbowEncoder.positionConversionFactor = 2.0 * Math.PI
         elbowEncoder.velocityConversionFactor = (2.0 *Math.PI)/60
+        elbowEncoder.inverted = true
 
         elevatorEncoder.positionConversionFactor = ArmConstants.elevatorEncoderPositionConversionFactor
         elevatorEncoder.velocityConversionFactor = ArmConstants.elevatorEncoderVelocityConversionFactor
 
         wristEncoder.positionConversionFactor = 2.0 * Math.PI
         wristEncoder.velocityConversionFactor = (2.0 * Math.PI)/ 60.0
+        wristEncoder.inverted = false
+
+
+
         // TODO: wristEncoder position and velocity conversion factor
     }
 
@@ -108,7 +134,7 @@ class PickAndPlaceSubsystem : SubsystemBase(){
     val elevatorPositionMeters get() = elevatorEncoder.position
 
     //intake
-    val absoluteWristPosition get() = Rotation2d(wristEncoder.position).minus(Rotation2d(ArmConstants.wristEncoderPosOffset)).radians
+    val absoluteWristPosition get() = Rotation2d(-wristEncoder.position).minus(Rotation2d(ArmConstants.wristEncoderPosOffset)).radians
 
 
     /** This is the pitch with taking consideration to the position of the elbow.
@@ -182,6 +208,18 @@ class PickAndPlaceSubsystem : SubsystemBase(){
         Telemetry.intakeVoltage.set(intakesVoltage)
         Telemetry.elevatorPosition.set(elevatorPositionMeters)
         Telemetry.elevatorVelocity.set(elevatorEncoder.velocity)
+        Telemetry.wristPosition.set(absoluteWristPosition)
+
+        Telemetry.cubeNT.set(CommandValues.cube)
+        Telemetry.coneNT.set(CommandValues.cone)
+        Telemetry.floorNT.set(CommandValues.floor)
+        Telemetry.chuteNT.set(CommandValues.chute)
+        Telemetry.pickupNT.set(CommandValues.pickup)
+        Telemetry.middlePlaceNT.set(CommandValues.middlePlace)
+        Telemetry.highPlaceNT.set(CommandValues.highPlace)
+        Telemetry.groundNT.set(CommandValues.ground)
+
+        Telemetry.visionNT.set(CommandValues.vision)
 
     }
 //    fun NTPnP(pnp: PickAndPlaceSubsystem, controller: XboxController): Command {
