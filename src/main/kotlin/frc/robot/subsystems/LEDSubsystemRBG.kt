@@ -1,4 +1,4 @@
-//package frc.robot.subsystems
+package frc.robot.subsystems
 //
 //import edu.wpi.first.wpilibj.AddressableLED
 //import edu.wpi.first.wpilibj.AddressableLEDBuffer
@@ -9,8 +9,8 @@
 //    private var ds = DriverStation.isTeleop()
 //    var led = AddressableLED(0)
 //    var ledBuffer = AddressableLEDBuffer(24)
-//    var coneNeeded : Boolean = true
-//    var cubeNeeded : Boolean = false
+//    var cone : Boolean = true
+//    var cube : Boolean = false
 //    //TODO: Remember, the lights are RBG not RGB so G and B must be switched to get the correct color
 //    init {
 //        led.setLength(ledBuffer.length)

@@ -38,8 +38,6 @@ class RobotContainer {
     //val trajectories = Trajectories(pickAndPlace, swerveSubsystem)
     val testTrajectories = AutoTrajectories(pickAndPlace, swerveSubsystem)
 
-    // val ledsubsystem = yadda yadad
-
     //Starting Config: Cube, with Middle Place, and Ground Pickup
 ////    var cube: Boolean = true // Both
 ////    var middlePlace: Boolean = true // Place
@@ -58,9 +56,9 @@ class RobotContainer {
     init {
         // change this variable if you would like to use competition bindings (final tuning, driver practice), or test bindings
         // for (individual tuning and what not)
-        //configureButtonBindings()
-        Discovery()
-        configureAutoOptions()
+        configureButtonBindings()
+        //Discovery()
+        //configureAutoOptions()
     }
 
     // Do not modify.
@@ -320,14 +318,18 @@ class RobotContainer {
         Trigger {secondaryController.rightTriggerAxis > 0.2} .whileTrue(
             VoltageArm(pickAndPlace, { 2.0 }, { 0.0 }, { 0.0 }, { 0.0 })
         )
+        Trigger {secondaryController.rightTriggerAxis > 0.2} .whileTrue(
+            VoltageArm(pickAndPlace, { -2.0 }, { 0.0 }, { 0.0 }, { 0.0 })
+        )
         //TODO: Tune
         JoystickButton(secondaryController, XboxController.Button.kLeftBumper.value).whileTrue(
             MidPlaceCone(pickAndPlace, primaryController)
         )
+
         //TODO: Tune
-        JoystickButton(secondaryController, XboxController.Button.kRightBumper.value).whileTrue(
-            LowPickCone(pickAndPlace)
-        )
+//        JoystickButton(secondaryController, XboxController.Button.kRightBumper.value).whileTrue(
+//            LowPickCone(pickAndPlace)
+//        )
         //Ready
         JoystickButton(secondaryController, XboxController.Button.kX.value).whileTrue(
             ChutePick(pickAndPlace)
@@ -350,7 +352,7 @@ class RobotContainer {
                 AutoPlaceHigh(pickAndPlace).withTimeout(4.0),
                 ParallelCommandGroup(
                     AutoBase(pickAndPlace),
-                    RunCommand({swerveSubsystem.drive(-0.2, 0.0, 0.0, false, true)}, swerveSubsystem)
+                    RunCommand({swerveSubsystem.drive(-0.25, 0.0, 0.0, false, true)}, swerveSubsystem)
                 ).withTimeout(2.0),
                 ParallelCommandGroup(
                     Base(pickAndPlace),
@@ -365,7 +367,7 @@ class RobotContainer {
                 AutoPlaceConeHigh(pickAndPlace).withTimeout(5.0),
                 ParallelCommandGroup(
                     AutoBase(pickAndPlace),
-                    RunCommand({swerveSubsystem.drive(-0.2, 0.0, 0.0, false, true)}, swerveSubsystem)
+                    RunCommand({swerveSubsystem.drive(-0.25, 0.0, 0.0, false, true)}, swerveSubsystem)
                 ).withTimeout(2.0),
                 ParallelCommandGroup(
                     Base(pickAndPlace),
