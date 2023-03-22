@@ -18,7 +18,6 @@ import java.net.URL
 import java.util.concurrent.CompletableFuture
 
 object VisionUtils {
-    private var mapper: ObjectMapper? = null
 
     /**
      * Print JSON Parse time to the console in milliseconds
@@ -377,14 +376,11 @@ object VisionUtils {
     /**
      * Parses Limelight's JSON results dump into a LimelightResults Object
      */
-    fun getLatestResults(limelightName: String?): LimelightResults {
+    fun getLatestResults(mapper: ObjectMapper, limelightName: String?): LimelightResults {
         val start = System.nanoTime()
         var results = LimelightResults()
-        if (mapper == null) {
-            mapper = ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-        }
         try {
-            results = mapper!!.readValue(getJSONDump(limelightName), LimelightResults::class.java)
+            results = mapper.readValue(getJSONDump(limelightName), LimelightResults::class.java)
         } catch (e: JsonProcessingException) {
             System.err.println("lljson error: " + e.message)
         }
@@ -478,49 +474,20 @@ object VisionUtils {
         var fiducialFamily: String? = null
 
         @JsonProperty("t6c_ts")
-        private val cameraPose_TargetSpace: DoubleArray
+        val cameraPose_TargetSpace: DoubleArray
 
         @JsonProperty("t6r_fs")
-        private val robotPose_FieldSpace: DoubleArray
+        val robotPose_FieldSpace: DoubleArray
 
         @JsonProperty("t6r_ts")
         val robotPose_TargetSpace: DoubleArray
 
         @JsonProperty("t6t_cs")
-        private val targetPose_CameraSpace: DoubleArray
+        val targetPose_CameraSpace: DoubleArray
 
         @JsonProperty("t6t_rs")
-        private val targetPose_RobotSpace: DoubleArray
-        fun getCameraPose_TargetSpace(): Pose3d {
-            return toPose3D(cameraPose_TargetSpace)
-        }
+        val targetPose_RobotSpace: DoubleArray
 
-        fun getRobotPose_FieldSpace(): Pose3d {
-            return toPose3D(robotPose_FieldSpace)
-        }
-
-        fun getRobotPose_TargetSpace(): Pose3d {
-            return toPose3D(robotPose_TargetSpace)
-        }
-
-        fun getTargetPose_CameraSpace(): Pose3d {
-            return toPose3D(targetPose_CameraSpace)
-        }
-
-        fun getTargetPose_RobotSpace(): Pose3d {
-            return toPose3D(targetPose_RobotSpace)
-        }
-
-        val cameraPose_TargetSpace2D: Pose2d
-            get() = toPose2D(cameraPose_TargetSpace)
-        val robotPose_FieldSpace2D: Pose2d
-            get() = toPose2D(robotPose_FieldSpace)
-        val robotPose_TargetSpace2D: Pose2d
-            get() = toPose2D(robotPose_TargetSpace)
-        val targetPose_CameraSpace2D: Pose2d
-            get() = toPose2D(targetPose_CameraSpace)
-        val targetPose_RobotSpace2D: Pose2d
-            get() = toPose2D(targetPose_RobotSpace)
 
         @JsonProperty("ta")
         var ta = 0.0
