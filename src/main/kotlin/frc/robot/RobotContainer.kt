@@ -57,6 +57,7 @@ class RobotContainer {
         // change this variable if you would like to use competition bindings (final tuning, driver practice), or test bindings
         // for (individual tuning and what not)
         configureButtonBindings()
+        LEDSubsystemRBG(swerveSubsystem)
         //Discovery()
         //configureAutoOptions()
     }
