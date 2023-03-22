@@ -37,6 +37,7 @@ class RobotContainer {
     val swerveSubsystem = SwerveSubsystem()
     //val trajectories = Trajectories(pickAndPlace, swerveSubsystem)
     val testTrajectories = AutoTrajectories(pickAndPlace, swerveSubsystem)
+    var ledSubsystemRBG = LEDSubsystemRBG(swerveSubsystem)
 
     //Starting Config: Cube, with Middle Place, and Ground Pickup
 ////    var cube: Boolean = true // Both
@@ -57,7 +58,6 @@ class RobotContainer {
         // change this variable if you would like to use competition bindings (final tuning, driver practice), or test bindings
         // for (individual tuning and what not)
         configureButtonBindings()
-        LEDSubsystemRBG(swerveSubsystem)
         //Discovery()
         //configureAutoOptions()
     }

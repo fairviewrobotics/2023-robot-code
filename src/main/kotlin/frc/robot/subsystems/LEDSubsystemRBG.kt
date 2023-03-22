@@ -37,7 +37,7 @@ class LEDSubsystemRBG(val swerveDrive: SwerveSubsystem) : SubsystemBase() {
                     autoColor()
                 }
             } else if (DriverStation.isTeleop()) {
-                if (pitch > 2 || pitch < 2) {
+                if (pitch > 2 || pitch < 2) { //pitch is set to 2 because there is a tolerance of 2.5 degrees on charge station
                     balanceColor()
                 } else {
                     teleop()
