@@ -1,28 +1,18 @@
 package frc.robot.commands
 
+import com.revrobotics.CANSparkMax
+import com.revrobotics.SparkMaxAbsoluteEncoder
+import edu.wpi.first.math.controller.ProfiledPIDController
+import edu.wpi.first.math.trajectory.TrapezoidProfile
+import edu.wpi.first.networktables.NetworkTableInstance
+import edu.wpi.first.wpilibj.DigitalInput
 import edu.wpi.first.wpilibj.XboxController
-import edu.wpi.first.wpilibj2.command.Command
-import frc.robot.VisionUtils
-import frc.robot.subsystems.SwerveSubsystem
+import edu.wpi.first.wpilibj2.command.CommandBase
+import frc.robot.constants.ArmConstants
+import frc.robot.constants.DrivetrainConstants
+import frc.robot.subsystems.DigitalInputSubsystem
+import frc.robot.subsystems.SparkMaxSubsystem
 
-//fun TestAlign(driveSubsystem: SwerveSubsystem, controller: XboxController): Command
-//{
-//    return RumbleCheck(controller) { !VisionUtils.getTV("") }
-//}
-//
-//import com.revrobotics.CANSparkMax
-//import com.revrobotics.SparkMaxAbsoluteEncoder
-//import edu.wpi.first.math.controller.ProfiledPIDController
-//import edu.wpi.first.math.trajectory.TrapezoidProfile
-//import edu.wpi.first.networktables.NetworkTableInstance
-//import edu.wpi.first.wpilibj.DigitalInput
-//import edu.wpi.first.wpilibj.XboxController
-//import edu.wpi.first.wpilibj2.command.CommandBase
-//import frc.robot.constants.ArmConstants
-//import frc.robot.constants.DrivetrainConstants
-//import frc.robot.subsystems.DigitalInputSubsystem
-//import frc.robot.subsystems.SparkMaxSubsystem
-//
 ///**
 // * Rezero the swerve modules
 // */
@@ -64,31 +54,31 @@ import frc.robot.subsystems.SwerveSubsystem
 //    }
 //}
 //
-///**
-// * For quickly testing a single motor
-// */
-//class QuickSpin(val controller: XboxController, val motor: SparkMaxSubsystem, val currentLimit: Int): CommandBase() {
-//    val voltageTopic = NetworkTableInstance.getDefault().getTable("QuickSpin").getDoubleTopic("Voltage").publish()
-//    val currentTopic = NetworkTableInstance.getDefault().getTable("QuickSpin").getDoubleTopic("Current").publish()
-//    val powerTopic = NetworkTableInstance.getDefault().getTable("QuickSpin").getDoubleTopic("Power").publish()
-//    init {
-//        addRequirements(motor)
-//        motor.x.setSmartCurrentLimit(currentLimit)
-//        motor.x.burnFlash()
-//    }
-//
-//    override fun execute() {
-//        motor.x.setVoltage(controller.leftY * 12.0)
-//        voltageTopic.set(motor.x.appliedOutput / motor.x.outputCurrent)
-//        currentTopic.set(motor.x.outputCurrent)
-//        powerTopic.set(motor.x.appliedOutput)
-//    }
-//
-//    override fun end(interrupted: Boolean) {
-//        motor.x.setVoltage(0.0)
-//    }
-//}
-//
+/**
+ * For quickly testing a single motor
+ */
+class QuickSpin(val controller: XboxController, val motor: SparkMaxSubsystem, val currentLimit: Int): CommandBase() {
+    val voltageTopic = NetworkTableInstance.getDefault().getTable("QuickSpin").getDoubleTopic("Voltage").publish()
+    val currentTopic = NetworkTableInstance.getDefault().getTable("QuickSpin").getDoubleTopic("Current").publish()
+    val powerTopic = NetworkTableInstance.getDefault().getTable("QuickSpin").getDoubleTopic("Power").publish()
+    init {
+        addRequirements(motor)
+        motor.x.setSmartCurrentLimit(currentLimit)
+        motor.x.burnFlash()
+    }
+
+    override fun execute() {
+        motor.x.setVoltage(controller.leftY * 12.0)
+        voltageTopic.set(motor.x.appliedOutput / motor.x.outputCurrent)
+        currentTopic.set(motor.x.outputCurrent)
+        powerTopic.set(motor.x.appliedOutput)
+    }
+
+    override fun end(interrupted: Boolean) {
+        motor.x.setVoltage(0.0)
+    }
+}
+
 //class AbsoluteEncoderSetting(val controller: XboxController, val motor: SparkMaxSubsystem, val currentLimit: Int) : CommandBase() {
 //    init {
 //        addRequirements(motor)

@@ -5,6 +5,7 @@ package frc.robot
 
 import edu.wpi.first.networktables.BooleanEntry
 import edu.wpi.first.networktables.NetworkTableInstance
+import edu.wpi.first.wpilibj.Joystick
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj2.command.button.JoystickButton
 
@@ -63,14 +64,6 @@ class RobotContainer {
         configureAutoOptions()
     }
 
-    // Do not modify.
-    enum class Piece(val x: Int) {
-        CONE(0),
-        CUBE(1);
-
-        companion object {
-            fun fromInt(value: Int) = Piece.values().first { it.x == value }
-        }
     }
 
     enum class Place(val x: Int) {
