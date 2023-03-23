@@ -19,19 +19,28 @@ object VisionConstants {
      * If this value is 0, that means the camera is perfectly centered on the robot.
      */
 
-    const val lineupZP = 0.5
+    const val lineupZP = 0.4
     const val lineupZI = 0.0
     const val lineupZD = 0.0
 
-    const val retroreflectiveP = 0.015
+    val lineupZConstraints = TrapezoidProfile.Constraints(0.75, 0.5)
+
+    const val lineupRotP = 0.5
+    const val lineupRotI = 0.0
+    const val lineupRotD = 0.0
+
+    val lineupRotConstraints = TrapezoidProfile.Constraints(0.75, 0.2)
+
+
+    const val retroreflectiveP = 0.03
     const val retroreflectiveI = 0.0
     const val retroreflectiveD = 0.0
 
-    const val ttaP = 1.0
+    const val ttaP = 5.0
     const val ttaI = 0.0
     const val ttaD = 0.0
+    val ttaConstraints = TrapezoidProfile.Constraints(3.14159, 3.14159)
 
-    val lineupZConstraints = TrapezoidProfile.Constraints(0.75, 0.2)
 
     val mapper = ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 }

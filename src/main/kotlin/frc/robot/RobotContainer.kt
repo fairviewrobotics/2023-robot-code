@@ -36,31 +36,12 @@ class RobotContainer {
     val secondaryController = XboxController(1)
     val pickAndPlace = PickAndPlaceSubsystem()
     val swerveSubsystem = SwerveSubsystem()
-    //val trajectories = Trajectories(pickAndPlace, swerveSubsystem)
     val testTrajectories = AutoTrajectories(pickAndPlace, swerveSubsystem)
-    //var ledSubsystemRBG = LEDSubsystemRBG(swerveSubsystem)
-
-    //Starting Config: Cube, with Middle Place, and Ground Pickup
-////    var cube: Boolean = true // Both
-////    var middlePlace: Boolean = true // Place
-////    var floor: Boolean = false // Place
-////    var chute: Boolean = false // Pickup
-//
-//    // THESE ARE ONLY FOR DRIVERS(Network Tables), NOT USED IN CODE
-//    var ground: Boolean = true // Pickup
-//    var cone: Boolean = true // Both
-//    var highPlace: Boolean = false // Place
-
-
 
 
     /** The container for the robot. Contains subsystems, OI devices, and commands.  */
     init {
-        // change this variable if you would like to use competition bindings (final tuning, driver practice), or test bindings
-        // for (individual tuning and what not)
-        //configureButtonBindings()
         Discovery()
-        //configureAutoOptions()
     }
 
 
@@ -156,12 +137,12 @@ class RobotContainer {
 
                 SelectCommand(
                     mapOf(
-                        VisionSelector.RETROREFLECTIVE to RetroreflectiveVision(swerveSubsystem, primaryController),
-                        VisionSelector.CHUTEVISION to ChuteVision(swerveSubsystem, primaryController),
+                        VisionSelector.RETROREFLECTIVE to RetroreflectiveVision(swerveSubsystem, primaryController).withTimeout(3.0),
+                        VisionSelector.CHUTEVISION to ChuteVision(swerveSubsystem, primaryController).withTimeout(6.0),
                         VisionSelector.NOVISION to InstantCommand({})
                     ),
                     this::selectVision
-                ).withTimeout(3.0),
+                ),
                 ParallelCommandGroup(
                     StandardDrive(swerveSubsystem,
                         { primaryController.leftY * DrivetrainConstants.drivingSpeedScalar / 2.0 },
@@ -213,7 +194,7 @@ class RobotContainer {
                     StandardDrive(swerveSubsystem,
                         { primaryController.leftY * DrivetrainConstants.drivingSpeedScalar / 2.0 },
                         { primaryController.leftX * DrivetrainConstants.drivingSpeedScalar / 2.0},
-                        { primaryController.rightX * DrivetrainConstants.rotationSpeedScalar  / 2.0},
+                        { primaryController.rightX * DrivetrainConstants.rotationSpeedScalar / 2.0},
                         true,
                         true
                     ).repeatedly(),
@@ -310,97 +291,72 @@ class RobotContainer {
 
 
 
-
     }
-
-    private fun configureButtonBindings() {
-        //TESTING CONTROLS:
-
-        swerveSubsystem.defaultCommand = StandardDrive(swerveSubsystem,
-            { primaryController.leftY * DrivetrainConstants.drivingSpeedScalar / 2.0 },
-            { primaryController.leftX * DrivetrainConstants.drivingSpeedScalar / 2.0},
-            { primaryController.rightX * DrivetrainConstants.rotationSpeedScalar  / 2.0},
-            true,
-            true)
-
-        JoystickButton(primaryController, XboxController.Button.kB.value).whileTrue(
-            StandardDrive(swerveSubsystem,
-                { primaryController.leftY * DrivetrainConstants.drivingSpeedScalar },
-                { primaryController.leftX * DrivetrainConstants.drivingSpeedScalar },
-                { primaryController.rightX * DrivetrainConstants.rotationSpeedScalar },
-                true,
-                true
-            )
-        )
-
-
-        //PRIMARY CONtROLLER:
-        pickAndPlace.defaultCommand = Base(pickAndPlace)
-
-        JoystickButton(primaryController, XboxController.Button.kX.value).whileTrue(
-            RunCommand({
-                swerveSubsystem.setX()
-            })
-        )
-        JoystickButton(primaryController, XboxController.Button.kY.value).whileTrue(
-            RunCommand({
-                swerveSubsystem.zeroGyroAndOdometry()
-            })
-        )
-        //TODO: Tune
-        Trigger {secondaryController.leftTriggerAxis > 0.2} .whileTrue(
-            HighPlaceCone(pickAndPlace, primaryController)
-        )
-        Trigger {secondaryController.rightTriggerAxis > 0.2} .whileTrue(
-            VoltageArm(pickAndPlace, { 2.0 }, { 0.0 }, { 0.0 }, { 0.0 })
-        )
-        Trigger {secondaryController.rightTriggerAxis > 0.2} .whileTrue(
-            VoltageArm(pickAndPlace, { -2.0 }, { 0.0 }, { 0.0 }, { 0.0 })
-        )
-        //TODO: Tune
-        JoystickButton(secondaryController, XboxController.Button.kLeftBumper.value).whileTrue(
-            MidPlaceCone(pickAndPlace, primaryController)
-        )
-
-        //TODO: Tune
-//        JoystickButton(secondaryController, XboxController.Button.kRightBumper.value).whileTrue(
-//            LowPickCone(pickAndPlace)
-//        )
-        //Ready
-        JoystickButton(secondaryController, XboxController.Button.kX.value).whileTrue(
-            ChutePick(pickAndPlace)
-        )
-        //TODO: Tune
-        JoystickButton(secondaryController, XboxController.Button.kA.value).whileTrue(
-            FloorPlace(pickAndPlace, primaryController)
-        )
-
-    }
-
     //AUTO CONFIGURATION
     var autoCommandChooser: SendableChooser<Command> = SendableChooser()
-//    private fun configureAutoOptions() {
-//        autoCommandChooser.setDefaultOption(
-//            "Center Place Cube and Balance",
-//            SequentialCommandGroup(
-//                AutoPlaceCubeHigh(pickAndPlace).withTimeout(4.0),
-//                ParallelCommandGroup(
-//                    AutoBase(pickAndPlace),
-//                    RunCommand({swerveSubsystem.drive(-0.25, 0.0, 0.0, false, true)}, swerveSubsystem)
-//                ).withTimeout(2.0),
-//                ParallelCommandGroup(
-//                    Base(pickAndPlace),
-//                    Balancer(swerveSubsystem)
-//                )
-//            )
-//        )
-//        SmartDashboard.putData("Auto Mode", autoCommandChooser)
-//    }
 
-    val autonomousCommand: Command get() = autoCommandChooser.selected
+    private fun configureAutoOptions() {
+        autoCommandChooser.setDefaultOption(
+            "Center Place Cube Mid and Balance",
+            SequentialCommandGroup(
+                AutoPlaceCubeMid(pickAndPlace).withTimeout(4.0),
+                ParallelCommandGroup(
+                    AutoBase(pickAndPlace),
+                    RunCommand({swerveSubsystem.drive(-0.25, 0.0, 0.0, false, true)}, swerveSubsystem)
+                ).withTimeout(2.0),
+                ParallelCommandGroup(
+                    Base(pickAndPlace),
+                    Balancer(swerveSubsystem)
+                )
+            )
+        )
+        autoCommandChooser.addOption(
+            "Center Place Cube High and Balance",
+            SequentialCommandGroup(
+                AutoPlaceCubeHigh(pickAndPlace).withTimeout(4.0),
+                ParallelCommandGroup(
+                    AutoBase(pickAndPlace),
+                    RunCommand({swerveSubsystem.drive(-0.25, 0.0, 0.0, false, true)}, swerveSubsystem)
+                ).withTimeout(2.0),
+                ParallelCommandGroup(
+                    Base(pickAndPlace),
+                    Balancer(swerveSubsystem)
+                )
+            )
+        )
+        autoCommandChooser.addOption(
+            "Center Place Cone Mid and Balance",
+            SequentialCommandGroup(
+                AutoPlaceConeMid(pickAndPlace).withTimeout(4.0),
+                ParallelCommandGroup(
+                    AutoBase(pickAndPlace),
+                    RunCommand({swerveSubsystem.drive(-0.25, 0.0, 0.0, false, true)}, swerveSubsystem)
+                ).withTimeout(2.0),
+                ParallelCommandGroup(
+                    Base(pickAndPlace),
+                    Balancer(swerveSubsystem)
+                )
+            )
+        )
+        autoCommandChooser.addOption(
+            "Center Place Cone High and Balance",
+            SequentialCommandGroup(
+                AutoPlaceConeHigh(pickAndPlace).withTimeout(4.0),
+                ParallelCommandGroup(
+                    AutoBase(pickAndPlace),
+                    RunCommand({swerveSubsystem.drive(-0.25, 0.0, 0.0, false, true)}, swerveSubsystem)
+                ).withTimeout(2.0),
+                ParallelCommandGroup(
+                    Base(pickAndPlace),
+                    Balancer(swerveSubsystem)
+                )
+            )
+        )
+        SmartDashboard.putData("Auto Mode", autoCommandChooser)
+    }
 
-
-
-
-
+    val autonomousCommand: Command get() = SequentialCommandGroup(
+        AutoPlaceConeMid(pickAndPlace).withTimeout(4.0),
+        Base(pickAndPlace)
+    )
 }

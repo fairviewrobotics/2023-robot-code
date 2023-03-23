@@ -3,7 +3,9 @@ package frc.robot.commands
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.controller.ProfiledPIDController
 import edu.wpi.first.math.filter.LinearFilter
+import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
+import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.networktables.DoubleEntry
 import edu.wpi.first.networktables.NetworkTableInstance
 import edu.wpi.first.wpilibj.DriverStation
@@ -89,8 +91,7 @@ class ZAlign(val driveSubsystem: SwerveSubsystem, val targetZ: Double) : Command
 
         // TODO: maybe invert zoutput?
         val zOutput = lineupZPID.calculate(mostRecentZ)
-        driveSubsystem.drive(-zOutput, 0.0, 0.0, true, false)
-
+        driveSubsystem.drive(zOutput, 0.0, 0.0, true, false)
 
         ZMeasurement.set(mostRecentZ)
         ZOutput.set(-zOutput)
@@ -99,6 +100,68 @@ class ZAlign(val driveSubsystem: SwerveSubsystem, val targetZ: Double) : Command
 
     override fun isFinished(): Boolean {
         return lineupZPID.atGoal()
+    }
+
+    override fun end(interrupted: Boolean) {
+        CommandRunning.set(false)
+        driveSubsystem.drive(0.0, 0.0, 0.0, false, false)
+    }
+}
+
+class ZOdometryAlign(val driveSubsystem: SwerveSubsystem, val targetDistance: Double) : CommandBase() {
+    val lineupZPID = ProfiledPIDController(
+        VisionConstants.lineupZP,
+        VisionConstants.lineupZI,
+        VisionConstants.lineupZD,
+        VisionConstants.lineupZConstraints
+    )
+    val lineupRotPID = ProfiledPIDController(
+        VisionConstants.lineupRotP,
+        VisionConstants.lineupRotI,
+        VisionConstants.lineupRotD,
+        VisionConstants.lineupRotConstraints
+    )
+
+    val ZSetpoint = NT("ZSetpoint")
+    val ZMeasurement = NT("ZMeasurement")
+    val ZOutput = NT("ZOutput")
+
+    val rotSetpoint = NT("rotSetpoint")
+    val rotMeasurement = NT("rotMeasurement")
+    val rotOutput = NT("rotOutput")
+
+    val CommandRunning = NetworkTableInstance.getDefault().getTable("Vision").getBooleanTopic("Running").getEntry(false)
+
+    //non-null asserted, but might be null; if limelight doesn't see apriltag for a frame
+    val initialDistance =  VisionUtils.getLatestResults(VisionConstants.mapper, "").targetingResults.targets_Fiducials[0]!!.robotPose_TargetSpace[2] // get from the limelight
+    var currentPose = driveSubsystem.pose
+    val desiredPose = currentPose.minus(Pose2d(Translation2d(currentPose.x, targetDistance - initialDistance),Rotation2d(0.0)))
+    override fun initialize() {
+        lineupZPID.setTolerance(0.1, 0.1)
+        lineupZPID.reset(currentPose.y)
+        lineupZPID.setGoal(desiredPose.y)
+        lineupRotPID.setTolerance(0.1, 0.1)
+        lineupRotPID.reset(currentPose.rotation.radians)
+        lineupRotPID.setGoal(desiredPose.rotation.radians)
+    }
+
+    override fun execute() {
+        currentPose = driveSubsystem.pose
+        val zOutput = lineupZPID.calculate(desiredPose.y)
+        val rotOutput = lineupZPID.calculate(desiredPose.rotation.radians)
+        driveSubsystem.drive(-zOutput, 0.0, rotOutput, true, false)
+
+        ZMeasurement.set(currentPose.y)
+        ZOutput.set(-zOutput)
+        ZSetpoint.set(lineupZPID.goal.position)
+
+        rotMeasurement.set(currentPose.y)
+        //rotOutput.set(rotOutput)
+        rotSetpoint.set(lineupZPID.goal.position)
+    }
+
+    override fun isFinished(): Boolean {
+        return lineupZPID.atGoal() && lineupRotPID.atGoal()
     }
 
     override fun end(interrupted: Boolean) {
@@ -132,7 +195,7 @@ class RetroreflectiveAlign(val driveSubsystem: SwerveSubsystem) : CommandBase() 
     // moving this into init may help
     override fun initialize() {
         CommandRunning.set(true)
-        lineupXPID.setTolerance(0.1, 0.1)
+        lineupXPID.setTolerance(0.5, 0.1)
     }
 
     fun calculateTargets() {
@@ -156,7 +219,7 @@ class RetroreflectiveAlign(val driveSubsystem: SwerveSubsystem) : CommandBase() 
     override fun execute() {
         calculateTargets()
 
-        val xOutput = -lineupXPID.calculate(mostRecentX, 0.1)
+        val xOutput = -lineupXPID.calculate(mostRecentX, 6.7)
         driveSubsystem.drive(0.0, xOutput, 0.0, true, false)
 
 
@@ -177,7 +240,7 @@ class RetroreflectiveAlign(val driveSubsystem: SwerveSubsystem) : CommandBase() 
 
 // CCW is positive
 class TurnToAngle(val driveSubsystem: SwerveSubsystem, val targetAngleRadians: Double) : CommandBase() {
-    val ttaPID = PIDController(VisionConstants.ttaP, VisionConstants.ttaI, VisionConstants.ttaD)
+    val ttaPID = ProfiledPIDController(VisionConstants.ttaP, VisionConstants.ttaI, VisionConstants.ttaD, VisionConstants.ttaConstraints)
 
     val setpoint = NT("TTASetpoint")
     val measurement = NT("TTAMeasurement")
@@ -190,12 +253,14 @@ class TurnToAngle(val driveSubsystem: SwerveSubsystem, val targetAngleRadians: D
     }
 
     override fun initialize() {
-        ttaPID.setTolerance(0.1, 0.1)
+        ttaPID.setTolerance(0.05, 0.1)
+        ttaPID.reset(heading.radians)
         ttaPID.enableContinuousInput(-Math.PI, Math.PI)
+        ttaPID.setGoal(targetAngleRadians)
     }
 
     override fun execute() {
-        val out = ttaPID.calculate(heading.radians, targetAngleRadians)
+        val out = ttaPID.calculate(heading.radians)
         driveSubsystem.drive(0.0, 0.0, out, true, false)
 
         setpoint.set(targetAngleRadians)
@@ -204,7 +269,7 @@ class TurnToAngle(val driveSubsystem: SwerveSubsystem, val targetAngleRadians: D
     }
 
     override fun isFinished(): Boolean {
-        return ttaPID.atSetpoint()
+        return ttaPID.atGoal()
     }
 
     override fun end(interrupted: Boolean) {
@@ -216,7 +281,7 @@ fun ChuteVision(driveSubsystem: SwerveSubsystem, controller: XboxController): Co
     return SequentialCommandGroup(
         SetPipeline(VisionConstants.Pipelines.APRILTAG),
         RumbleCheck(controller) { !VisionUtils.getTV("") },
-        ZAlign(driveSubsystem, -3.1),
+        ZAlign(driveSubsystem, -2.39),
         if (DriverStation.getAlliance() == DriverStation.Alliance.Red)
             TurnToAngle(driveSubsystem, Math.PI / 2.0)
         else
@@ -228,7 +293,7 @@ fun RetroreflectiveVision(driveSubsystem: SwerveSubsystem, controller: XboxContr
     return (SequentialCommandGroup(
         SetPipeline(VisionConstants.Pipelines.RETROREFLECTIVE),
         RumbleCheck(controller) { !VisionUtils.getTV("") },
-        TurnToAngle(driveSubsystem, 0.0),
+        TurnToAngle(driveSubsystem, Math.PI),
         RetroreflectiveAlign(driveSubsystem)
     ))
 }

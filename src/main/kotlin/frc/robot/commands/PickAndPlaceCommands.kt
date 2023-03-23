@@ -152,7 +152,7 @@ fun Base(pnp: PickAndPlaceSubsystem): Command {
             0.0, // elevator
             Math.toRadians(70.0), // elbow
             Math.toRadians(80.0), // wrist
-            { 1.5 } // intake
+            { 1.0 } // intake
         ),
         SetPickAndPlacePosition(
                 true,
@@ -160,7 +160,7 @@ fun Base(pnp: PickAndPlaceSubsystem): Command {
         0.0, // elevator
         Math.toRadians(98.0), // elbow
         Math.toRadians(80.0), // wrist
-        { 1.5 } // intake
+        { 1.0 } // intake
     )
     )
 }
@@ -287,8 +287,8 @@ fun HighPlaceCone(pnp: PickAndPlaceSubsystem, controller: XboxController): Comma
             false,
             pnp,
             0.92, // elevator
-            Math.toRadians(36.0), // elbow
-            Math.toRadians(-30.0), // wrist
+            Math.toRadians(34.0), // elbow
+            Math.toRadians(-27.0), // wrist
             { 1.0 }
         ),
 
@@ -296,8 +296,8 @@ fun HighPlaceCone(pnp: PickAndPlaceSubsystem, controller: XboxController): Comma
             true,
             pnp,
             0.92, // elevator
-            Math.toRadians(36.0), // elbow
-            Math.toRadians(-30.0), // wrist
+            Math.toRadians(34.0), // elbow
+            Math.toRadians(-27.0), // wrist
             { if (controller.leftBumper) -5.0 else 1.0  }
         )
     )
@@ -414,32 +414,53 @@ fun AutoPlaceCubeHigh(pnp: PickAndPlaceSubsystem): Command {
         )
     )
 }
+fun AutoPlaceConeMid(pnp: PickAndPlaceSubsystem): Command {
+    return SequentialCommandGroup(
+        SetPickAndPlacePosition(
+            false,
+            pnp,
+            0.4, // elevator
+            Math.toRadians(53.0), // elbow
+            Math.toRadians(-25.0), // wrist
+            { 1.0 } // intake
+        ),
+
+        SetPickAndPlacePosition(
+            false,
+            pnp,
+            0.4, // elevator
+            Math.toRadians(53.0), // elbow
+            Math.toRadians(-25.0), // wrist
+            { -6.0 } // intake
+        )
+    )
+}
 
 fun AutoPlaceConeHigh(pnp: PickAndPlaceSubsystem): Command {
     return SequentialCommandGroup(
         SetPickAndPlacePosition(
             false,
             pnp,
-            0.88, // elevator
-            Math.toRadians(55.0), // elbow
-            Math.toRadians(55.0), // wrist
+            0.92, // elevator
+            Math.toRadians(50.0), // elbow
+            Math.toRadians(50.0), // wrist
             { 1.0 }
         ),
         SetPickAndPlacePosition(
             false,
             pnp,
-            0.88, // elevator
-            Math.toRadians(33.0), // elbow
-            Math.toRadians(-26.0), // wrist
+            0.92, // elevator
+            Math.toRadians(34.0), // elbow
+            Math.toRadians(-27.0), // wrist
             { 1.0 }
         ),
 
         SetPickAndPlacePosition(
             false,
             pnp,
-            0.88, // elevator
-            Math.toRadians(33.0), // elbow
-            Math.toRadians(-26.0), // wrist
+            0.92, // elevator
+            Math.toRadians(34.0), // elbow
+            Math.toRadians(-27.0), // wrist
             { -5.0 }
         )
     )
