@@ -1,5 +1,7 @@
 package frc.robot.constants
 
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.ObjectMapper
 import edu.wpi.first.math.trajectory.TrapezoidProfile
 
 object VisionConstants {
@@ -16,19 +18,20 @@ object VisionConstants {
      *
      * If this value is 0, that means the camera is perfectly centered on the robot.
      */
-    const val alignmentTxOffset = 0
 
-    const val targetZ = 4.0
-    const val lineupXP = 0.05
-    const val lineupXI = 0.0
-    const val lineupXD = 0.0
-    const val lineupZP = 0.04
+    const val lineupZP = 0.5
     const val lineupZI = 0.0
     const val lineupZD = 0.0
-    const val lineupRotP = 0.1
-    const val lineupRotI = 0.0
-    const val lineupRotD = 0.0
-    val lineupXConstraints = TrapezoidProfile.Constraints(1.0, 10.0)
-    val lineupZConstraints = TrapezoidProfile.Constraints(5.0, 10.0)
-    val lineupRotConstraints = TrapezoidProfile.Constraints(5.0, 10.0)
+
+    const val retroreflectiveP = 0.015
+    const val retroreflectiveI = 0.0
+    const val retroreflectiveD = 0.0
+
+    const val ttaP = 1.0
+    const val ttaI = 0.0
+    const val ttaD = 0.0
+
+    val lineupZConstraints = TrapezoidProfile.Constraints(0.75, 0.2)
+
+    val mapper = ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 }
