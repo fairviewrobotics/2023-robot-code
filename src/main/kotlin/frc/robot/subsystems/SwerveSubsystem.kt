@@ -83,6 +83,8 @@ class SwerveSubsystem: SubsystemBase() {
     val actualTelemetry: DoubleArrayEntry = NetworkTableInstance.getDefault().getTable("Swerve").getDoubleArrayTopic("Actual").getEntry(doubleArrayOf(0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0))
     val poseTelemetry: DoubleArrayEntry = NetworkTableInstance.getDefault().getTable("Swerve").getDoubleArrayTopic("Pose").getEntry(doubleArrayOf(pose.x, pose.y, pose.rotation.radians))
     val gyroHeading: DoubleEntry = NetworkTableInstance.getDefault().getTable("Swerve").getDoubleTopic("GyroHeading").getEntry((heading))
+    val frontrightpos: DoubleEntry = NetworkTableInstance.getDefault().getTable("Swerve").getDoubleTopic("frpos").getEntry((frontRight.position.angle.radians))
+    val frontleftpos: DoubleEntry = NetworkTableInstance.getDefault().getTable("Swerve").getDoubleTopic("flpos").getEntry((frontLeft.position.angle.radians))
 
     //Periodic
     override fun periodic() {
@@ -99,6 +101,9 @@ class SwerveSubsystem: SubsystemBase() {
 //            val pose = Pose2d(Translation2d(botpose[0], botpose[2]), Rotation2d(botpose[3], botpose[5]))
 //            resetOdometry(pose)
 //        }
+
+        frontrightpos.set(frontRight.position.angle.radians)
+        frontleftpos.set(frontLeft.position.angle.radians)
 
         //Set Network Tables Telemetry
         actualTelemetry.set(doubleArrayOf(

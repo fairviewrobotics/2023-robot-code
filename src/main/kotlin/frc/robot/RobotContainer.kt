@@ -38,7 +38,7 @@ class RobotContainer {
     val swerveSubsystem = SwerveSubsystem()
     //val trajectories = Trajectories(pickAndPlace, swerveSubsystem)
     val testTrajectories = AutoTrajectories(pickAndPlace, swerveSubsystem)
-    var ledSubsystemRBG = LEDSubsystemRBG(swerveSubsystem)
+    //var ledSubsystemRBG = LEDSubsystemRBG(swerveSubsystem)
 
     //Starting Config: Cube, with Middle Place, and Ground Pickup
 ////    var cube: Boolean = true // Both
@@ -58,12 +58,11 @@ class RobotContainer {
     init {
         // change this variable if you would like to use competition bindings (final tuning, driver practice), or test bindings
         // for (individual tuning and what not)
-        configureButtonBindings()
-        //Discovery()
+        //configureButtonBindings()
+        Discovery()
         //configureAutoOptions()
     }
 
-    }
 
     enum class Place(val x: Int) {
         HIGH(0),
@@ -109,6 +108,21 @@ class RobotContainer {
         }
     }
 
+    enum class VisionSelector {
+        CHUTEVISION,
+        RETROREFLECTIVE,
+        NOVISION
+    }
+
+    fun selectVision(): VisionSelector {
+        if (CommandValues.vision && CommandValues.chute && CommandValues.pickup){
+            return VisionSelector.CHUTEVISION
+        } else if (CommandValues.vision && CommandValues.cone && !CommandValues.pickup) {
+            return VisionSelector.RETROREFLECTIVE
+        } else {
+            return VisionSelector.NOVISION
+        }
+    }
 
     private fun Discovery() {
         swerveSubsystem.defaultCommand = StandardDrive(swerveSubsystem,
@@ -133,35 +147,51 @@ class RobotContainer {
 
         //PRIMARY CONTROLLER
         Trigger { primaryController.leftTriggerAxis > 0.2 }.whileTrue(
+
+
             SequentialCommandGroup(
                 InstantCommand({
                     CommandValues.pickup = true
                 }),
 
-                if (CommandValues.vision && CommandValues.chute)
-                    AlignToAprilTag(swerveSubsystem,primaryController)
-                else if (CommandValues.vision && CommandValues.cube)
-                    AlignToCube(swerveSubsystem, primaryController)
-                else if (CommandValues.vision && !CommandValues.cube)
-                    AlignToCone(swerveSubsystem, primaryController)
-                else
-                    InstantCommand({}),
-
                 SelectCommand(
                     mapOf(
-                        CommandSelector.BASE to Base(pickAndPlace),
-                        CommandSelector.CHUTEPICK to ChutePick(pickAndPlace),
-                        CommandSelector.FLOORPLACE to FloorPlace(pickAndPlace, primaryController),
-                        CommandSelector.HIGHPLACECONE to HighPlaceCone(pickAndPlace, primaryController),
-                        CommandSelector.HIGHPLACECUBE to HighPlaceCube(pickAndPlace, primaryController),
-                        CommandSelector.LOWPICKCONE to LowPickCone(pickAndPlace),
-                        CommandSelector.LOWPICKCUBE to LowPickCube(pickAndPlace),
-                        CommandSelector.MIDPLACECONE to MidPlaceCone(pickAndPlace, primaryController),
-                        CommandSelector.MIDPLACECUBE to MidPlaceCube(pickAndPlace, primaryController)
+                        VisionSelector.RETROREFLECTIVE to RetroreflectiveVision(swerveSubsystem, primaryController),
+                        VisionSelector.CHUTEVISION to ChuteVision(swerveSubsystem, primaryController),
+                        VisionSelector.NOVISION to InstantCommand({})
                     ),
-                    this::select
+                    this::selectVision
+                ).withTimeout(3.0),
+                ParallelCommandGroup(
+                    StandardDrive(swerveSubsystem,
+                        { primaryController.leftY * DrivetrainConstants.drivingSpeedScalar / 2.0 },
+                        { primaryController.leftX * DrivetrainConstants.drivingSpeedScalar / 2.0},
+                        { primaryController.rightX * DrivetrainConstants.rotationSpeedScalar  / 2.0},
+                        true,
+                        true
+                    ).repeatedly(),
+
+                    SelectCommand(
+                        mapOf(
+                            CommandSelector.BASE to Base(pickAndPlace),
+                            CommandSelector.CHUTEPICK to ChutePick(pickAndPlace),
+                            CommandSelector.FLOORPLACE to FloorPlace(pickAndPlace, primaryController),
+                            CommandSelector.HIGHPLACECONE to HighPlaceCone(pickAndPlace, primaryController),
+                            CommandSelector.HIGHPLACECUBE to HighPlaceCube(pickAndPlace, primaryController),
+                            CommandSelector.LOWPICKCONE to LowPickCone(pickAndPlace),
+                            CommandSelector.LOWPICKCUBE to LowPickCube(pickAndPlace),
+                            CommandSelector.MIDPLACECONE to MidPlaceCone(pickAndPlace, primaryController),
+                            CommandSelector.MIDPLACECUBE to MidPlaceCube(pickAndPlace, primaryController)
+                        ),
+                        this::select
+                    )
                 )
             )
+
+        )
+
+        JoystickButton(primaryController, XboxController.Button.kRightBumper.value).whileTrue(
+            RetroreflectiveVision(swerveSubsystem, primaryController)
         )
 
         Trigger { primaryController.rightTriggerAxis > 0.2 }.whileTrue(
@@ -170,26 +200,38 @@ class RobotContainer {
                     CommandValues.pickup = false
                 }),
 
-                if (CommandValues.vision && CommandValues.cube)
-                    AlignToAprilTag(swerveSubsystem,primaryController)
-                else if (CommandValues.vision && !CommandValues.cube)
-                    AlignToRetroreflective(swerveSubsystem, primaryController)
-                else
-                    InstantCommand({}),
-
                 SelectCommand(
                     mapOf(
-                        CommandSelector.BASE to Base(pickAndPlace),
-                        CommandSelector.CHUTEPICK to ChutePick(pickAndPlace),
-                        CommandSelector.FLOORPLACE to FloorPlace(pickAndPlace, primaryController),
-                        CommandSelector.HIGHPLACECONE to HighPlaceCone(pickAndPlace, primaryController),
-                        CommandSelector.HIGHPLACECUBE to HighPlaceCube(pickAndPlace, primaryController),
-                        CommandSelector.LOWPICKCONE to LowPickCone(pickAndPlace),
-                        CommandSelector.LOWPICKCUBE to LowPickCube(pickAndPlace),
-                        CommandSelector.MIDPLACECONE to MidPlaceCone(pickAndPlace, primaryController),
-                        CommandSelector.MIDPLACECUBE to MidPlaceCube(pickAndPlace, primaryController)
+                        VisionSelector.RETROREFLECTIVE to RetroreflectiveVision(swerveSubsystem, primaryController),
+                        VisionSelector.CHUTEVISION to ChuteVision(swerveSubsystem, primaryController),
+                        VisionSelector.NOVISION to InstantCommand({})
                     ),
-                    this::select
+                    this::selectVision
+                ).withTimeout(3.0),
+
+                ParallelCommandGroup(
+                    StandardDrive(swerveSubsystem,
+                        { primaryController.leftY * DrivetrainConstants.drivingSpeedScalar / 2.0 },
+                        { primaryController.leftX * DrivetrainConstants.drivingSpeedScalar / 2.0},
+                        { primaryController.rightX * DrivetrainConstants.rotationSpeedScalar  / 2.0},
+                        true,
+                        true
+                    ).repeatedly(),
+
+                    SelectCommand(
+                        mapOf(
+                            CommandSelector.BASE to Base(pickAndPlace),
+                            CommandSelector.CHUTEPICK to ChutePick(pickAndPlace),
+                            CommandSelector.FLOORPLACE to FloorPlace(pickAndPlace, primaryController),
+                            CommandSelector.HIGHPLACECONE to HighPlaceCone(pickAndPlace, primaryController),
+                            CommandSelector.HIGHPLACECUBE to HighPlaceCube(pickAndPlace, primaryController),
+                            CommandSelector.LOWPICKCONE to LowPickCone(pickAndPlace),
+                            CommandSelector.LOWPICKCUBE to LowPickCube(pickAndPlace),
+                            CommandSelector.MIDPLACECONE to MidPlaceCone(pickAndPlace, primaryController),
+                            CommandSelector.MIDPLACECUBE to MidPlaceCube(pickAndPlace, primaryController)
+                        ),
+                        this::select
+                    )
                 )
             )
         )
@@ -336,43 +378,24 @@ class RobotContainer {
     }
 
     //AUTO CONFIGURATION
-
     var autoCommandChooser: SendableChooser<Command> = SendableChooser()
-    private fun configureAutoOptions() {
-
-        autoCommandChooser.setDefaultOption(
-            "Center Place Cube and Balance",
-            SequentialCommandGroup(
-                AutoPlaceHigh(pickAndPlace).withTimeout(4.0),
-                ParallelCommandGroup(
-                    AutoBase(pickAndPlace),
-                    RunCommand({swerveSubsystem.drive(-0.25, 0.0, 0.0, false, true)}, swerveSubsystem)
-                ).withTimeout(2.0),
-                ParallelCommandGroup(
-                    Base(pickAndPlace),
-                    Balancer(swerveSubsystem)
-                )
-            )
-        )
-
-        autoCommandChooser.addOption(
-            "Center Place Cone and Balance",
-            SequentialCommandGroup(
-                AutoPlaceConeHigh(pickAndPlace).withTimeout(5.0),
-                ParallelCommandGroup(
-                    AutoBase(pickAndPlace),
-                    RunCommand({swerveSubsystem.drive(-0.25, 0.0, 0.0, false, true)}, swerveSubsystem)
-                ).withTimeout(2.0),
-                ParallelCommandGroup(
-                    Base(pickAndPlace),
-                    Balancer(swerveSubsystem)
-                )
-            )
-        )
-
-
-        SmartDashboard.putData("Auto Mode", autoCommandChooser)
-    }
+//    private fun configureAutoOptions() {
+//        autoCommandChooser.setDefaultOption(
+//            "Center Place Cube and Balance",
+//            SequentialCommandGroup(
+//                AutoPlaceCubeHigh(pickAndPlace).withTimeout(4.0),
+//                ParallelCommandGroup(
+//                    AutoBase(pickAndPlace),
+//                    RunCommand({swerveSubsystem.drive(-0.25, 0.0, 0.0, false, true)}, swerveSubsystem)
+//                ).withTimeout(2.0),
+//                ParallelCommandGroup(
+//                    Base(pickAndPlace),
+//                    Balancer(swerveSubsystem)
+//                )
+//            )
+//        )
+//        SmartDashboard.putData("Auto Mode", autoCommandChooser)
+//    }
 
     val autonomousCommand: Command get() = autoCommandChooser.selected
 

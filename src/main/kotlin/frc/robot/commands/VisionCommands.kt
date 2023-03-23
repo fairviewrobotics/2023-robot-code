@@ -156,7 +156,7 @@ class RetroreflectiveAlign(val driveSubsystem: SwerveSubsystem) : CommandBase() 
     override fun execute() {
         calculateTargets()
 
-        val xOutput = -lineupXPID.calculate(mostRecentX, 0.0)
+        val xOutput = -lineupXPID.calculate(mostRecentX, 0.1)
         driveSubsystem.drive(0.0, xOutput, 0.0, true, false)
 
 
@@ -216,7 +216,7 @@ fun ChuteVision(driveSubsystem: SwerveSubsystem, controller: XboxController): Co
     return SequentialCommandGroup(
         SetPipeline(VisionConstants.Pipelines.APRILTAG),
         RumbleCheck(controller) { !VisionUtils.getTV("") },
-        ZAlign(driveSubsystem, -2.5),
+        ZAlign(driveSubsystem, -3.1),
         if (DriverStation.getAlliance() == DriverStation.Alliance.Red)
             TurnToAngle(driveSubsystem, Math.PI / 2.0)
         else
@@ -228,6 +228,7 @@ fun RetroreflectiveVision(driveSubsystem: SwerveSubsystem, controller: XboxContr
     return (SequentialCommandGroup(
         SetPipeline(VisionConstants.Pipelines.RETROREFLECTIVE),
         RumbleCheck(controller) { !VisionUtils.getTV("") },
+        TurnToAngle(driveSubsystem, 0.0),
         RetroreflectiveAlign(driveSubsystem)
     ))
 }

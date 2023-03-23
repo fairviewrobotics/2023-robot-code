@@ -2,7 +2,7 @@ package frc.robot.commands
 import edu.wpi.first.wpilibj.*
 import frc.robot.subsystems.SwerveSubsystem
 import edu.wpi.first.wpilibj2.command.CommandBase
-import frc.robot.subsystems.LEDSubsystemRBG
+//import frc.robot.subsystems.LEDSubsystemRBG
 
 class Balancer(val swerveDrive: SwerveSubsystem): CommandBase() {
     var gyro = swerveDrive.gyro
@@ -27,11 +27,11 @@ class Balancer(val swerveDrive: SwerveSubsystem): CommandBase() {
             var error = (targetAngle-gyroAngle).coerceIn(-coerceIn,coerceIn)
             var correction = error * balanceSpeed
             swerveDrive.drive(-correction, 0.0, 0.0, false, true)
-            LEDSubsystemRBG(swerveDrive).autobalancing = true
+           // LEDSubsystemRBG(swerveDrive).autobalancing = true
         } else {
             swerveDrive.setX()
-            LEDSubsystemRBG(swerveDrive).autobalancing = false
-            LEDSubsystemRBG(swerveDrive).autobalanced = true
+            //LEDSubsystemRBG(swerveDrive).autobalancing = false
+            //LEDSubsystemRBG(swerveDrive).autobalanced = true
             if (cutCoerce == 1){
                 coerceIn = coerceIn/1.5
                 cutCoerce = 0
