@@ -9,12 +9,15 @@ import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.networktables.DoubleEntry
 import edu.wpi.first.networktables.NetworkTableInstance
 import edu.wpi.first.wpilibj.DriverStation
+import edu.wpi.first.wpilibj.DriverStation.Alliance
+import edu.wpi.first.wpilibj.DriverStation.getAlliance
 import edu.wpi.first.wpilibj.GenericHID.RumbleType
 import edu.wpi.first.wpilibj.XboxController
 import frc.robot.VisionUtils
 import frc.robot.constants.VisionConstants
 import frc.robot.subsystems.SwerveSubsystem
 import edu.wpi.first.wpilibj2.command.*
+import java.sql.Driver
 
 fun NT(x: String): DoubleEntry {
     return NetworkTableInstance.getDefault().getTable("Vision").getDoubleTopic(x).getEntry(0.0)
@@ -278,15 +281,22 @@ class TurnToAngle(val driveSubsystem: SwerveSubsystem, val targetAngleRadians: D
 }
 
 fun ChuteVision(driveSubsystem: SwerveSubsystem, controller: XboxController): Command {
-    return SequentialCommandGroup(
-        SetPipeline(VisionConstants.Pipelines.APRILTAG),
-        RumbleCheck(controller) { !VisionUtils.getTV("") },
-        ZAlign(driveSubsystem, -2.39),
-        if (DriverStation.getAlliance() == DriverStation.Alliance.Red)
+    if (DriverStation.getAlliance() == DriverStation.Alliance.Red) {
+
+        return SequentialCommandGroup(
+            SetPipeline(VisionConstants.Pipelines.APRILTAG),
+            RumbleCheck(controller) { !VisionUtils.getTV("") },
+            ZAlign(driveSubsystem, -2.39),
+            TurnToAngle(driveSubsystem, -Math.PI / 2.0)
+        )
+    } else {
+        return SequentialCommandGroup(
+            SetPipeline(VisionConstants.Pipelines.APRILTAG),
+            RumbleCheck(controller) { !VisionUtils.getTV("") },
+            ZAlign(driveSubsystem, -2.39),
             TurnToAngle(driveSubsystem, Math.PI / 2.0)
-        else
-            TurnToAngle(driveSubsystem, Math.PI / 2.0)
-    )
+        )
+    }
 }
 
 fun RetroreflectiveVision(driveSubsystem: SwerveSubsystem, controller: XboxController): SequentialCommandGroup {
