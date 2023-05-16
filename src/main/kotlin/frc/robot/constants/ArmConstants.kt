@@ -61,8 +61,8 @@ object ArmConstants {
     val elevatorEncoderPositionConversionFactor = 0.003010870139 * 2.4 //this should turn revs to meters
 
     //could need small tuning:
-    val elbowEncoderPosOffset = 2.219
-    val wristEncoderPosOffset = 2.642
+    val elbowEncoderPosOffset = 2.088
+    val wristEncoderPosOffset = 2.767
 
     val elevatorZeroingVoltage = -1.0
 }
