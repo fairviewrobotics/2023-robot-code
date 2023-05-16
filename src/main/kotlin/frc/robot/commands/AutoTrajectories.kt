@@ -34,6 +34,7 @@ class AutoTrajectories(val pnp: PickAndPlaceSubsystem, val swerveSubsystem: Swer
             "Base" to AutoBase(pnp),
             "PickUpCube" to AutoPickCube(pnp),
             "HighPlace" to AutoPlaceCubeHigh(pnp),
+            "MidCone" to AutoPlaceConeMid(pnp),
             "Balance" to Balancer(swerveSubsystem)
         )
 //        val eventMap = hashMapOf<String, Command>()
