@@ -16,11 +16,11 @@ import frc.robot.subsystems.PickAndPlaceSubsystem
 import frc.robot.subsystems.SwerveSubsystem
 
 class SetPickAndPlacePosition(val continuous: Boolean ,val subsystem: PickAndPlaceSubsystem,
-                          val elevatorPos: Double,
-                          val elbowRot: Double,
-                          val wristRot: Double,
-                          val intakeVolts: () -> Double,
-                          ) : CommandBase() {
+                              val elevatorPos: Double,
+                              val elbowRot: Double,
+                              val wristRot: Double,
+                              val intakeVolts: () -> Double,
+) : CommandBase() {
     var elevatorPid = ProfiledPIDController(
         ArmConstants.elevatorP,
         ArmConstants.elevatorI,
@@ -149,19 +149,19 @@ fun Base(pnp: PickAndPlaceSubsystem): Command {
         SetPickAndPlacePosition(
             false,
             pnp,
-            0.0, // elevator
-            Math.toRadians(80.0), // elbow
-            Math.toRadians(70.0), // wrist
+            ArmConstants.elevatorMinHeight, // elevator
+            Math.toRadians(70.0), // elbow
+            Math.toRadians(80.0), // wrist
             { 1.0 } // intake
         ),
         SetPickAndPlacePosition(
             true,
             pnp,
-        0.0, // elevator
-            Math.toRadians(80.0), // elbow
-            Math.toRadians(70.0), // wrist
-            { 0.5 } // intake
-    )
+            ArmConstants.elevatorMinHeight, // elevator
+            Math.toRadians(98.0), // elbow
+            Math.toRadians(80.0), // wrist
+            { 1.0 } // intake
+        )
     )
 }
 fun AutoBase(pnp: PickAndPlaceSubsystem): Command {
@@ -169,18 +169,18 @@ fun AutoBase(pnp: PickAndPlaceSubsystem): Command {
         SetPickAndPlacePosition(
             false,
             pnp,
-            0.0, // elevator
-            Math.toRadians(80.0), // elbow
-            Math.toRadians(70.0), // wrist
-            { 1.0 } // intake
+            ArmConstants.elevatorMinHeight, // elevator
+            Math.toRadians(70.0), // elbow
+            Math.toRadians(80.0), // wrist
+            { 1.5 } // intake
         ),
         SetPickAndPlacePosition(
             false,
             pnp,
-            0.0, // elevator
-            Math.toRadians(80.0), // elbow
-            Math.toRadians(70.0), // wrist
-            { 0.5 } // intake
+            ArmConstants.elevatorMinHeight, // elevator
+            Math.toRadians(98.0), // elbow
+            Math.toRadians(80.0), // wrist
+            { 1.5 } // intake
         )
     )
 }
@@ -188,21 +188,21 @@ fun AutoBase(pnp: PickAndPlaceSubsystem): Command {
 fun FloorPlace(pnp: PickAndPlaceSubsystem, controller: XboxController): Command {
     return SequentialCommandGroup(
         SetPickAndPlacePosition(
-                false,
-                pnp,
-                0.0, // elevator
-                Math.toRadians(70.0), // elbow
-            Math.toRadians(-70.0), // wrist
-            { 1.0 } // intake
-            ),
-        SetPickAndPlacePosition(
-            true,
+            false,
             pnp,
-            0.0, // elevator
-            Math.toRadians(70.0), // elbow
-            Math.toRadians(-70.0), // wrist
-            { if (controller.rightBumper) -3.0 else 0.0  } // intake
-        )
+            ArmConstants.elevatorMinHeight, // elevator
+            Math.toRadians(66.0), // elbow
+            Math.toRadians(-25.0), // wrist
+            { 1.5 } // intake
+        ),
+        SetPickAndPlacePosition(
+                true,
+        pnp,
+        ArmConstants.elevatorMinHeight, // elevator
+        Math.toRadians(66.0), // elbow
+        Math.toRadians(-25.0), // wrist
+        { if (controller.leftBumper) -5.0 else 1.5  } // intake
+    )
     )
 
     //println("running")
@@ -223,7 +223,7 @@ fun MidPlaceCube(pnp: PickAndPlaceSubsystem, controller: XboxController): Comman
             0.2, // elevator
             Math.toRadians(60.0), // elbow
             0.0, // wrist
-            { if (controller.rightBumper) -3.0 else 0.0  } // intake
+            { if (controller.leftBumper) -3.0 else 2.0  } // intake
         )
     )
 
@@ -246,7 +246,7 @@ fun HighPlaceCube(pnp: PickAndPlaceSubsystem, controller: XboxController): Comma
             0.6, // elevator
             Math.toRadians(60.0), // elbow
             Math.toRadians(-5.0), // wrist
-            { if (controller.rightBumper) -3.0 else 0.0  }
+            { if (controller.leftBumper) -3.0 else 2.0  }
         )
     )
 }
@@ -256,19 +256,19 @@ fun MidPlaceCone(pnp: PickAndPlaceSubsystem, controller: XboxController): Comman
         SetPickAndPlacePosition(
             false,
             pnp,
-            0.0394, // elevator
-            0.9527, // elbow
-            0.908, // wrist
-            { 0.5 } // intake
+            0.4, // elevator
+            Math.toRadians(53.0), // elbow
+            Math.toRadians(-25.0), // wrist
+            { 1.0 } // intake
         ),
 
         SetPickAndPlacePosition(
             true,
             pnp,
-            0.0394, // elevator
-            0.9527, // elbow
-            0.908, // wrist
-            { if (controller.rightBumper) -5.0 else 0.0  } // intake
+            0.4, // elevator
+            Math.toRadians(53.0), // elbow
+            Math.toRadians(-25.0), // wrist
+            { if (controller.leftBumper) -6.0 else 1.0  } // intake
         )
     )
 }
@@ -278,27 +278,27 @@ fun HighPlaceCone(pnp: PickAndPlaceSubsystem, controller: XboxController): Comma
         SetPickAndPlacePosition(
             false,
             pnp,
-            0.88, // elevator
-            Math.toRadians(55.0), // elbow
-            Math.toRadians(55.0), // wrist
+            0.946, // elevator
+            Math.toRadians(50.0), // elbow
+            Math.toRadians(50.0), // wrist
             { 1.0 }
         ),
         SetPickAndPlacePosition(
             false,
             pnp,
-            0.88, // elevator
-            Math.toRadians(33.0), // elbow
-            Math.toRadians(-26.0), // wrist
+            0.946, // elevator
+            Math.toRadians(25.0), // elbow
+            Math.toRadians(-29.0), // wrist
             { 1.0 }
         ),
 
         SetPickAndPlacePosition(
             true,
             pnp,
-            0.88, // elevator
-            Math.toRadians(33.0), // elbow
-            Math.toRadians(-26.0), // wrist
-            { if (controller.rightBumper) -5.0 else 0.0  }
+            0.946, // elevator
+            Math.toRadians(20.0), // elbow
+            Math.toRadians(-29.0), // wrist
+            { if (controller.leftBumper) -6.0 else 1.0  }
         )
     )
 }
@@ -340,22 +340,23 @@ fun LowPickCube(pnp: PickAndPlaceSubsystem): Command {
         SetPickAndPlacePosition(
             true,
             pnp,
-            0.3, // elevator
-            Math.toRadians(-28.0), // elbow
-            Math.toRadians(-30.0), // wrist
+            0.33, // elevator
+            Math.toRadians(-27.0), // elbow
+            Math.toRadians(-27.0), // wrist
             { 5.0 } // intake
         )
     )
 }
 fun ChutePick(pnp: PickAndPlaceSubsystem): Command {
     return SequentialCommandGroup(
-       SetPickAndPlacePosition(
+        SetPickAndPlacePosition(
             true,
             pnp,
-            0.0, // elevator
+            ArmConstants.elevatorMinHeight
+            , // elevator
             1.03475, // elbow
-            0.92208, // wrist
-           { 1.0 } // intake
+            0.99999, // wrist
+            { 2.5 } // intake
         )
     )
 }
@@ -372,7 +373,7 @@ fun AutoPickCube(pnp: PickAndPlaceSubsystem): Command {
         )
     )
 }
-fun AutoPlaceMid(pnp: PickAndPlaceSubsystem): Command {
+fun AutoPlaceCubeMid(pnp: PickAndPlaceSubsystem): Command {
     return SequentialCommandGroup(
         SetPickAndPlacePosition(
             false,
@@ -380,7 +381,7 @@ fun AutoPlaceMid(pnp: PickAndPlaceSubsystem): Command {
             0.2, // elevator
             Math.toRadians(60.0), // elbow
             0.0, // wrist
-            { 1.0 } // intake
+            { 2.0 } // intake
         ),
         SetPickAndPlacePosition(
             false,
@@ -393,7 +394,7 @@ fun AutoPlaceMid(pnp: PickAndPlaceSubsystem): Command {
     )
 }
 //TODO:Test
-fun AutoPlaceHigh(pnp: PickAndPlaceSubsystem): Command {
+fun AutoPlaceCubeHigh(pnp: PickAndPlaceSubsystem): Command {
     return SequentialCommandGroup(
         SetPickAndPlacePosition(
             false,
@@ -401,7 +402,7 @@ fun AutoPlaceHigh(pnp: PickAndPlaceSubsystem): Command {
             0.6, // elevator
             Math.toRadians(60.0), // elbow
             Math.toRadians(-5.0), // wrist
-            { 1.0 }
+            { 1.5 }
         ),
 
         SetPickAndPlacePosition(
@@ -410,7 +411,28 @@ fun AutoPlaceHigh(pnp: PickAndPlaceSubsystem): Command {
             0.6, // elevator
             Math.toRadians(60.0), // elbow
             Math.toRadians(-5.0), // wrist
-            { -3.0 }
+            { -5.0 }
+        )
+    )
+}
+fun AutoPlaceConeMid(pnp: PickAndPlaceSubsystem): Command {
+    return SequentialCommandGroup(
+        SetPickAndPlacePosition(
+            false,
+            pnp,
+            0.4, // elevator
+            Math.toRadians(53.0), // elbow
+            Math.toRadians(-25.0), // wrist
+            { 1.0 } // intake
+        ),
+
+        SetPickAndPlacePosition(
+            false,
+            pnp,
+            0.4, // elevator
+            Math.toRadians(53.0), // elbow
+            Math.toRadians(-25.0), // wrist
+            { -6.0 } // intake
         )
     )
 }
@@ -420,26 +442,26 @@ fun AutoPlaceConeHigh(pnp: PickAndPlaceSubsystem): Command {
         SetPickAndPlacePosition(
             false,
             pnp,
-            0.88, // elevator
-            Math.toRadians(55.0), // elbow
-            Math.toRadians(55.0), // wrist
+            0.92, // elevator
+            Math.toRadians(50.0), // elbow
+            Math.toRadians(50.0), // wrist
             { 1.0 }
         ),
         SetPickAndPlacePosition(
             false,
             pnp,
-            0.88, // elevator
-            Math.toRadians(33.0), // elbow
-            Math.toRadians(-26.0), // wrist
+            0.92, // elevator
+            Math.toRadians(34.0), // elbow
+            Math.toRadians(-27.0), // wrist
             { 1.0 }
         ),
 
         SetPickAndPlacePosition(
             false,
             pnp,
-            0.88, // elevator
-            Math.toRadians(33.0), // elbow
-            Math.toRadians(-26.0), // wrist
+            0.92, // elevator
+            Math.toRadians(34.0), // elbow
+            Math.toRadians(-27.0), // wrist
             { -5.0 }
         )
     )

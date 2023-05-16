@@ -30,10 +30,11 @@ class AutoTrajectories(val pnp: PickAndPlaceSubsystem, val swerveSubsystem: Swer
 
         //The way these are called may need to change
         val eventMap: HashMap<String, Command> = hashMapOf(
-            "MidPlace" to AutoPlaceMid(pnp),
+            "MidPlace" to AutoPlaceCubeMid(pnp),
             "Base" to AutoBase(pnp),
             "PickUpCube" to AutoPickCube(pnp),
-            "HighPlace" to AutoPlaceHigh(pnp),
+            "HighPlace" to AutoPlaceCubeHigh(pnp),
+            "MidCone" to AutoPlaceConeMid(pnp),
             "Balance" to Balancer(swerveSubsystem)
         )
 //        val eventMap = hashMapOf<String, Command>()
@@ -59,42 +60,28 @@ class AutoTrajectories(val pnp: PickAndPlaceSubsystem, val swerveSubsystem: Swer
     }
     fun TestPath(): Command {
         return base("Test Path",
-            PathConstraints(1.00,0.50),
-            PathConstraints(4.00, 3.00),
-            PathConstraints(4.00, 3.00),
-            PathConstraints(4.00, 3.00)
+            PathConstraints(0.50,0.50),
+            PathConstraints(1.00, 1.00)
         )
     }
     fun BlueTop1(): Command {
         return base("Blue Top 1",
-            PathConstraints(1.00,0.50),
-            PathConstraints(4.00, 3.00),
-            PathConstraints(4.00, 3.00),
-            PathConstraints(4.00, 3.00)
+            PathConstraints(2.00,1.00)
         )
     }
     fun BlueBottom1(): Command {
         return base("Blue Bottom 1",
-            PathConstraints(1.00,0.50),
-            PathConstraints(4.00, 3.00),
-            PathConstraints(4.00, 3.00),
-            PathConstraints(4.00, 3.00)
+            PathConstraints(2.00,1.00)
         )
     }
     fun RedTop1(): Command {
         return base("Red Top 1",
-            PathConstraints(1.00,0.50),
-            PathConstraints(4.00, 3.00),
-            PathConstraints(4.00, 3.00),
-            PathConstraints(4.00, 3.00)
+            PathConstraints(2.00,1.00)
         )
     }
     fun RedBottom1(): Command {
         return base("Red Bottom 1",
-            PathConstraints(1.00,0.50),
-            PathConstraints(4.00, 3.00),
-            PathConstraints(4.00, 3.00),
-            PathConstraints(4.00, 3.00)
+            PathConstraints(2.00,1.00)
         )
     }
     fun BlueTop2(): Command {
@@ -187,9 +174,9 @@ class AutoTrajectories(val pnp: PickAndPlaceSubsystem, val swerveSubsystem: Swer
     fun BlueBottom1GetBalance(): Command {
         return base("Blue Bottom 1 Get Balance",
             PathConstraints(1.00,0.50),
-            PathConstraints(4.00, 3.00),
-            PathConstraints(4.00, 3.00),
-            PathConstraints(4.00, 3.00)
+            PathConstraints(2.00, 1.00),
+            PathConstraints(3.00, 2.00),
+            PathConstraints(1.00, 1.00)
         )
     }
     fun RedTop1GetBalance(): Command {

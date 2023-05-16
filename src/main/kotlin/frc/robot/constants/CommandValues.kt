@@ -12,7 +12,7 @@ object CommandValues {
     var pickup: Boolean = false
 
     //Vision
-    var vision = true
+    var vision = false
 
     // THESE ARE ONLY FOR DRIVERS(Network Tables), NOT USED IN CODE
     var ground: Boolean = true // Pickup

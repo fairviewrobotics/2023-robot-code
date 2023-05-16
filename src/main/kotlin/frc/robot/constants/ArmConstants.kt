@@ -45,8 +45,8 @@ object ArmConstants {
     //maybe change:
     val wristFF = ArmFeedforward(0.13, 0.20, 1.00)
 
-    val elevatorMinHeight = 0.0
-    val elevatorMaxHeight = 0.9245
+    val elevatorMinHeight = 0.05
+    val elevatorMaxHeight = 0.948
 
     val elbowMaxRotation = Math.toRadians(130.0)
     val elbowMinRotation = -(1.0 / 2.0) * Math.PI
@@ -61,8 +61,8 @@ object ArmConstants {
     val elevatorEncoderPositionConversionFactor = 0.003010870139 * 2.4 //this should turn revs to meters
 
     //could need small tuning:
-    val elbowEncoderPosOffset = 2.378
-    val wristEncoderPosOffset = 2.477
+    val elbowEncoderPosOffset = 2.088
+    val wristEncoderPosOffset = 2.767
 
     val elevatorZeroingVoltage = -1.0
 }

@@ -1,16 +1,19 @@
-//package frc.robot.subsystems
+package frc.robot.subsystems
 //
 //import edu.wpi.first.wpilibj.AddressableLED
 //import edu.wpi.first.wpilibj.AddressableLEDBuffer
 //import edu.wpi.first.wpilibj.DriverStation
 //import edu.wpi.first.wpilibj2.command.SubsystemBase
+//import frc.robot.constants.CommandValues
 //
-//class LEDSubsystemRBG : SubsystemBase() {
+//class LEDSubsystemRBG(val swerveDrive: SwerveSubsystem) : SubsystemBase() {
 //    private var ds = DriverStation.isTeleop()
-//    var led = AddressableLED(0)
-//    var ledBuffer = AddressableLEDBuffer(24)
-//    var coneNeeded : Boolean = true
-//    var cubeNeeded : Boolean = false
+//    var led = AddressableLED(5)
+//    var ledBuffer = AddressableLEDBuffer(17)
+//    var autobalancing : Boolean = false
+//    var autobalanced : Boolean = false
+//    var gyro = swerveDrive.gyro
+//    var pitch = gyro.pitch.toDouble()
 //    //TODO: Remember, the lights are RBG not RGB so G and B must be switched to get the correct color
 //    init {
 //        led.setLength(ledBuffer.length)
@@ -21,17 +24,29 @@
 //    override fun periodic() {
 //        time += 1
 //        println(time)
-//        if (time >= 96) {
+//        if (time >= 68) {
 //            time = 0
 //        }
 //        if (DriverStation.isEnabled()) {
 //            if (DriverStation.isAutonomous()) {
-//                autoColor()
+//                if (autobalancing == true) {
+//                    balanceColor()
+//                } else if (autobalanced == true) {
+//                    balanceColor()
+//                } else {
+//                    autoColor()
+//                }
 //            } else if (DriverStation.isTeleop()) {
-//                teleop()
+//                if (pitch > 2 || pitch < 2) { //pitch is set to 2 because there is a tolerance of 2.5 degrees on charge station
+//                    balanceColor()
+//                } else {
+//                    teleop()
+//                }
 //            }
 //        } else if (DriverStation.isDisabled()) {
-//            flashOfColor()
+//            flashOfRedColor()
+//        } else {
+//            offLeds()
 //        }
 //    }
 //
@@ -49,14 +64,24 @@
 //            led.setData(ledBuffer)
 //        }
 //    }
+//    fun balanceColor() {
+//        if (time >= 1) {
+//            ledBuffer.setRGB(time / 2, 255, 255, 255)
+//            led.setData(ledBuffer)
+//            for (i in 0..ledBuffer.length - 1) {
+//                ledBuffer.setRGB(i, 0, 0, 0)
+//            }
+//            led.setData(ledBuffer)
+//        }
+//    }
 //    fun teleop() {
-//            if (cone == true) {
+//            if (CommandValues.cone == true) {
 //                for (i in 0..ledBuffer.length - 1) {
 //                    ledBuffer.setRGB(i, 255, 0, 200)
 //
 //                }
 //                led.setData(ledBuffer)
-//            } else if (cone == false) {
+//            } else if (CommandValues.cube == true) {
 //                for (i in 0..ledBuffer.length - 1) {
 //                    ledBuffer.setRGB(i, 95, 150, 0)
 //                }
@@ -67,25 +92,20 @@
 //                }
 //                led.setData(ledBuffer)
 //            }
-//        //connect to network tables on strategy app
-//        //if strategy app says pickup cone, shine yellow solid lights
 //    }
-//    fun flashOfColor() {
+//    fun flashOfRedColor() {
 //        if (DriverStation.isTeleop()) {
 //            if (time >= 1) {
 //                ledBuffer.setRGB(time / 4, 255, 0, 0)
 //                led.setData(ledBuffer)
 //                for (i in 0..ledBuffer.length - 1) {
-//                    ledBuffer.setRGB(i, 0, 0, 0)
+//                    ledBuffer.setRGB(i, 0, 0, 255)
 //                }
 //                led.setData(ledBuffer)
-//
-//                ledBuffer.setRGB(time / 8, 0, 0, 255)
-//                led.setData(ledBuffer)
-//                for (i in 0..ledBuffer.length - 1) {
-//                    ledBuffer.setRGB(i, 0, 0, 0)
-//                }
-//                led.setData(ledBuffer)
+////                for (i in 0..ledBuffer.length - 1) {
+////                    ledBuffer.setRGB(i, 0, 0, 0)
+////                }
+////                led.setData(ledBuffer)
 //            }
 //        }
 //    }
