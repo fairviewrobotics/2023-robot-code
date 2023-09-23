@@ -6,6 +6,7 @@ package frc.robot
 import edu.wpi.first.wpilibj.TimedRobot
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandScheduler
+import frc.robot.subsystems.PickAndPlaceSubsystem
 import frc.robot.subsystems.SwerveSubsystem
 
 /**
@@ -50,10 +51,14 @@ class Robot : TimedRobot() {
 
     }
 
+
     /** This function is called once each time the robot enters Disabled mode.  */
     override fun disabledInit() {
         //m_robotContainer?.mArmSubsystem?.elevatorZeroed = false
-        //robotContainer.pickAndPlace.elevatorZeroed = false
+        if (robotContainer != null) {
+            robotContainer!!.pickAndPlace.elevatorZeroed = false
+            println("I just made the elevator NOT ZEROED")
+        }
     }
     override fun disabledPeriodic() {}
 

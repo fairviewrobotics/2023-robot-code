@@ -24,7 +24,6 @@ import frc.robot.constants.CommandValues
 import frc.robot.constants.DrivetrainConstants
 import frc.robot.subsystems.*
 import java.util.ConcurrentModificationException
-import kotlin.math.abs
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -113,18 +112,18 @@ class RobotContainer {
 
     private fun Discovery() {
         swerveSubsystem.defaultCommand = StandardDrive(swerveSubsystem,
-            { primaryController.leftY * DrivetrainConstants.drivingSpeedScalar },
-            { primaryController.leftX * DrivetrainConstants.drivingSpeedScalar},
-            { primaryController.rightX * DrivetrainConstants.rotationSpeedScalar},
+            { primaryController.leftY * DrivetrainConstants.drivingSpeedScalar / 2.0 },
+            { primaryController.leftX * DrivetrainConstants.drivingSpeedScalar / 2.0},
+            { primaryController.rightX * DrivetrainConstants.rotationSpeedScalar  / 2.0},
             true,
             true
         )
 
-        JoystickButton(primaryController, XboxController.Button.kRightBumper.value).whileTrue(
+        JoystickButton(primaryController, XboxController.Button.kB.value).whileTrue(
             StandardDrive(swerveSubsystem,
-                { primaryController.leftY * DrivetrainConstants.drivingSpeedScalar / 2.0 },
-                { primaryController.leftX * DrivetrainConstants.drivingSpeedScalar / 2.0 },
-                { primaryController.rightX * DrivetrainConstants.rotationSpeedScalar / 2.0 },
+                { primaryController.leftY * DrivetrainConstants.drivingSpeedScalar },
+                { primaryController.leftX * DrivetrainConstants.drivingSpeedScalar },
+                { primaryController.rightX * DrivetrainConstants.rotationSpeedScalar },
                 true,
                 true
             )
@@ -133,7 +132,7 @@ class RobotContainer {
         pickAndPlace.defaultCommand = Base(pickAndPlace)
 
         //PRIMARY CONTROLLER
-        Trigger { primaryController.rightTriggerAxis > 0.2 }.whileTrue(
+        Trigger { primaryController.leftTriggerAxis > 0.2 }.whileTrue(
 
 
             SequentialCommandGroup(
@@ -177,7 +176,11 @@ class RobotContainer {
 
         )
 
-        Trigger { primaryController.leftTriggerAxis > 0.2 }.whileTrue(
+        JoystickButton(primaryController, XboxController.Button.kRightBumper.value).whileTrue(
+            RetroreflectiveVision(swerveSubsystem, primaryController)
+        )
+
+        Trigger { primaryController.rightTriggerAxis > 0.2 }.whileTrue(
             SequentialCommandGroup(
                 InstantCommand({
                     CommandValues.pickup = false
@@ -225,7 +228,6 @@ class RobotContainer {
             })
         )
 
-
         JoystickButton(primaryController, XboxController.Button.kY.value).whileTrue(
             RunCommand({
                 swerveSubsystem.zeroGyro()
@@ -247,26 +249,17 @@ class RobotContainer {
             VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { 0.0 }, { -4.0 })
         )
         Trigger {secondaryController.leftTriggerAxis > 0.2} .whileTrue(
-            VoltageArm(pickAndPlace, { 2.0 }, { 0.0 }, { 0.0 }, { 0.0 })
+           VoltageArm(pickAndPlace, { 1.0 }, { 0.0 }, { 0.0 }, { 0.0 })
         )
-        //TODO: This wasn't working
         Trigger {secondaryController.rightTriggerAxis > 0.2} .whileTrue(
             VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { 0.0 }, { 4.0 })
         )
 //        JoystickButton(secondaryController, Axis.kLeftY.value ).whileTrue(
-//            VoltageArm(pickAndPlace, { 0.0 }, { secondaryController.leftY * -4.0 }, { 0.0 }, { 0.0 })
+//            VoltageArm(pickAndPlace, { 0.0 }, { -4.0 }, { 0.0 }, { 0.0 })
 //        )
 //        JoystickButton(secondaryController, Axis.kRightY.value).whileTrue(
-//            VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { secondaryController.rightY * 4.0 }, { 0.0 })
+//            VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { -4.0 }, { 0.0 })
 //        )
-//TODO: Test the following
-        Trigger { abs( secondaryController.leftY ) > 0.1 }.whileTrue(
-            VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { secondaryController.leftY * -4.0}, { 0.0 })
-        )
-
-        Trigger { abs( secondaryController.rightY ) > 0.1 }.whileTrue(
-            VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { secondaryController.leftY * -4.0}, { 0.0 })
-        )
 
         JoystickButton(secondaryController, XboxController.Button.kX.value).onTrue(
             InstantCommand({
@@ -304,9 +297,10 @@ class RobotContainer {
 
 
     }
+
+
+
     //AUTO CONFIGURATION
-
-
     private fun configureAutoOptions() {
         autoCommandChooser.setDefaultOption(
             "Center Place Cube High and Balance",

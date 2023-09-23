@@ -31,7 +31,6 @@ class PickAndPlaceSubsystem : SubsystemBase(){
     val forwardLimit = DigitalInput(ArmConstants.topBreakerId)
     val reverseLimit = DigitalInput(ArmConstants.bottomBreakerId)
 
-
     var elevatorZeroed = false
 
     //Is the carriage at the top of the elevator?
@@ -54,6 +53,8 @@ class PickAndPlaceSubsystem : SubsystemBase(){
         val wristVoltage = NetworkTableInstance.getDefault().getTable("Arm").getDoubleTopic("WristVoltage").publish()
         val elbowVoltage = NetworkTableInstance.getDefault().getTable("Arm").getDoubleTopic("ElbowVolts").publish()
         val intakeVoltage = NetworkTableInstance.getDefault().getTable("Arm").getDoubleTopic("IntakeVolts").publish()
+
+        val elevatorP = NetworkTableInstance.getDefault().getTable("Arm").getDoubleTopic("ElevatorP").getEntry(ArmConstants.elevatorP)
 
         val elevatorZeroed =  NetworkTableInstance.getDefault().getTable("Arm").getBooleanTopic("ElevatorZeroed").publish()
 
@@ -99,6 +100,8 @@ class PickAndPlaceSubsystem : SubsystemBase(){
 
         intakeOneMotor.inverted = false
         intakeTwoMotor.inverted = true
+//        elevatorZeroed = false
+//        println("I just made the elevator NOT ZEROED")
 
         //intakeOneMotor.setSmartCurrentLimit(IntakeConstants.intakeMotorsCurrentLimit)
         //intakeTwoMotor.setSmartCurrentLimit(IntakeConstants.intakeMotorsCurrentLimit)
@@ -115,8 +118,8 @@ class PickAndPlaceSubsystem : SubsystemBase(){
         elbowEncoder.velocityConversionFactor = (2.0 *Math.PI)/60
         elbowEncoder.inverted = true
 
-        elevatorEncoder.positionConversionFactor = ArmConstants.elevatorEncoderPositionConversionFactor
-        elevatorEncoder.velocityConversionFactor = ArmConstants.elevatorEncoderVelocityConversionFactor
+        elevatorEncoder.positionConversionFactor = (0.003010870139 * 2.4)
+        elevatorEncoder.velocityConversionFactor =  (0.003010870139 * 2.4) / 60.0
 
         wristEncoder.positionConversionFactor = 2.0 * Math.PI
         wristEncoder.velocityConversionFactor = (2.0 * Math.PI)/ 60.0
@@ -125,8 +128,10 @@ class PickAndPlaceSubsystem : SubsystemBase(){
 
 
         // TODO: wristEncoder position and velocity conversion factor
-    }
 
+
+        Telemetry.elevatorP.set(ArmConstants.elevatorP)
+    }
 
     val elbowPositionFirst get() = Rotation2d(elbowEncoder.position).plus(Rotation2d(absoluteWristPosition))
 
@@ -183,11 +188,13 @@ class PickAndPlaceSubsystem : SubsystemBase(){
         super.periodic()
         if (!elevatorZeroed) {
             elevatorMotor.setVoltage(ArmConstants.elevatorZeroingVoltage)
+            println("Zeroing")
 
         }
         // These are the voltages we set and will be sent to the elevator and elbow.
         if(bottomHit)
         {
+            println("Zeroed")
             if (!elevatorZeroed) {
                 elevatorEncoder.position = 0.0
             }
@@ -225,6 +232,7 @@ class PickAndPlaceSubsystem : SubsystemBase(){
 
         Telemetry.visionNT.set(CommandValues.vision)
 
+        ArmConstants.elevatorP =  Telemetry.elevatorP.get()
     }
 //    fun NTPnP(pnp: PickAndPlaceSubsystem, controller: XboxController): Command {
 //

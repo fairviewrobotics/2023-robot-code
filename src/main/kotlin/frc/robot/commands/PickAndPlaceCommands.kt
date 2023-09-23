@@ -25,7 +25,7 @@ class SetPickAndPlacePosition(val continuous: Boolean ,val subsystem: PickAndPla
         ArmConstants.elevatorP,
         ArmConstants.elevatorI,
         ArmConstants.elevatorD,
-        TrapezoidProfile.Constraints(2.5, 1.7)//3.0, 0.8
+        TrapezoidProfile.Constraints(2.5, 1.7)//2.5, 1.7
     )
     var elbowPid = ProfiledPIDController(
         ArmConstants.elbowP,
@@ -85,6 +85,8 @@ class SetPickAndPlacePosition(val continuous: Boolean ,val subsystem: PickAndPla
     }
 
     override fun execute() {
+
+        elevatorPid.p = ArmConstants.elevatorP
 
         // store a lastValue for each of these, compare, and then set/reset if they are changed
 
@@ -152,7 +154,7 @@ fun Base(pnp: PickAndPlaceSubsystem): Command {
             ArmConstants.elevatorMinHeight, // elevator
             Math.toRadians(70.0), // elbow
             Math.toRadians(80.0), // wrist
-            { 1.0 } // intake
+            { 0.0 } // intake
         ),
         SetPickAndPlacePosition(
             true,
@@ -160,7 +162,8 @@ fun Base(pnp: PickAndPlaceSubsystem): Command {
             ArmConstants.elevatorMinHeight, // elevator
             Math.toRadians(98.0), // elbow
             Math.toRadians(80.0), // wrist
-            { 1.0 } // intake
+            { 0.0 } // intake
+
         )
     )
 }
@@ -229,6 +232,28 @@ fun MidPlaceCube(pnp: PickAndPlaceSubsystem, controller: XboxController): Comman
 
     //println("running")
 }
+fun MidPlaceCube2(pnp: PickAndPlaceSubsystem): Command {
+    return SequentialCommandGroup(
+        SetPickAndPlacePosition(
+            false,
+            pnp,
+            0.2, // elevator
+            Math.toRadians(60.0), // elbow
+            0.0, // wrist
+            { 2.0 } // intake
+        ),
+        SetPickAndPlacePosition(
+            true,
+            pnp,
+            0.2, // elevator
+            Math.toRadians(60.0), // elbow
+            0.0, // wrist
+            { 0.0 } // intake
+        )
+    )
+
+    //println("running")
+}
 fun HighPlaceCube(pnp: PickAndPlaceSubsystem, controller: XboxController): Command {
     return SequentialCommandGroup(
         SetPickAndPlacePosition(
@@ -278,7 +303,7 @@ fun HighPlaceCone(pnp: PickAndPlaceSubsystem, controller: XboxController): Comma
         SetPickAndPlacePosition(
             false,
             pnp,
-            0.946, // elevator
+            0.945, // elevator
             Math.toRadians(50.0), // elbow
             Math.toRadians(50.0), // wrist
             { 1.0 }
@@ -286,7 +311,7 @@ fun HighPlaceCone(pnp: PickAndPlaceSubsystem, controller: XboxController): Comma
         SetPickAndPlacePosition(
             false,
             pnp,
-            0.946, // elevator
+            0.945, // elevator
             Math.toRadians(25.0), // elbow
             Math.toRadians(-29.0), // wrist
             { 1.0 }
@@ -295,7 +320,7 @@ fun HighPlaceCone(pnp: PickAndPlaceSubsystem, controller: XboxController): Comma
         SetPickAndPlacePosition(
             true,
             pnp,
-            0.946, // elevator
+            0.945, // elevator
             Math.toRadians(20.0), // elbow
             Math.toRadians(-29.0), // wrist
             { if (controller.leftBumper) -6.0 else 1.0  }
