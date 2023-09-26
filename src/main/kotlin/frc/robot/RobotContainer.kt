@@ -303,6 +303,20 @@ class RobotContainer {
     //AUTO CONFIGURATION
     private fun configureAutoOptions() {
         autoCommandChooser.setDefaultOption(
+            "Center Place Cube Mid and Balance",
+            SequentialCommandGroup(
+                AutoPlaceCubeMid(pickAndPlace).withTimeout(4.0),
+                ParallelCommandGroup(
+                    AutoBase(pickAndPlace),
+                    RunCommand({swerveSubsystem.drive(-0.25, 0.0, 0.0, false, true)}, swerveSubsystem)
+                ).withTimeout(2.0),
+                ParallelCommandGroup(
+                    Base(pickAndPlace),
+                    Balancer(swerveSubsystem)
+                )
+            )
+        )
+        autoCommandChooser.setDefaultOption(
             "Center Place Cube High and Balance",
             SequentialCommandGroup(
                 AutoPlaceCubeHigh(pickAndPlace).withTimeout(4.0),
@@ -338,6 +352,13 @@ class RobotContainer {
             )
         )
         autoCommandChooser.addOption(
+            "Just Place Cube Moid",
+            SequentialCommandGroup(
+                AutoPlaceCubeMid(pickAndPlace).withTimeout(4.0),
+                AutoBase(pickAndPlace)
+            )
+        )
+        autoCommandChooser.addOption(
             "Just Place Cone Mid",
             SequentialCommandGroup(
                 AutoPlaceConeMid(pickAndPlace).withTimeout(4.0),
@@ -359,6 +380,22 @@ class RobotContainer {
         autoCommandChooser.addOption(
             "Blue Right Place Cube High Leave",
             testTrajectories.BlueBottom1()
+        )
+        autoCommandChooser.addOption(
+            "Red Left Place Cube High Leave and Balance",
+            testTrajectories.RedBottom1Balance()
+        )
+        autoCommandChooser.addOption(
+            "Red Right Place Cube High Leave and Balance",
+            testTrajectories.RedTop1Balance()
+        )
+        autoCommandChooser.addOption(
+            "Blue Left Place Cube High Leave and Balance",
+            testTrajectories.BlueTop1Balance()
+        )
+        autoCommandChooser.addOption(
+            "Blue Right Place Cube High Leave and Balance",
+            testTrajectories.BlueBottom1Balance()
         )
         SmartDashboard.putData("Auto Mode", autoCommandChooser)
     }

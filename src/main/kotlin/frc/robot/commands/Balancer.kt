@@ -7,10 +7,10 @@ import edu.wpi.first.wpilibj2.command.CommandBase
 class Balancer(val swerveDrive: SwerveSubsystem): CommandBase() {
     var gyro = swerveDrive.gyro
     var pitch = gyro.pitch.toDouble()
-    val toleranceDegrees = 7.0//on the field, it is 2.5, but we dont want it getting too close
+    val toleranceDegrees = 7.0//on the field, it is 2.5, but we dont want it getting too close    //As of 9/26/23, this might need to be changed
     val targetAngle = 0.0
     //This balance speed means that at 45 degrees off, the swerve will use 3.0 m/s to fix the error.
-    val balanceSpeed = 0.15 //TODO: TUNE
+    val balanceSpeed = 0.14 //TODO: TUNE
 
     var coerceIn = 1.0
     var cutCoerce = 1

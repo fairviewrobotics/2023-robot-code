@@ -24,7 +24,7 @@ class AutoTrajectories(val pnp: PickAndPlaceSubsystem, val swerveSubsystem: Swer
         val pathGroup: List<PathPlannerTrajectory> = PathPlanner.loadPathGroup(
             pathName, firstConstraint, *pathConstraints
         )
-        println("Running")
+        println("Auto Running")
         //It might be this for the line above: val pathGroup: ArrayList<PathPlannerTrajectory> = arrayListOf()
         // PathPlanner.loadPathGroup("Red Top 1 Get Balance", PathConstraints(1.0, 0.5)).toCollection(pathGroup)
 
@@ -66,22 +66,22 @@ class AutoTrajectories(val pnp: PickAndPlaceSubsystem, val swerveSubsystem: Swer
     }
     fun BlueTop1(): Command {
         return base("Blue Top 1",
-            PathConstraints(2.00,1.00)
+            PathConstraints(3.00,1.50)
         )
     }
     fun BlueBottom1(): Command {
         return base("Blue Bottom 1",
-            PathConstraints(2.00,1.00)
+            PathConstraints(3.00,1.50)
         )
     }
     fun RedTop1(): Command {
         return base("Red Top 1",
-            PathConstraints(2.00,1.00)
+            PathConstraints(3.00,1.50)
         )
     }
     fun RedBottom1(): Command {
         return base("Red Bottom 1",
-            PathConstraints(2.00,1.00)
+            PathConstraints(3.00,1.50)
         )
     }
     fun BlueTop2(): Command {
@@ -134,31 +134,29 @@ class AutoTrajectories(val pnp: PickAndPlaceSubsystem, val swerveSubsystem: Swer
     }
     fun BlueTop1Balance(): Command {
         return base("Blue Top 1 Balance",
-            PathConstraints(1.00,0.50),
-            PathConstraints(4.00, 3.00),
-            PathConstraints(4.00, 3.00),
-            PathConstraints(4.00, 3.00)
+            PathConstraints(3.00,1.50),
+            PathConstraints(2.00, 1.00),
+            PathConstraints(1.00, 0.50)
         )
     }
     fun BlueBottom1Balance(): Command {
         return base("Blue Bottom 1 Balance",
-            PathConstraints(1.00,0.50),
-            PathConstraints(4.00, 3.00),
-            PathConstraints(4.00, 3.00),
-            PathConstraints(4.00, 3.00)
+            PathConstraints(3.00,1.50),
+            PathConstraints(2.00, 1.00),
+            PathConstraints(1.00, 0.50)
         )
     }
     fun RedTop1Balance(): Command {
         return base("Red Top 1 Balance",
-            PathConstraints(1.00,0.50),
-            PathConstraints(1.00, 0.50),
+            PathConstraints(3.00,1.50),
+            PathConstraints(2.00, 1.00),
             PathConstraints(1.00, 0.50)
         )
     }
     fun RedBottom1Balance(): Command {
         println("Running The Path")
         return base("Red Bottom 1 Balance",
-            PathConstraints(1.00,0.50),
+            PathConstraints(3.00,1.50),
             PathConstraints(2.00, 1.00),
             PathConstraints(1.00, 0.50)
         )

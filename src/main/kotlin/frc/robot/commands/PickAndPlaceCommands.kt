@@ -154,7 +154,7 @@ fun Base(pnp: PickAndPlaceSubsystem): Command {
             ArmConstants.elevatorMinHeight, // elevator
             Math.toRadians(70.0), // elbow
             Math.toRadians(80.0), // wrist
-            { 0.0 } // intake
+            { 1.5 } // intake
         ),
         SetPickAndPlacePosition(
             true,
@@ -162,7 +162,7 @@ fun Base(pnp: PickAndPlaceSubsystem): Command {
             ArmConstants.elevatorMinHeight, // elevator
             Math.toRadians(98.0), // elbow
             Math.toRadians(80.0), // wrist
-            { 0.0 } // intake
+            { 1.5 } // intake
 
         )
     )
@@ -227,28 +227,6 @@ fun MidPlaceCube(pnp: PickAndPlaceSubsystem, controller: XboxController): Comman
             Math.toRadians(60.0), // elbow
             0.0, // wrist
             { if (controller.leftBumper) -3.0 else 2.0  } // intake
-        )
-    )
-
-    //println("running")
-}
-fun MidPlaceCube2(pnp: PickAndPlaceSubsystem): Command {
-    return SequentialCommandGroup(
-        SetPickAndPlacePosition(
-            false,
-            pnp,
-            0.2, // elevator
-            Math.toRadians(60.0), // elbow
-            0.0, // wrist
-            { 2.0 } // intake
-        ),
-        SetPickAndPlacePosition(
-            true,
-            pnp,
-            0.2, // elevator
-            Math.toRadians(60.0), // elbow
-            0.0, // wrist
-            { 0.0 } // intake
         )
     )
 
