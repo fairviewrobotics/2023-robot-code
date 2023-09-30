@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase
 
 class BlinkinLEDSubsystem : SubsystemBase(){
 
-    val BlinkinDriver = Spark(0)
+    val BlinkinDriver = Spark(9)
 
     var LEDNT = NetworkTableInstance.getDefault().getTable("LEDs").getDoubleTopic("LEDValue").publish()
 
