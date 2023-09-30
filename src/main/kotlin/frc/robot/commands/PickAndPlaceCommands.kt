@@ -154,7 +154,7 @@ fun Base(pnp: PickAndPlaceSubsystem): Command {
             ArmConstants.elevatorMinHeight, // elevator
             Math.toRadians(70.0), // elbow
             Math.toRadians(80.0), // wrist
-            { 1.5 } // intake
+            { 1.0 } // intake
         ),
         SetPickAndPlacePosition(
             true,
@@ -162,7 +162,7 @@ fun Base(pnp: PickAndPlaceSubsystem): Command {
             ArmConstants.elevatorMinHeight, // elevator
             Math.toRadians(98.0), // elbow
             Math.toRadians(80.0), // wrist
-            { 1.5 } // intake
+            { 1.0 } // intake
 
         )
     )

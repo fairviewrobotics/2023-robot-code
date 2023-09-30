@@ -112,29 +112,80 @@ class RobotContainer {
     }
 
     private fun Discovery() {
-        swerveSubsystem.defaultCommand = StandardDrive(swerveSubsystem,
-            { primaryController.leftY * DrivetrainConstants.drivingSpeedScalar / 2.0 },
-            { primaryController.leftX * DrivetrainConstants.drivingSpeedScalar / 2.0},
-            { primaryController.rightX * DrivetrainConstants.rotationSpeedScalar  / 2.0},
-            true,
-            true
-        )
 
-        JoystickButton(primaryController, XboxController.Button.kB.value).whileTrue(
+        JoystickButton(primaryController, XboxController.Button.kRightBumper.value).whileTrue(
             StandardDrive(swerveSubsystem,
-                { primaryController.leftY * DrivetrainConstants.drivingSpeedScalar },
-                { primaryController.leftX * DrivetrainConstants.drivingSpeedScalar },
-                { primaryController.rightX * DrivetrainConstants.rotationSpeedScalar },
+                { primaryController.leftY * DrivetrainConstants.drivingSpeedScalar / 2.0 },
+                { primaryController.leftX * DrivetrainConstants.drivingSpeedScalar / 2.0 },
+                { primaryController.rightX * DrivetrainConstants.rotationSpeedScalar / 2.0 },
                 true,
                 true
             )
         )
+
+        swerveSubsystem.defaultCommand = StandardDrive(swerveSubsystem,
+            { primaryController.leftY * DrivetrainConstants.drivingSpeedScalar },
+            { primaryController.leftX * DrivetrainConstants.drivingSpeedScalar },
+            { primaryController.rightX * DrivetrainConstants.rotationSpeedScalar },
+            true,
+            true
+        )
+
 
         pickAndPlace.defaultCommand = Base(pickAndPlace)
         ledSubsystem.defaultCommand = SetLEDValueConeCube(ledSubsystem)
 
         //PRIMARY CONTROLLER
         Trigger { primaryController.leftTriggerAxis > 0.2 }.whileTrue(
+
+
+            SequentialCommandGroup(
+                InstantCommand({
+                    CommandValues.pickup = false
+                }),
+
+                SelectCommand(
+                    mapOf(
+                        VisionSelector.RETROREFLECTIVE to RetroreflectiveVision(swerveSubsystem, primaryController).withTimeout(3.0),
+                        VisionSelector.CHUTEVISION to ChuteVision(swerveSubsystem, primaryController).withTimeout(6.0),
+                        VisionSelector.NOVISION to InstantCommand({})
+                    ),
+                    this::selectVision
+                ),
+
+                ParallelCommandGroup(
+                    StandardDrive(swerveSubsystem,
+                        { primaryController.leftY * DrivetrainConstants.drivingSpeedScalar / 2.0 },
+                        { primaryController.leftX * DrivetrainConstants.drivingSpeedScalar / 2.0},
+                        { primaryController.rightX * DrivetrainConstants.rotationSpeedScalar / 2.0},
+                        true,
+                        true
+                    ).repeatedly(),
+
+                    SelectCommand(
+                        mapOf(
+                            CommandSelector.BASE to Base(pickAndPlace),
+                            CommandSelector.CHUTEPICK to ChutePick(pickAndPlace),
+                            CommandSelector.FLOORPLACE to FloorPlace(pickAndPlace, primaryController),
+                            CommandSelector.HIGHPLACECONE to HighPlaceCone(pickAndPlace, primaryController),
+                            CommandSelector.HIGHPLACECUBE to HighPlaceCube(pickAndPlace, primaryController),
+                            CommandSelector.LOWPICKCONE to LowPickCone(pickAndPlace),
+                            CommandSelector.LOWPICKCUBE to LowPickCube(pickAndPlace),
+                            CommandSelector.MIDPLACECONE to MidPlaceCone(pickAndPlace, primaryController),
+                            CommandSelector.MIDPLACECUBE to MidPlaceCube(pickAndPlace, primaryController)
+                        ),
+                        this::select
+                    )
+                )
+            )
+
+        )
+
+//        JoystickButton(primaryController, XboxController.Button.kRightBumper.value).whileTrue(
+//            RetroreflectiveVision(swerveSubsystem, primaryController)
+        //)
+
+        Trigger { primaryController.rightTriggerAxis > 0.2 }.whileTrue(
 
 
             SequentialCommandGroup(
@@ -175,53 +226,6 @@ class RobotContainer {
                     )
                 )
             )
-
-        )
-
-        JoystickButton(primaryController, XboxController.Button.kRightBumper.value).whileTrue(
-            RetroreflectiveVision(swerveSubsystem, primaryController)
-        )
-
-        Trigger { primaryController.rightTriggerAxis > 0.2 }.whileTrue(
-            SequentialCommandGroup(
-                InstantCommand({
-                    CommandValues.pickup = false
-                }),
-
-                SelectCommand(
-                    mapOf(
-                        VisionSelector.RETROREFLECTIVE to RetroreflectiveVision(swerveSubsystem, primaryController).withTimeout(3.0),
-                        VisionSelector.CHUTEVISION to ChuteVision(swerveSubsystem, primaryController).withTimeout(6.0),
-                        VisionSelector.NOVISION to InstantCommand({})
-                    ),
-                    this::selectVision
-                ),
-
-                ParallelCommandGroup(
-                    StandardDrive(swerveSubsystem,
-                        { primaryController.leftY * DrivetrainConstants.drivingSpeedScalar / 2.0 },
-                        { primaryController.leftX * DrivetrainConstants.drivingSpeedScalar / 2.0},
-                        { primaryController.rightX * DrivetrainConstants.rotationSpeedScalar / 2.0},
-                        true,
-                        true
-                    ).repeatedly(),
-
-                    SelectCommand(
-                        mapOf(
-                            CommandSelector.BASE to Base(pickAndPlace),
-                            CommandSelector.CHUTEPICK to ChutePick(pickAndPlace),
-                            CommandSelector.FLOORPLACE to FloorPlace(pickAndPlace, primaryController),
-                            CommandSelector.HIGHPLACECONE to HighPlaceCone(pickAndPlace, primaryController),
-                            CommandSelector.HIGHPLACECUBE to HighPlaceCube(pickAndPlace, primaryController),
-                            CommandSelector.LOWPICKCONE to LowPickCone(pickAndPlace),
-                            CommandSelector.LOWPICKCUBE to LowPickCube(pickAndPlace),
-                            CommandSelector.MIDPLACECONE to MidPlaceCone(pickAndPlace, primaryController),
-                            CommandSelector.MIDPLACECUBE to MidPlaceCube(pickAndPlace, primaryController)
-                        ),
-                        this::select
-                    )
-                )
-            )
         )
 
         JoystickButton(primaryController, XboxController.Button.kX.value).whileTrue(
@@ -242,26 +246,30 @@ class RobotContainer {
             })
         )
 
-        //SECONDARY CONTROLLER
 
+
+
+
+        //SECONDARY CONTROLLER
+        Trigger {secondaryController.leftTriggerAxis > 0.2} .whileTrue(
+            VoltageArm(pickAndPlace, { 2.0 }, { 0.0 }, { 0.0 }, { 0.0 })
+        )
         JoystickButton(secondaryController, XboxController.Button.kLeftBumper.value).whileTrue(
             VoltageArm(pickAndPlace, { -2.0 }, { 0.0 }, { 0.0 }, { 0.0 })
-        )
-        JoystickButton(secondaryController, XboxController.Button.kRightBumper.value).whileTrue(
-            VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { 0.0 }, { -4.0 })
-        )
-        Trigger {secondaryController.leftTriggerAxis > 0.2} .whileTrue(
-           VoltageArm(pickAndPlace, { 1.0 }, { 0.0 }, { 0.0 }, { 0.0 })
         )
         Trigger {secondaryController.rightTriggerAxis > 0.2} .whileTrue(
             VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { 0.0 }, { 4.0 })
         )
-//        JoystickButton(secondaryController, Axis.kLeftY.value ).whileTrue(
-//            VoltageArm(pickAndPlace, { 0.0 }, { -4.0 }, { 0.0 }, { 0.0 })
-//        )
-//        JoystickButton(secondaryController, Axis.kRightY.value).whileTrue(
-//            VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { -4.0 }, { 0.0 })
-//        )
+        JoystickButton(secondaryController, XboxController.Button.kRightBumper.value).whileTrue(
+            VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { 0.0 }, { -4.0 })
+        )
+
+        JoystickButton(secondaryController, Axis.kLeftY.value ).whileTrue(
+            VoltageArm(pickAndPlace, { 0.0 }, { secondaryController.leftY * -4.0 }, { 0.0 }, { 0.0 })
+        )
+        JoystickButton(secondaryController, Axis.kRightY.value).whileTrue(
+            VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { secondaryController.rightY * -4.0 }, { 0.0 })
+        )
 
         JoystickButton(secondaryController, XboxController.Button.kX.value).onTrue(
             InstantCommand({
@@ -295,9 +303,6 @@ class RobotContainer {
                 CommandValues.vision = !CommandValues.vision
             })
         )
-
-
-
     }
 
 
