@@ -23,7 +23,7 @@ import frc.robot.constants.CommandValues
 
 import frc.robot.constants.DrivetrainConstants
 import frc.robot.subsystems.*
-import java.util.ConcurrentModificationException
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -36,6 +36,7 @@ class RobotContainer {
     val secondaryController = XboxController(1)
     val pickAndPlace = PickAndPlaceSubsystem()
     val swerveSubsystem = SwerveSubsystem()
+    val ledSubsystem = BlinkinLEDSubsystem()
     val testTrajectories = AutoTrajectories(pickAndPlace, swerveSubsystem)
     var autoCommandChooser: SendableChooser<Command> = SendableChooser()
 
@@ -130,6 +131,7 @@ class RobotContainer {
         )
 
         pickAndPlace.defaultCommand = Base(pickAndPlace)
+        ledSubsystem.defaultCommand = SetLEDValueConeCube(ledSubsystem)
 
         //PRIMARY CONTROLLER
         Trigger { primaryController.leftTriggerAxis > 0.2 }.whileTrue(
