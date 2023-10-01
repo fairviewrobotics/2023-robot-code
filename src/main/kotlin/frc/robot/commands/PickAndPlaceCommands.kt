@@ -187,6 +187,18 @@ fun AutoBase(pnp: PickAndPlaceSubsystem): Command {
         )
     )
 }
+fun AutoBase2(pnp: PickAndPlaceSubsystem): Command {
+    return SequentialCommandGroup(
+        SetPickAndPlacePosition(
+            false,
+            pnp,
+            ArmConstants.elevatorMinHeight, // elevator
+            Math.toRadians(70.0), // elbow
+            Math.toRadians(80.0), // wrist
+            { 1.5 } // intake
+        )
+    )
+}
 //TODO:Test
 fun FloorPlace(pnp: PickAndPlaceSubsystem, controller: XboxController): Command {
     return SequentialCommandGroup(
@@ -204,7 +216,7 @@ fun FloorPlace(pnp: PickAndPlaceSubsystem, controller: XboxController): Command 
         ArmConstants.elevatorMinHeight, // elevator
         Math.toRadians(66.0), // elbow
         Math.toRadians(-25.0), // wrist
-        { if (controller.leftBumper) -5.0 else 1.5  } // intake
+        { if (controller.rightBumper) -6.0 else 1.5  } // intake
     )
     )
 
@@ -226,7 +238,7 @@ fun MidPlaceCube(pnp: PickAndPlaceSubsystem, controller: XboxController): Comman
             0.2, // elevator
             Math.toRadians(60.0), // elbow
             0.0, // wrist
-            { if (controller.leftBumper) -3.0 else 2.0  } // intake
+            { if (controller.rightBumper) -6.0 else 2.0  } // intake
         )
     )
 
@@ -249,7 +261,7 @@ fun HighPlaceCube(pnp: PickAndPlaceSubsystem, controller: XboxController): Comma
             0.6, // elevator
             Math.toRadians(60.0), // elbow
             Math.toRadians(-5.0), // wrist
-            { if (controller.leftBumper) -3.0 else 2.0  }
+            { if (controller.rightBumper) -5.0 else 2.0  }
         )
     )
 }
@@ -259,19 +271,19 @@ fun MidPlaceCone(pnp: PickAndPlaceSubsystem, controller: XboxController): Comman
         SetPickAndPlacePosition(
             false,
             pnp,
-            0.4, // elevator
+            0.47, // elevator
             Math.toRadians(53.0), // elbow
-            Math.toRadians(-25.0), // wrist
+            Math.toRadians(-33.0), // wrist
             { 1.0 } // intake
         ),
 
         SetPickAndPlacePosition(
             true,
             pnp,
-            0.4, // elevator
+            0.47, // elevator
             Math.toRadians(53.0), // elbow
-            Math.toRadians(-25.0), // wrist
-            { if (controller.leftBumper) -6.0 else 1.0  } // intake
+            Math.toRadians(-33.0), // wrist
+            { if (controller.rightBumper) -6.0 else 1.0  } // intake
         )
     )
 }
@@ -301,7 +313,7 @@ fun HighPlaceCone(pnp: PickAndPlaceSubsystem, controller: XboxController): Comma
             0.945, // elevator
             Math.toRadians(20.0), // elbow
             Math.toRadians(-29.0), // wrist
-            { if (controller.leftBumper) -6.0 else 1.0  }
+            { if (controller.rightBumper) -6.0 else 1.0  }
         )
     )
 }
@@ -357,8 +369,8 @@ fun ChutePick(pnp: PickAndPlaceSubsystem): Command {
             pnp,
             ArmConstants.elevatorMinHeight
             , // elevator
-            1.03475, // elbow
-            0.99999, // wrist
+            1.13475, // elbow
+            0.83999, // wrist
             { 2.5 } // intake
         )
     )
@@ -392,7 +404,7 @@ fun AutoPlaceCubeMid(pnp: PickAndPlaceSubsystem): Command {
             0.2, // elevator
             Math.toRadians(60.0), // elbow
             0.0, // wrist
-            { -3.0 } // intake
+            { -8.0 } // intake
         )
     )
 }
@@ -414,7 +426,7 @@ fun AutoPlaceCubeHigh(pnp: PickAndPlaceSubsystem): Command {
             0.6, // elevator
             Math.toRadians(60.0), // elbow
             Math.toRadians(-5.0), // wrist
-            { -5.0 }
+            { -9.0 }
         )
     )
 }
@@ -435,7 +447,7 @@ fun AutoPlaceConeMid(pnp: PickAndPlaceSubsystem): Command {
             0.4, // elevator
             Math.toRadians(53.0), // elbow
             Math.toRadians(-25.0), // wrist
-            { -6.0 } // intake
+            { -9.0 } // intake
         )
     )
 }

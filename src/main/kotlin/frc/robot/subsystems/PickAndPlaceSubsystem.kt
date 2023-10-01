@@ -188,18 +188,14 @@ class PickAndPlaceSubsystem : SubsystemBase(){
         super.periodic()
         if (!elevatorZeroed) {
             elevatorMotor.setVoltage(ArmConstants.elevatorZeroingVoltage)
-            println("Zeroing")
 
         }
         // These are the voltages we set and will be sent to the elevator and elbow.
-        if(bottomHit)
-        {
-            println("Zeroed")
+        if(bottomHit) {
             if (!elevatorZeroed) {
                 elevatorEncoder.position = 0.0
             }
             elevatorZeroed = true
-
         }
         else if(topHit)
         {

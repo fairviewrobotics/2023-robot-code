@@ -113,7 +113,7 @@ class RobotContainer {
 
     private fun Discovery() {
 
-        JoystickButton(primaryController, XboxController.Button.kRightBumper.value).whileTrue(
+        JoystickButton(primaryController, XboxController.Button.kLeftBumper.value).whileTrue(
             StandardDrive(swerveSubsystem,
                 { primaryController.leftY * DrivetrainConstants.drivingSpeedScalar / 2.0 },
                 { primaryController.leftX * DrivetrainConstants.drivingSpeedScalar / 2.0 },
@@ -359,7 +359,7 @@ class RobotContainer {
             )
         )
         autoCommandChooser.addOption(
-            "Just Place Cube Moid",
+            "Just Place Cube Mid",
             SequentialCommandGroup(
                 AutoPlaceCubeMid(pickAndPlace).withTimeout(4.0),
                 AutoBase(pickAndPlace)
@@ -387,6 +387,22 @@ class RobotContainer {
         autoCommandChooser.addOption(
             "Blue Right Place Cube High Leave",
             testTrajectories.BlueBottom1()
+        )
+        autoCommandChooser.addOption(
+            "Red Left Cone Right Place Leave",
+            testTrajectories.RedLeftConeRightPlaceLeave()
+        )
+        autoCommandChooser.addOption(
+            "Red Left Cone Left Place Leave",
+            testTrajectories.RedLeftConeLeftPlaceLeave()
+        )
+        autoCommandChooser.addOption(
+            "Red Right Cone Right Place Leave",
+            testTrajectories.RedRightConeRightPlaceLeave()
+        )
+        autoCommandChooser.addOption(
+            "Red Right Cone Left Place Leave",
+            testTrajectories.RedRightConeLeftPlaceLeave()
         )
         autoCommandChooser.addOption(
             "Red Left Place Cube High Leave and Balance",

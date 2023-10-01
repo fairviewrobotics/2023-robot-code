@@ -24,7 +24,7 @@ class AutoTrajectories(val pnp: PickAndPlaceSubsystem, val swerveSubsystem: Swer
         val pathGroup: List<PathPlannerTrajectory> = PathPlanner.loadPathGroup(
             pathName, firstConstraint, *pathConstraints
         )
-        println("Auto Running")
+        //println("Auto Running")
         //It might be this for the line above: val pathGroup: ArrayList<PathPlannerTrajectory> = arrayListOf()
         // PathPlanner.loadPathGroup("Red Top 1 Get Balance", PathConstraints(1.0, 0.5)).toCollection(pathGroup)
 
@@ -35,6 +35,7 @@ class AutoTrajectories(val pnp: PickAndPlaceSubsystem, val swerveSubsystem: Swer
             "PickUpCube" to AutoPickCube(pnp),
             "HighPlace" to AutoPlaceCubeHigh(pnp),
             "MidCone" to AutoPlaceConeMid(pnp),
+            "Base2" to AutoBase2(pnp),
             "Balance" to Balancer(swerveSubsystem)
         )
 //        val eventMap = hashMapOf<String, Command>()
@@ -116,6 +117,30 @@ class AutoTrajectories(val pnp: PickAndPlaceSubsystem, val swerveSubsystem: Swer
             PathConstraints(4.00, 3.00)
         )
     }
+    fun RedLeftConeRightPlaceLeave(): Command {
+        return base("Red Left Cone Right Place Leave",
+            PathConstraints(3.00,1.50),
+            PathConstraints(2.00, 1.00)
+        )
+    }
+    fun RedLeftConeLeftPlaceLeave(): Command {
+        return base("Red Left Cone Left Place Leave",
+            PathConstraints(3.00,1.50),
+            PathConstraints(2.00, 1.00)
+        )
+    }
+    fun RedRightConeLeftPlaceLeave(): Command {
+        return base("Red Right Cone Left Place Leave",
+            PathConstraints(3.00,1.50),
+            PathConstraints(3.00, 1.00)
+        )
+    }
+    fun RedRightConeRightPlaceLeave(): Command {
+        return base("Red Right Cone Right Place Leave",
+            PathConstraints(3.00,1.50),
+            PathConstraints(2.00, 1.00)
+        )
+    }
     fun BlueCenter1Balance(): Command {
         return base("Blue Center 1 Balance",
             PathConstraints(1.00,0.50),
@@ -149,16 +174,16 @@ class AutoTrajectories(val pnp: PickAndPlaceSubsystem, val swerveSubsystem: Swer
     fun RedTop1Balance(): Command {
         return base("Red Top 1 Balance",
             PathConstraints(3.00,1.50),
-            PathConstraints(2.00, 1.00),
-            PathConstraints(1.00, 0.50)
+            PathConstraints(3.00, 1.50),
+            PathConstraints(2.00, 1.00)
         )
     }
     fun RedBottom1Balance(): Command {
         println("Running The Path")
         return base("Red Bottom 1 Balance",
-            PathConstraints(3.00,1.50),
-            PathConstraints(2.00, 1.00),
-            PathConstraints(1.00, 0.50)
+            PathConstraints(4.00,2.50),
+            PathConstraints(3.50, 1.75),
+            PathConstraints(1.20, 0.70)
         )
     }
     fun BlueTop1GetBalance(): Command {

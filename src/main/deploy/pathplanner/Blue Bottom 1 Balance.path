@@ -17,12 +17,12 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "MidPlace",
+          "HighPlace",
           "Base"
         ],
         "executionBehavior": "sequential",
         "waitBehavior": "after",
-        "waitTime": 0.01
+        "waitTime": 0.05
       }
     },
     {
@@ -92,7 +92,8 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "Balance"
+          "Balance",
+          "Base"
         ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",

@@ -17,8 +17,8 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "MidPlace",
-          "Base"
+          "HighPlace",
+          "Base2"
         ],
         "executionBehavior": "sequential",
         "waitBehavior": "after",
@@ -79,12 +79,12 @@
     },
     {
       "anchorPoint": {
-        "x": 12.729878838229899,
-        "y": 2.7803488714616322
+        "x": 12.769252665241442,
+        "y": 2.7737962316202402
       },
       "prevControl": {
-        "x": 12.713787178442411,
-        "y": 2.7840311071247146
+        "x": 12.753161005453954,
+        "y": 2.7774784672833226
       },
       "nextControl": null,
       "holonomicAngle": 180.0,
@@ -94,9 +94,10 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "Balance"
+          "Balance",
+          "Base2"
         ],
-        "executionBehavior": "sequential",
+        "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
       }

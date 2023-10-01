@@ -16,9 +16,12 @@
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
-        "waitBehavior": "none",
+        "names": [
+          "HighPlace",
+          "Base2"
+        ],
+        "executionBehavior": "sequential",
+        "waitBehavior": "after",
         "waitTime": 0.01
       }
     },
@@ -89,10 +92,11 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "Balance"
+          "Balance",
+          "Base"
         ],
         "executionBehavior": "parallel",
-        "waitBehavior": "none",
+        "waitBehavior": "after",
         "waitTime": 0.01
       }
     }
