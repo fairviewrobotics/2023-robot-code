@@ -19,5 +19,8 @@ object CommandValues {
     var cone: Boolean = false // Both
     var highPlace: Boolean = false // Place
 
-
+    var balancing : Boolean = false
+    var balanced : Boolean = false
+    var auto : Boolean = false
+    var visionIsMovingRobot : Boolean = false
 }

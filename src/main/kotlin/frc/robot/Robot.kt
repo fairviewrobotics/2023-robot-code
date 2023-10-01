@@ -6,6 +6,8 @@ package frc.robot
 import edu.wpi.first.wpilibj.TimedRobot
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandScheduler
+import frc.robot.constants.CommandValues
+import frc.robot.constants.DrivetrainConstants
 import frc.robot.subsystems.PickAndPlaceSubsystem
 import frc.robot.subsystems.SwerveSubsystem
 
@@ -71,6 +73,11 @@ class Robot : TimedRobot() {
         if (autonomousCommand != null) {
            autonomousCommand!!.schedule()
         }
+
+
+        CommandValues.balanced = false
+        CommandValues.balancing = false
+        CommandValues.auto = true
     }
 
     /** This function is called periodically during autonomous.  */
@@ -83,6 +90,9 @@ class Robot : TimedRobot() {
         if (autonomousCommand != null) {
             autonomousCommand!!.cancel()
         }
+        CommandValues.balanced = false
+        CommandValues.balancing = false
+        CommandValues.auto = false
     }
 
     /** This function is called periodically during operator control.  */
