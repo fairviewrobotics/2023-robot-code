@@ -30,20 +30,14 @@ class AutoTrajectories(val pnp: PickAndPlaceSubsystem, val swerveSubsystem: Swer
 
         //The way these are called may need to change
         val eventMap: HashMap<String, Command> = hashMapOf(
-            "MidPlace" to AutoPlaceCubeMid(pnp),
+            "MidPlace" to AutoPlaceCubeMid(pnp).withTimeout(4.0),
             "Base" to AutoBase(pnp),
             "PickUpCube" to AutoPickCube(pnp),
-            "HighPlace" to AutoPlaceCubeHigh(pnp),
-            "MidCone" to AutoPlaceConeMid(pnp),
+            "HighPlace" to AutoPlaceCubeHigh(pnp).withTimeout(4.0),
+            "MidCone" to AutoPlaceConeMid(pnp).withTimeout(4.0),
             "Base2" to AutoBase2(pnp),
             "Balance" to Balancer(swerveSubsystem)
         )
-//        val eventMap = hashMapOf<String, Command>()
-//        eventMap["MidPlace"] = MidPlaceCube(pnp)
-//        eventMap["Base"] = Base(pnp)
-//        eventMap["PickUpCube"] = LowPickCube(pnp)
-//        eventMap["HighPlace"] = HighPlaceCube(pnp)
-//        eventMap["Balance"] = Balance(swerveSubsystem)
 
         val autoBuilder = SwerveAutoBuilder(
             swerveSubsystem::pose,
@@ -59,102 +53,64 @@ class AutoTrajectories(val pnp: PickAndPlaceSubsystem, val swerveSubsystem: Swer
         var fullAuto: Command = autoBuilder.fullAuto(pathGroup)
         return fullAuto
     }
-    fun TestPath(): Command {
-        return base("Test Path",
-            PathConstraints(0.50,0.50),
-            PathConstraints(1.00, 1.00)
-        )
-    }
     fun BlueTop1(): Command {
         return base("Blue Top 1",
-            PathConstraints(3.00,1.50)
+            PathConstraints(3.50,2.00)
         )
     }
     fun BlueBottom1(): Command {
         return base("Blue Bottom 1",
-            PathConstraints(3.00,1.50)
+            PathConstraints(3.50,2.00)
         )
     }
     fun RedTop1(): Command {
         return base("Red Top 1",
-            PathConstraints(3.00,1.50)
+            PathConstraints(3.50,2.00)
         )
     }
     fun RedBottom1(): Command {
         return base("Red Bottom 1",
-            PathConstraints(3.00,1.50)
-        )
-    }
-    fun BlueTop2(): Command {
-        return base("Blue Top 2",
-            PathConstraints(1.00,0.50),
-            PathConstraints(4.00, 3.00),
-            PathConstraints(4.00, 3.00),
-            PathConstraints(4.00, 3.00)
-        )
-    }
-    fun BlueBottom2(): Command {
-        return base("Blue Bottom 2",
-            PathConstraints(1.00,0.50),
-            PathConstraints(4.00, 3.00),
-            PathConstraints(4.00, 3.00),
-            PathConstraints(4.00, 3.00)
-        )
-    }
-    fun RedTop2(): Command {
-        return base("Red Top 2",
-            PathConstraints(1.00,0.50),
-            PathConstraints(4.00, 3.00),
-            PathConstraints(4.00, 3.00),
-            PathConstraints(4.00, 3.00)
-        )
-    }
-    fun RedBottom2(): Command {
-        return base("Red Bottom 2",
-            PathConstraints(1.00,0.50),
-            PathConstraints(4.00, 3.00),
-            PathConstraints(4.00, 3.00),
-            PathConstraints(4.00, 3.00)
+            PathConstraints(3.50,2.00)
         )
     }
     fun RedLeftConeRightPlaceLeave(): Command {
         return base("Red Left Cone Right Place Leave",
-            PathConstraints(3.00,1.50),
-            PathConstraints(2.00, 1.00)
+            PathConstraints(3.50,2.00)
         )
     }
     fun RedLeftConeLeftPlaceLeave(): Command {
         return base("Red Left Cone Left Place Leave",
-            PathConstraints(3.00,1.50),
-            PathConstraints(2.00, 1.00)
+            PathConstraints(3.50,2.00)
         )
     }
     fun RedRightConeLeftPlaceLeave(): Command {
         return base("Red Right Cone Left Place Leave",
-            PathConstraints(3.00,1.50),
-            PathConstraints(3.00, 1.00)
+            PathConstraints(3.50,2.00)
+        )
+    }
+    fun BlueRightConeRightPlaceLeave(): Command {
+        return base("Blue Right Cone Right Place Leave",
+            PathConstraints(3.50,2.00)
+        )
+    }
+    fun BlueLeftConeRightPlaceLeave(): Command {
+        return base("Blue Left Cone Right Place Leave",
+            PathConstraints(3.50,2.00)
+        )
+    }
+    fun BlueLeftConeLeftPlaceLeave(): Command {
+        return base("Blue Left Cone Left Place Leave",
+            PathConstraints(3.50,2.00)
+        )
+    }
+    fun BlueRightConeLeftPlaceLeave(): Command {
+        return base("Blue Right Cone Left Place Leave",
+            PathConstraints(3.50,2.00)
         )
     }
     fun RedRightConeRightPlaceLeave(): Command {
         return base("Red Right Cone Right Place Leave",
-            PathConstraints(3.00,1.50),
-            PathConstraints(2.00, 1.00)
-        )
-    }
-    fun BlueCenter1Balance(): Command {
-        return base("Blue Center 1 Balance",
-            PathConstraints(1.00,0.50),
-            PathConstraints(4.00, 3.00),
-            PathConstraints(4.00, 3.00),
-            PathConstraints(4.00, 3.00)
-        )
-    }
-    fun RedCenter1Balance(): Command {
-        return base("Red Center 1 Balance",
-            PathConstraints(1.00,0.50),
-            PathConstraints(4.00, 3.00),
-            PathConstraints(4.00, 3.00),
-            PathConstraints(4.00, 3.00)
+            PathConstraints(3.50,2.00)
         )
     }
     fun BlueTop1Balance(): Command {
@@ -184,38 +140,6 @@ class AutoTrajectories(val pnp: PickAndPlaceSubsystem, val swerveSubsystem: Swer
             PathConstraints(4.00,2.50),
             PathConstraints(3.50, 1.75),
             PathConstraints(1.20, 0.70)
-        )
-    }
-    fun BlueTop1GetBalance(): Command {
-        return base("Blue Top 1 Get Balance",
-            PathConstraints(1.00,0.50),
-            PathConstraints(4.00, 3.00),
-            PathConstraints(4.00, 3.00),
-            PathConstraints(4.00, 3.00)
-        )
-    }
-    fun BlueBottom1GetBalance(): Command {
-        return base("Blue Bottom 1 Get Balance",
-            PathConstraints(1.00,0.50),
-            PathConstraints(2.00, 1.00),
-            PathConstraints(3.00, 2.00),
-            PathConstraints(1.00, 1.00)
-        )
-    }
-    fun RedTop1GetBalance(): Command {
-        return base("Red Top 1 Get Balance",
-            PathConstraints(1.00,0.50),
-            PathConstraints(4.00, 3.00),
-            PathConstraints(4.00, 3.00),
-            PathConstraints(4.00, 3.00)
-        )
-    }
-    fun RedBottom1GetBalance(): Command {
-        return base("Red Bottom 1 Get Balance",
-            PathConstraints(1.00,0.50),
-            PathConstraints(4.00, 3.00),
-            PathConstraints(4.00, 3.00),
-            PathConstraints(4.00, 3.00)
         )
     }
 }

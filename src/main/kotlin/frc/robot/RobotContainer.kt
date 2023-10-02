@@ -309,116 +309,153 @@ class RobotContainer {
 
     //AUTO CONFIGURATION
     private fun configureAutoOptions() {
-        autoCommandChooser.setDefaultOption(
-            "Center Place Cube Mid and Balance",
+        autoCommandChooser.addOption(
+            "Just Place Cube Mid",
             SequentialCommandGroup(
                 AutoPlaceCubeMid(pickAndPlace).withTimeout(4.0),
-                ParallelCommandGroup(
-                    AutoBase(pickAndPlace),
-                    RunCommand({swerveSubsystem.drive(-0.25, 0.0, 0.0, false, true)}, swerveSubsystem)
-                ).withTimeout(2.0),
-                ParallelCommandGroup(
-                    Base(pickAndPlace),
-                    Balancer(swerveSubsystem)
-                )
-            )
-        )
-        autoCommandChooser.setDefaultOption(
-            "Center Place Cube High and Balance",
-            SequentialCommandGroup(
-                AutoPlaceCubeHigh(pickAndPlace).withTimeout(4.0),
-                ParallelCommandGroup(
-                    AutoBase(pickAndPlace),
-                    RunCommand({swerveSubsystem.drive(-0.25, 0.0, 0.0, false, true)}, swerveSubsystem)
-                ).withTimeout(2.0),
-                ParallelCommandGroup(
-                    Base(pickAndPlace),
-                    Balancer(swerveSubsystem)
-                )
-            )
-        )
-        autoCommandChooser.addOption(
-            "Center Place Cone Mid and Balance",
-            SequentialCommandGroup(
-                AutoPlaceConeMid(pickAndPlace).withTimeout(4.0),
-                ParallelCommandGroup(
-                    AutoBase(pickAndPlace),
-                    RunCommand({swerveSubsystem.drive(-0.25, 0.0, 0.0, false, true)}, swerveSubsystem)
-                ).withTimeout(2.0),
-                ParallelCommandGroup(
-                    Base(pickAndPlace),
-                    Balancer(swerveSubsystem)
-                )
+                Base(pickAndPlace)
             )
         )
         autoCommandChooser.addOption(
             "Just Place Cube High",
             SequentialCommandGroup(
                 AutoPlaceCubeHigh(pickAndPlace).withTimeout(4.0),
-                AutoBase(pickAndPlace)
-            )
-        )
-        autoCommandChooser.addOption(
-            "Just Place Cube Mid",
-            SequentialCommandGroup(
-                AutoPlaceCubeMid(pickAndPlace).withTimeout(4.0),
-                AutoBase(pickAndPlace)
+                Base(pickAndPlace)
             )
         )
         autoCommandChooser.addOption(
             "Just Place Cone Mid",
             SequentialCommandGroup(
                 AutoPlaceConeMid(pickAndPlace).withTimeout(4.0),
-                AutoBase(pickAndPlace)
+                Base(pickAndPlace)
             )
         )
         autoCommandChooser.addOption(
-            "Red Left Place Cube High Leave",
-            testTrajectories.RedBottom1()
+            "Just Place Cone High",
+            SequentialCommandGroup(
+                AutoPlaceConeHigh(pickAndPlace).withTimeout(4.0),
+                Base(pickAndPlace)
+            )
+        )
+        autoCommandChooser.setDefaultOption(
+            "Center Cube Place Mid and Balance",
+            SequentialCommandGroup(
+                AutoPlaceCubeMid(pickAndPlace).withTimeout(4.0),
+                ParallelCommandGroup(
+                    AutoBase(pickAndPlace),
+                    RunCommand({swerveSubsystem.drive(-0.30, 0.0, 0.0, false, true)}, swerveSubsystem)
+                ).withTimeout(2.0),
+                ParallelCommandGroup(
+                    Base(pickAndPlace),
+                    Balancer(swerveSubsystem)
+                )
+            )
+        )
+        autoCommandChooser.setDefaultOption(
+            "Center Cube Place High and Balance",
+            SequentialCommandGroup(
+                AutoPlaceCubeHigh(pickAndPlace).withTimeout(4.0),
+                ParallelCommandGroup(
+                    AutoBase(pickAndPlace),
+                    RunCommand({swerveSubsystem.drive(-0.30, 0.0, 0.0, false, true)}, swerveSubsystem)
+                ).withTimeout(2.0),
+                ParallelCommandGroup(
+                    Base(pickAndPlace),
+                    Balancer(swerveSubsystem)
+                )
+            )
         )
         autoCommandChooser.addOption(
-            "Red Right Place Cube High Leave",
-            testTrajectories.RedTop1()
+            "Center Cone Place Mid and Balance",
+            SequentialCommandGroup(
+                AutoPlaceConeMid(pickAndPlace).withTimeout(4.0),
+                ParallelCommandGroup(
+                    AutoBase(pickAndPlace),
+                    RunCommand({swerveSubsystem.drive(-0.30, 0.0, 0.0, false, true)}, swerveSubsystem)
+                ).withTimeout(2.0),
+                ParallelCommandGroup(
+                    Base(pickAndPlace),
+                    Balancer(swerveSubsystem)
+                )
+            )
         )
         autoCommandChooser.addOption(
-            "Blue Left Place Cube High Leave",
+            "Center Cone Place High and Balance",
+            SequentialCommandGroup(
+                AutoPlaceConeHigh(pickAndPlace).withTimeout(4.0),
+                ParallelCommandGroup(
+                    AutoBase(pickAndPlace),
+                    RunCommand({swerveSubsystem.drive(-0.30, 0.0, 0.0, false, true)}, swerveSubsystem)
+                ).withTimeout(2.0),
+                ParallelCommandGroup(
+                    Base(pickAndPlace),
+                    Balancer(swerveSubsystem)
+                )
+            )
+        )
+        autoCommandChooser.addOption(
+            "Blue Left Cone Far Place Mid Leave",
+            testTrajectories.BlueLeftConeLeftPlaceLeave()
+        )
+        autoCommandChooser.addOption(
+            "Blue Left Cube Place High Leave",
             testTrajectories.BlueTop1()
         )
         autoCommandChooser.addOption(
-            "Blue Right Place Cube High Leave",
+            "Blue Left Cone Near Place Mid Leave",
+            testTrajectories.BlueLeftConeRightPlaceLeave()
+        )
+        autoCommandChooser.addOption(
+            "Blue Right Cone Near Place Mid Leave",
+            testTrajectories.BlueRightConeLeftPlaceLeave()
+        )
+        autoCommandChooser.addOption(
+            "Blue Right Cube Place High Leave",
             testTrajectories.BlueBottom1()
         )
         autoCommandChooser.addOption(
-            "Red Left Cone Right Place Leave",
-            testTrajectories.RedLeftConeRightPlaceLeave()
+            "Blue Right Cone Far Place Mid Leave",
+            testTrajectories.BlueRightConeRightPlaceLeave()
         )
         autoCommandChooser.addOption(
-            "Red Left Cone Left Place Leave",
+            "Red Left Cone Far Place Mid Leave",
             testTrajectories.RedLeftConeLeftPlaceLeave()
         )
         autoCommandChooser.addOption(
-            "Red Right Cone Right Place Leave",
-            testTrajectories.RedRightConeRightPlaceLeave()
+            "Red Left Cube Place High Leave",
+            testTrajectories.RedBottom1()
         )
         autoCommandChooser.addOption(
-            "Red Right Cone Left Place Leave",
+            "Red Left Cone Near Place Mid Leave",
+            testTrajectories.RedLeftConeRightPlaceLeave()
+        )
+        autoCommandChooser.addOption(
+            "Red Right Cone Near Place Mid Leave",
             testTrajectories.RedRightConeLeftPlaceLeave()
         )
         autoCommandChooser.addOption(
-            "Red Left Place Cube High Leave and Balance",
-            testTrajectories.RedBottom1Balance()
+            "Red Right Cube Place High Leave",
+            testTrajectories.RedTop1()
         )
         autoCommandChooser.addOption(
-            "Red Right Place Cube High Leave and Balance",
-            testTrajectories.RedTop1Balance()
+            "Red Right Cone Far Place Mid Leave",
+            testTrajectories.RedRightConeRightPlaceLeave()
         )
         autoCommandChooser.addOption(
-            "Blue Left Place Cube High Leave and Balance",
+            "Blue Left Cube Place High Leave and Balance",
             testTrajectories.BlueTop1Balance()
         )
         autoCommandChooser.addOption(
-            "Blue Right Place Cube High Leave and Balance",
+            "Blue Right Cube Place High Leave and Balance",
             testTrajectories.BlueBottom1Balance()
+        )
+        autoCommandChooser.addOption(
+            "Red Left Cube Place High Leave and Balance",
+            testTrajectories.RedBottom1Balance()
+        )
+        autoCommandChooser.addOption(
+            "Red Right Cube Place High Leave and Balance",
+            testTrajectories.RedTop1Balance()
         )
         SmartDashboard.putData("Auto Mode", autoCommandChooser)
     }

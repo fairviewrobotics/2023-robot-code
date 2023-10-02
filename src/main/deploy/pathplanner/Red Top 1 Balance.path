@@ -18,7 +18,7 @@
       "stopEvent": {
         "names": [
           "HighPlace",
-          "Base2"
+          "Base"
         ],
         "executionBehavior": "sequential",
         "waitBehavior": "after",
@@ -67,12 +67,12 @@
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
-      "isStopPoint": false,
+      "isStopPoint": true,
       "stopEvent": {
         "names": [
-          "Balance"
+          "Base2"
         ],
-        "executionBehavior": "sequential",
+        "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
       }

@@ -2,22 +2,22 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 14.62857871722688,
-        "y": 4.434107593909633
+        "x": 14.719735795374369,
+        "y": 4.960406347896029
       },
       "prevControl": null,
       "nextControl": {
-        "x": 14.149800321067548,
-        "y": 5.004782388813436
+        "x": 14.250207257358959,
+        "y": 4.5205096590748735
       },
-      "holonomicAngle": 0.0,
+      "holonomicAngle": 0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "HighPlace",
+          "MidCone",
           "Base"
         ],
         "executionBehavior": "sequential",
@@ -27,39 +27,37 @@
     },
     {
       "anchorPoint": {
-        "x": 10.886151548344765,
-        "y": 4.773279190655604
+        "x": 10.353590094332967,
+        "y": 4.605462025160161
       },
       "prevControl": {
-        "x": 11.541241568594248,
-        "y": 4.669712688383711
+        "x": 11.026482419284283,
+        "y": 4.56382666758389
       },
       "nextControl": {
-        "x": 10.847966097705754,
-        "y": 4.7793161221277884
+        "x": 10.302154939600378,
+        "y": 4.608644586440581
       },
-      "holonomicAngle": 0,
+      "holonomicAngle": 0.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [
-          "Base"
-        ],
+        "names": [],
         "executionBehavior": "parallel",
-        "waitBehavior": "after",
-        "waitTime": 0.01
+        "waitBehavior": "none",
+        "waitTime": 0
       }
     },
     {
       "anchorPoint": {
-        "x": 10.886151548344765,
-        "y": 4.765856731366241
+        "x": 10.34564574337482,
+        "y": 4.609521182584032
       },
       "prevControl": {
-        "x": 10.84370435928372,
-        "y": 4.800997437064319
+        "x": 10.327379534967404,
+        "y": 4.612942472412723
       },
       "nextControl": null,
       "holonomicAngle": 180.0,
@@ -72,8 +70,8 @@
           "Base"
         ],
         "executionBehavior": "parallel",
-        "waitBehavior": "after",
-        "waitTime": 0.01
+        "waitBehavior": "none",
+        "waitTime": 0
       }
     }
   ],

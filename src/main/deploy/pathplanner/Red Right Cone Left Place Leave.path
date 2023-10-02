@@ -2,22 +2,22 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 14.62857871722688,
-        "y": 4.434107593909633
+        "x": 14.73510260562188,
+        "y": 3.84408006836847
       },
       "prevControl": null,
       "nextControl": {
-        "x": 14.149800321067548,
-        "y": 5.004782388813436
+        "x": 14.655717084003614,
+        "y": 4.671162387463664
       },
-      "holonomicAngle": 0.0,
+      "holonomicAngle": 0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "HighPlace",
+          "MidCone",
           "Base"
         ],
         "executionBehavior": "sequential",
@@ -27,16 +27,16 @@
     },
     {
       "anchorPoint": {
-        "x": 10.886151548344765,
-        "y": 4.773279190655604
+        "x": 12.832691496980217,
+        "y": 4.727816627508255
       },
       "prevControl": {
-        "x": 11.541241568594248,
-        "y": 4.669712688383711
+        "x": 13.805398751544114,
+        "y": 4.6203616092287545
       },
       "nextControl": {
-        "x": 10.847966097705754,
-        "y": 4.7793161221277884
+        "x": 11.807522295600148,
+        "y": 4.841067119634239
       },
       "holonomicAngle": 0,
       "isReversal": false,
@@ -44,25 +44,23 @@
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [
-          "Base"
-        ],
+        "names": [],
         "executionBehavior": "parallel",
-        "waitBehavior": "after",
-        "waitTime": 0.01
+        "waitBehavior": "none",
+        "waitTime": 0
       }
     },
     {
       "anchorPoint": {
-        "x": 10.886151548344765,
-        "y": 4.765856731366241
+        "x": 10.527264044111423,
+        "y": 4.714595371899077
       },
       "prevControl": {
-        "x": 10.84370435928372,
-        "y": 4.800997437064319
+        "x": 11.542459315821413,
+        "y": 4.885891815186407
       },
       "nextControl": null,
-      "holonomicAngle": 180.0,
+      "holonomicAngle": 179.53808718249,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
@@ -72,8 +70,8 @@
           "Base"
         ],
         "executionBehavior": "parallel",
-        "waitBehavior": "after",
-        "waitTime": 0.01
+        "waitBehavior": "none",
+        "waitTime": 0
       }
     }
   ],

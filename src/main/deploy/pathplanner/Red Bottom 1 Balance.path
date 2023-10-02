@@ -18,7 +18,7 @@
       "stopEvent": {
         "names": [
           "HighPlace",
-          "Base2"
+          "Base"
         ],
         "executionBehavior": "sequential",
         "waitBehavior": "after",
@@ -42,7 +42,7 @@
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
-      "isStopPoint": true,
+      "isStopPoint": false,
       "stopEvent": {
         "names": [],
         "executionBehavior": "parallel",
@@ -69,7 +69,9 @@
       "isLocked": false,
       "isStopPoint": true,
       "stopEvent": {
-        "names": [],
+        "names": [
+          "Base2"
+        ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
@@ -77,12 +79,12 @@
     },
     {
       "anchorPoint": {
-        "x": 12.648231786046907,
-        "y": 2.759589180636694
+        "x": 12.582937339485792,
+        "y": 2.7701429899387575
       },
       "prevControl": {
-        "x": 12.72738535581238,
-        "y": 2.7467738407699027
+        "x": 12.662090909251265,
+        "y": 2.757327650071966
       },
       "nextControl": null,
       "holonomicAngle": 180.0,
@@ -93,7 +95,7 @@
       "stopEvent": {
         "names": [
           "Balance",
-          "Base"
+          "Base2"
         ],
         "executionBehavior": "parallel",
         "waitBehavior": "after",
