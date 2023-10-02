@@ -23,10 +23,10 @@ class SetLEDValueConeCube(val subsystem: BlinkinLEDSubsystem): CommandBase() {
                 println("Auto LEDs")
             }
         } else if (CommandValues.visionIsMovingRobot) {
-            subsystem.setLED(0.73)
+            subsystem.setLED(-0.91)
         } else {
             if (CommandValues.cube) {
-                subsystem.setLED(0.91)
+                subsystem.setLED(0.91)//0.91
             } else if (!CommandValues.cube) {
                 subsystem.setLED(0.69)
             } else {

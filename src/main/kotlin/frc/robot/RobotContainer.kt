@@ -264,12 +264,12 @@ class RobotContainer {
             VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { 0.0 }, { -4.0 })
         )
 
-        JoystickButton(secondaryController, Axis.kLeftY.value ).whileTrue(
-            VoltageArm(pickAndPlace, { 0.0 }, { secondaryController.leftY * -4.0 }, { 0.0 }, { 0.0 })
-        )
-        JoystickButton(secondaryController, Axis.kRightY.value).whileTrue(
-            VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { secondaryController.rightY * -4.0 }, { 0.0 })
-        )
+//        JoystickButton(secondaryController, Axis.kLeftY.value ).whileTrue(
+//            VoltageArm(pickAndPlace, { 0.0 }, { secondaryController.leftY * -4.0 }, { 0.0 }, { 0.0 })
+//        )
+//        JoystickButton(secondaryController, Axis.kRightY.value).whileTrue(
+//            VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { secondaryController.rightY * -4.0 }, { 0.0 })
+//        )
 
         JoystickButton(secondaryController, XboxController.Button.kX.value).onTrue(
             InstantCommand({

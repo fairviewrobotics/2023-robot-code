@@ -64,5 +64,5 @@ object ArmConstants {
     val elbowEncoderPosOffset = 2.088
     val wristEncoderPosOffset = 2.767
 
-    val elevatorZeroingVoltage = -1.0 //-1.0
+    val elevatorZeroingVoltage = -1.5 //-1.0
 }
