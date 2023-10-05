@@ -24,7 +24,7 @@ object ArmConstants {
     val intakeMotorInverted = false
 
     //Need very small tune
-    var elevatorP = 100.0 //100
+    var elevatorP = 100.0
     val elevatorI = 0.0
     val elevatorD = 0.0
 
@@ -61,8 +61,8 @@ object ArmConstants {
     val elevatorEncoderPositionConversionFactor = 1.0 //this should turn revs to meters
 
     //could need small tuning:
-    val elbowEncoderPosOffset = 2.088
-    val wristEncoderPosOffset = 2.767
+    val elbowEncoderPosOffset = 0.0
+    val wristEncoderPosOffset = 0.0
 
     val elevatorZeroingVoltage = -1.5 //-1.0
 }

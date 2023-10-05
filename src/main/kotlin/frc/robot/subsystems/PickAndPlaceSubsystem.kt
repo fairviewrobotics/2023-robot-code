@@ -86,8 +86,8 @@ class PickAndPlaceSubsystem : SubsystemBase(){
         //intake
         elbowMotor.setSmartCurrentLimit(38)
         wristMotor.setSmartCurrentLimit(38)
-        intakeOneMotor.setSmartCurrentLimit(28)
-        intakeTwoMotor.setSmartCurrentLimit(28)
+        intakeOneMotor.setSmartCurrentLimit(38)
+        intakeTwoMotor.setSmartCurrentLimit(38)
         elevatorMotor.setSmartCurrentLimit(38)
         elbowMotor.inverted = ArmConstants.elbowMotorInverted
         wristMotor.idleMode = CANSparkMax.IdleMode.kBrake

@@ -14,6 +14,6 @@ object IntakeConstants {
     const val intakeMotorLInverted = true
     const val intakeMotorRInverted = true
 
-    const val intakeMotorsCurrentLimit = 20
-    const val pitchMotorCurrentLimit = 20
+    const val intakeMotorsCurrentLimit = 40
+    const val pitchMotorCurrentLimit = 40
 }
