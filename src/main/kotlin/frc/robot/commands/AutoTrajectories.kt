@@ -8,6 +8,7 @@ import com.pathplanner.lib.auto.SwerveAutoBuilder
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.wpilibj2.command.Command
 import frc.robot.constants.DrivetrainConstants
+import frc.robot.constants.CommandValues
 import frc.robot.constants.TrajectoryConstants
 import frc.robot.subsystems.PickAndPlaceSubsystem
 import frc.robot.subsystems.SwerveSubsystem
@@ -30,13 +31,16 @@ class AutoTrajectories(val pnp: PickAndPlaceSubsystem, val swerveSubsystem: Swer
 
         //The way these are called may need to change
         val eventMap: HashMap<String, Command> = hashMapOf(
-            "MidPlace" to AutoPlaceCubeMid(pnp).withTimeout(4.0),
-            "Base" to AutoBase(pnp),
+            "MidPlace" to AutoPlaceCubeMid(pnp).withTimeout(3.0),
+            "Base" to AutoBase(pnp).withTimeout(3.0),
             "PickUpCube" to AutoPickCube(pnp),
             "HighPlace" to AutoPlaceCubeHigh(pnp).withTimeout(4.0),
-            "MidCone" to AutoPlaceConeMid(pnp).withTimeout(4.0),
+            "MidConeGetThere" to AutoPlaceConeMidGetThere(pnp).withTimeout(2.0),
+            "MidConePlace" to AutoPlaceConeMidPlace(pnp).withTimeout(2.0),
+            "HighCone" to AutoPlaceConeHigh(pnp).withTimeout(4.0),
             "Base2" to AutoBase2(pnp),
-            "Balance" to Balancer(swerveSubsystem)
+            "Balance" to Balancer(swerveSubsystem),
+            "PickUpConeUp" to AutoPickCone(pnp)
         )
 
         val autoBuilder = SwerveAutoBuilder(
@@ -52,6 +56,11 @@ class AutoTrajectories(val pnp: PickAndPlaceSubsystem, val swerveSubsystem: Swer
         )
         var fullAuto: Command = autoBuilder.fullAuto(pathGroup)
         return fullAuto
+    }
+    fun TestPath(): Command {
+        return base("Test Path",
+            PathConstraints(0.50,0.50)
+        )
     }
     fun BlueTop1(): Command {
         return base("Blue Top 1",

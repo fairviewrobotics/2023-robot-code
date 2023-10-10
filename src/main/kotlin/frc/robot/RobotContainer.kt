@@ -60,21 +60,31 @@ class RobotContainer {
 
     enum class CommandSelector {
         LOWPICKCUBE,
-        LOWPICKCONE,
+        UPRIGHTPICKCONE,
         CHUTEPICK,
         FLOORPLACE,
         MIDPLACECUBE,
         HIGHPLACECUBE,
         MIDPLACECONE,
         HIGHPLACECONE,
+        CHUTEPICKCUBE,
+        CHUTEPICKCONE,
+        SHELFPICKCUBE,
+        SHELFPICKCONE,
         BASE
     }
 
     fun select(): CommandSelector {
         if (!CommandValues.pickup && CommandValues.floor){
             return CommandSelector.FLOORPLACE
-        } else if (CommandValues.pickup && CommandValues.chute) {
-            return CommandSelector.CHUTEPICK
+        } else if (CommandValues.pickup && CommandValues.cube && CommandValues.chute) {
+            return CommandSelector.CHUTEPICKCUBE
+        } else if (CommandValues.pickup && !CommandValues.cube && CommandValues.chute) {
+            return CommandSelector.CHUTEPICKCONE
+        } else if (CommandValues.pickup && !CommandValues.chute && CommandValues.shelf && CommandValues.cube) {
+            return CommandSelector.SHELFPICKCUBE
+        } else if (CommandValues.pickup && !CommandValues.chute && CommandValues.shelf && !CommandValues.cube) {
+            return CommandSelector.SHELFPICKCONE
         } else if (!CommandValues.pickup && CommandValues.cube && CommandValues.middlePlace) {
             return CommandSelector.MIDPLACECUBE
         } else if (!CommandValues.pickup && !CommandValues.cube && CommandValues.middlePlace) {
@@ -86,7 +96,7 @@ class RobotContainer {
         } else if (CommandValues.pickup && CommandValues.cube) {
             return CommandSelector.LOWPICKCUBE
         } else if (CommandValues.pickup && !CommandValues.cube) {
-            return CommandSelector.LOWPICKCONE
+            return CommandSelector.UPRIGHTPICKCONE
         } else {
             return CommandSelector.BASE
         }
@@ -165,11 +175,14 @@ class RobotContainer {
                     SelectCommand(
                         mapOf(
                             CommandSelector.BASE to Base(pickAndPlace),
-                            CommandSelector.CHUTEPICK to ChutePick(pickAndPlace),
+                            CommandSelector.CHUTEPICKCUBE to ChutePickCube(pickAndPlace),
+                            CommandSelector.CHUTEPICKCONE to ChutePickCone(pickAndPlace),
+                            CommandSelector.SHELFPICKCUBE to ShelfPickCube(pickAndPlace),
+                            CommandSelector.SHELFPICKCONE to ShelfPickCone(pickAndPlace),
                             CommandSelector.FLOORPLACE to FloorPlace(pickAndPlace, primaryController),
                             CommandSelector.HIGHPLACECONE to HighPlaceCone(pickAndPlace, primaryController),
                             CommandSelector.HIGHPLACECUBE to HighPlaceCube(pickAndPlace, primaryController),
-                            CommandSelector.LOWPICKCONE to LowPickCone(pickAndPlace),
+                            CommandSelector.UPRIGHTPICKCONE to UprightPickCone(pickAndPlace, primaryController),
                             CommandSelector.LOWPICKCUBE to LowPickCube(pickAndPlace),
                             CommandSelector.MIDPLACECONE to MidPlaceCone(pickAndPlace, primaryController),
                             CommandSelector.MIDPLACECUBE to MidPlaceCube(pickAndPlace, primaryController)
@@ -213,11 +226,14 @@ class RobotContainer {
                     SelectCommand(
                         mapOf(
                             CommandSelector.BASE to Base(pickAndPlace),
-                            CommandSelector.CHUTEPICK to ChutePick(pickAndPlace),
+                            CommandSelector.CHUTEPICKCUBE to ChutePickCube(pickAndPlace),
+                            CommandSelector.CHUTEPICKCONE to ChutePickCone(pickAndPlace),
+                            CommandSelector.SHELFPICKCUBE to ShelfPickCube(pickAndPlace),
+                            CommandSelector.SHELFPICKCONE to ShelfPickCone(pickAndPlace),
                             CommandSelector.FLOORPLACE to FloorPlace(pickAndPlace, primaryController),
                             CommandSelector.HIGHPLACECONE to HighPlaceCone(pickAndPlace, primaryController),
                             CommandSelector.HIGHPLACECUBE to HighPlaceCube(pickAndPlace, primaryController),
-                            CommandSelector.LOWPICKCONE to LowPickCone(pickAndPlace),
+                            CommandSelector.UPRIGHTPICKCONE to UprightPickCone(pickAndPlace, primaryController),
                             CommandSelector.LOWPICKCUBE to LowPickCube(pickAndPlace),
                             CommandSelector.MIDPLACECONE to MidPlaceCone(pickAndPlace, primaryController),
                             CommandSelector.MIDPLACECUBE to MidPlaceCube(pickAndPlace, primaryController)
@@ -233,6 +249,12 @@ class RobotContainer {
                 swerveSubsystem.setX()
             })
         )
+
+//        JoystickButton(primaryController, XboxController.Button.kB.value).whileTrue(
+//            RunCommand({
+//                TelemetryPosition(pickAndPlace);
+//            })
+//        )
 
         JoystickButton(primaryController, XboxController.Button.kY.value).whileTrue(
             RunCommand({
@@ -303,6 +325,11 @@ class RobotContainer {
                 CommandValues.vision = !CommandValues.vision
             })
         )
+        POVButton(secondaryController, 0).onTrue(
+            InstantCommand({
+                CommandValues.shelf = !CommandValues.shelf
+            })
+        )
     }
 
 
@@ -326,7 +353,8 @@ class RobotContainer {
         autoCommandChooser.addOption(
             "Just Place Cone Mid",
             SequentialCommandGroup(
-                AutoPlaceConeMid(pickAndPlace).withTimeout(4.0),
+                AutoPlaceConeMidGetThere(pickAndPlace).withTimeout(2.0),
+                AutoPlaceConeMidPlace(pickAndPlace).withTimeout(1.0),
                 Base(pickAndPlace)
             )
         )
@@ -340,7 +368,8 @@ class RobotContainer {
         autoCommandChooser.setDefaultOption(
             "Center Cube Place Mid and Balance",
             SequentialCommandGroup(
-                AutoPlaceCubeMid(pickAndPlace).withTimeout(4.0),
+                AutoPlaceConeMidGetThere(pickAndPlace).withTimeout(2.0),
+                AutoPlaceConeMidPlace(pickAndPlace).withTimeout(1.0),
                 ParallelCommandGroup(
                     AutoBase(pickAndPlace),
                     RunCommand({swerveSubsystem.drive(-0.30, 0.0, 0.0, false, true)}, swerveSubsystem)
@@ -368,7 +397,8 @@ class RobotContainer {
         autoCommandChooser.addOption(
             "Center Cone Place Mid and Balance",
             SequentialCommandGroup(
-                AutoPlaceConeMid(pickAndPlace).withTimeout(4.0),
+                AutoPlaceConeMidGetThere(pickAndPlace).withTimeout(2.0),
+                AutoPlaceConeMidPlace(pickAndPlace).withTimeout(1.0),
                 ParallelCommandGroup(
                     AutoBase(pickAndPlace),
                     RunCommand({swerveSubsystem.drive(-0.30, 0.0, 0.0, false, true)}, swerveSubsystem)
@@ -456,6 +486,10 @@ class RobotContainer {
         autoCommandChooser.addOption(
             "Red Right Cube Place High Leave and Balance",
             testTrajectories.RedTop1Balance()
+        )
+        autoCommandChooser.addOption(
+            "Test Path",
+            testTrajectories.TestPath()
         )
         SmartDashboard.putData("Auto Mode", autoCommandChooser)
     }

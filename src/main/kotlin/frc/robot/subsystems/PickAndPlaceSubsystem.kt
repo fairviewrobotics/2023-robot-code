@@ -31,6 +31,7 @@ class PickAndPlaceSubsystem : SubsystemBase(){
     val forwardLimit = DigitalInput(ArmConstants.topBreakerId)
     val reverseLimit = DigitalInput(ArmConstants.bottomBreakerId)
 
+
     var elevatorZeroed = false
 
     //Is the carriage at the top of the elevator?
@@ -55,14 +56,16 @@ class PickAndPlaceSubsystem : SubsystemBase(){
         val intakeVoltage = NetworkTableInstance.getDefault().getTable("Arm").getDoubleTopic("IntakeVolts").publish()
 
         val elevatorP = NetworkTableInstance.getDefault().getTable("Arm").getDoubleTopic("ElevatorP").getEntry(ArmConstants.elevatorP)
+        val elbowP = NetworkTableInstance.getDefault().getTable("Arm").getDoubleTopic("ElbowP").getEntry(ArmConstants.elbowP)
+        val wristP = NetworkTableInstance.getDefault().getTable("Arm").getDoubleTopic("WristP").getEntry(ArmConstants.wristP)
 
         val elevatorZeroed =  NetworkTableInstance.getDefault().getTable("Arm").getBooleanTopic("ElevatorZeroed").publish()
 
         var table = NetworkTableInstance.getDefault().getTable("NtPnP positions")
 
-        var elevatorValue = table.getDoubleTopic("Elevator").subscribe(0.0)
-        var elbowValue = table.getDoubleTopic("Elbow").subscribe(0.0)
-        var wristValue = table.getDoubleTopic("Wrist").subscribe(0.0)
+        var elevatorGoalEntry = table.getDoubleTopic("Elevator Goal").getEntry(ArmConstants.elevatorGoal)
+        var elbowGoalEntry = table.getDoubleTopic("Elbow Goal").getEntry(ArmConstants.elbowGoal)
+        var wristGoalEntry = table.getDoubleTopic("Wrist Goal").getEntry(ArmConstants.wristGoal)
 
         val nt = NetworkTableInstance.getDefault().getTable("DriverControl")
 
@@ -115,7 +118,7 @@ class PickAndPlaceSubsystem : SubsystemBase(){
         //everything else:
         // TODO: Elevator conversion factors have been tuned
         elbowEncoder.positionConversionFactor = 2.0 * Math.PI
-        elbowEncoder.velocityConversionFactor = (2.0 *Math.PI)/60
+        elbowEncoder.velocityConversionFactor = (2.0 *Math.PI)/60.0
         elbowEncoder.inverted = true
 
         elevatorEncoder.positionConversionFactor = (0.003010870139 * 2.4)
@@ -131,6 +134,12 @@ class PickAndPlaceSubsystem : SubsystemBase(){
 
 
         Telemetry.elevatorP.set(ArmConstants.elevatorP)
+        Telemetry.elbowP.set(ArmConstants.elbowP)
+        Telemetry.wristP.set(ArmConstants.wristP)
+
+        Telemetry.elevatorGoalEntry.set(ArmConstants.elevatorGoal)
+        Telemetry.elbowGoalEntry.set(ArmConstants.elbowGoal)
+        Telemetry.wristGoalEntry.set(ArmConstants.wristGoal)
     }
 
     val elbowPositionFirst get() = Rotation2d(elbowEncoder.position).plus(Rotation2d(absoluteWristPosition))
@@ -150,10 +159,14 @@ class PickAndPlaceSubsystem : SubsystemBase(){
     /** This value sets the voltage for the intake motors. Positive value will spin the wheels inward
      * and pick objects up.
      */
-    var intakesVoltage = 0.0
+    var intakeOnesVoltage = 0.0
         set(x: Double) {
             field = x
             intakeOneMotor.setVoltage(x)
+        }
+    var intakeTwosVoltage = 0.0
+        set(x: Double) {
+            field = x
             intakeTwoMotor.setVoltage(x)
         }
 
@@ -212,7 +225,8 @@ class PickAndPlaceSubsystem : SubsystemBase(){
         Telemetry.wristVoltage.set(wristVoltage)
         Telemetry.elbowVoltage.set(elbowVoltage)
 
-        Telemetry.intakeVoltage.set(intakesVoltage)
+        Telemetry.intakeVoltage.set(intakeOnesVoltage)
+        Telemetry.intakeVoltage.set(intakeTwosVoltage)
         Telemetry.elevatorPosition.set(elevatorPositionMeters)
         Telemetry.elevatorVelocity.set(elevatorEncoder.velocity)
         Telemetry.wristPosition.set(absoluteWristPosition)
@@ -229,6 +243,10 @@ class PickAndPlaceSubsystem : SubsystemBase(){
         Telemetry.visionNT.set(CommandValues.vision)
 
         ArmConstants.elevatorP =  Telemetry.elevatorP.get()
+
+        ArmConstants.elevatorGoal = Telemetry.elevatorGoalEntry.get()
+        ArmConstants.elbowGoal = Telemetry.elbowGoalEntry.get()
+        ArmConstants.wristGoal = Telemetry.wristGoalEntry.get()
     }
 //    fun NTPnP(pnp: PickAndPlaceSubsystem, controller: XboxController): Command {
 //

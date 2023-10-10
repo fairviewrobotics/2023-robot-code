@@ -10,6 +10,7 @@ object CommandValues {
     var floor: Boolean = false // Place
     var chute: Boolean = false // Pickup
     var pickup: Boolean = false
+    var shelf: Boolean = false
 
     //Vision
     var vision = false
