@@ -7,8 +7,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 14.655717084003614,
-        "y": 4.671162387463664
+        "x": 14.655543120114018,
+        "y": 4.934601704272853
       },
       "holonomicAngle": 0,
       "isReversal": false,
@@ -17,7 +17,7 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "MidCone",
+          "HighCone",
           "Base"
         ],
         "executionBehavior": "sequential",
@@ -27,16 +27,16 @@
     },
     {
       "anchorPoint": {
-        "x": 12.832691496980217,
-        "y": 4.727816627508255
+        "x": 12.123266755214068,
+        "y": 4.8020992083650835
       },
       "prevControl": {
-        "x": 13.805398751544114,
-        "y": 4.6203616092287545
+        "x": 13.095974009777965,
+        "y": 4.694644190085583
       },
       "nextControl": {
-        "x": 11.807522295600148,
-        "y": 4.841067119634239
+        "x": 11.098097553833998,
+        "y": 4.915349700491068
       },
       "holonomicAngle": 0,
       "isReversal": false,

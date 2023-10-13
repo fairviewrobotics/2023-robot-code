@@ -61,7 +61,6 @@ class RobotContainer {
     enum class CommandSelector {
         LOWPICKCUBE,
         UPRIGHTPICKCONE,
-        CHUTEPICK,
         FLOORPLACE,
         MIDPLACECUBE,
         HIGHPLACECUBE,
@@ -193,10 +192,6 @@ class RobotContainer {
             )
 
         )
-
-//        JoystickButton(primaryController, XboxController.Button.kRightBumper.value).whileTrue(
-//            RetroreflectiveVision(swerveSubsystem, primaryController)
-        //)
 
         Trigger { primaryController.rightTriggerAxis > 0.2 }.whileTrue(
 
@@ -494,13 +489,4 @@ class RobotContainer {
         SmartDashboard.putData("Auto Mode", autoCommandChooser)
     }
     val autonomousCommand: Command get() = autoCommandChooser.selected
-
-//        SequentialCommandGroup(
-//            AutoPlaceConeMid(pickAndPlace).withTimeout(4.0),
-//            RunCommand({swerveSubsystem.drive(-0.5,0.0,0.0,false, true)}, swerveSubsystem).withTimeout(1.0),
-//            ParallelCommandGroup(
-//                RunCommand({swerveSubsystem.drive(0.0,0.0,0.0,false, true)}, swerveSubsystem),
-//                Base(pickAndPlace)
-//            )
-//        )
 }
