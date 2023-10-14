@@ -72,7 +72,8 @@ class PickAndPlaceSubsystem : SubsystemBase(){
         var cubeNT = nt.getBooleanTopic("Cube").publish() // Both
         var middlePlaceNT = nt.getBooleanTopic("Middle Place").publish() // Place
         var floorNT = nt.getBooleanTopic("Floor").publish() // Place
-        var chuteNT = nt.getBooleanTopic("Chute Pickup").publish() // Pickup
+        var chuteNT = nt.getBooleanTopic("Chute Pickup").publish()
+        var shelfNT = nt.getBooleanTopic("Shelf Pickup").publish()// Pickup
         var pickupNT = nt.getBooleanTopic("Pickup").publish()
 
         // THESE ARE ONLY FOR DRIVERS(Network Tables), NOT USED IN CODE
@@ -235,6 +236,7 @@ class PickAndPlaceSubsystem : SubsystemBase(){
         Telemetry.coneNT.set(CommandValues.cone)
         Telemetry.floorNT.set(CommandValues.floor)
         Telemetry.chuteNT.set(CommandValues.chute)
+        Telemetry.shelfNT.set(CommandValues.shelf)
         Telemetry.pickupNT.set(CommandValues.pickup)
         Telemetry.middlePlaceNT.set(CommandValues.middlePlace)
         Telemetry.highPlaceNT.set(CommandValues.highPlace)

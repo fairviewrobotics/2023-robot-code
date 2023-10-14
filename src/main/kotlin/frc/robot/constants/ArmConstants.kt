@@ -56,7 +56,7 @@ object ArmConstants {
     val elbowMaxRotation = Math.toRadians(140.0)
     val elbowMinRotation = -(1.0 / 2.0) * Math.PI
 
-    val wristMaxRotation = (15.0)//15
+    val wristMaxRotation = (18.0)//15
     val wristMinRotation = -(160.0)
 
     // multipliers for unit conversion and stuff

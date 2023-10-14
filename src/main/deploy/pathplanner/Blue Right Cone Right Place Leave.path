@@ -7,8 +7,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.810457853554596,
-        "y": 0.7674127049642984
+        "x": 2.7424379727231676,
+        "y": 0.9008430082832382
       },
       "holonomicAngle": 180.0,
       "isReversal": false,
@@ -31,12 +31,12 @@
         "y": 0.9262997241272253
       },
       "prevControl": {
-        "x": 6.201014061750347,
-        "y": 0.22800867129512026
+        "x": 6.173179839415235,
+        "y": 0.5555826754014612
       },
       "nextControl": {
-        "x": 6.26847198519108,
-        "y": 0.9801645176592935
+        "x": 6.276461563173993,
+        "y": 0.9788391241128324
       },
       "holonomicAngle": 180.0,
       "isReversal": false,
@@ -66,12 +66,9 @@
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [
-          "ConeDownIntake",
-          "Base"
-        ],
-        "executionBehavior": "sequential",
-        "waitBehavior": "after",
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
         "waitTime": 0.01
       }
     }

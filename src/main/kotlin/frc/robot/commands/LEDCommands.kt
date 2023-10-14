@@ -11,28 +11,28 @@ class SetLEDValueConeCube(val subsystem: BlinkinLEDSubsystem): CommandBase() {
     }
 
     override fun execute() {
-        if (CommandValues.auto) {
-            if (CommandValues.balanced) {
-                subsystem.setLED(0.59)
-                println("Balanced")
-            } else if (CommandValues.balancing) {
-                subsystem.setLED(-0.31)
-                println("Balancing")
+            if (CommandValues.auto) {
+                if (CommandValues.balanced) {
+                    subsystem.setLED(0.59)
+                    println("Balanced")
+                } else if (CommandValues.balancing) {
+                    subsystem.setLED(-0.31)
+                    println("Balancing")
+                } else {
+                    subsystem.setLED(-0.29)
+                    println("Auto LEDs")
+                }
+            } else if (CommandValues.visionIsMovingRobot) {
+                subsystem.setLED(-0.93)
             } else {
-                subsystem.setLED(-0.29)
-                println("Auto LEDs")
+                if (CommandValues.cube) {
+                    subsystem.setLED(0.91)//0.91
+                } else if (!CommandValues.cube) {
+                    subsystem.setLED(0.69)
+                } else {
+                    subsystem.setLED(0.93)
+                }
             }
-        } else if (CommandValues.visionIsMovingRobot) {
-            subsystem.setLED(-0.93)
-        } else {
-            if (CommandValues.cube) {
-                subsystem.setLED(0.91)//0.91
-            } else if (!CommandValues.cube) {
-                subsystem.setLED(0.69)
-            } else {
-                subsystem.setLED(0.93)
-            }
-        }
     }
 }
 

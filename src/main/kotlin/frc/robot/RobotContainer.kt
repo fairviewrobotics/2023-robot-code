@@ -76,14 +76,14 @@ class RobotContainer {
     fun select(): CommandSelector {
         if (!CommandValues.pickup && CommandValues.floor){
             return CommandSelector.FLOORPLACE
-        } else if (CommandValues.pickup && CommandValues.cube && CommandValues.chute) {
-            return CommandSelector.CHUTEPICKCUBE
-        } else if (CommandValues.pickup && !CommandValues.cube && CommandValues.chute) {
-            return CommandSelector.CHUTEPICKCONE
         } else if (CommandValues.pickup && !CommandValues.chute && CommandValues.shelf && CommandValues.cube) {
             return CommandSelector.SHELFPICKCUBE
         } else if (CommandValues.pickup && !CommandValues.chute && CommandValues.shelf && !CommandValues.cube) {
             return CommandSelector.SHELFPICKCONE
+        } else if (CommandValues.pickup && CommandValues.cube && CommandValues.chute) {
+            return CommandSelector.CHUTEPICKCUBE
+        } else if (CommandValues.pickup && !CommandValues.cube && CommandValues.chute) {
+            return CommandSelector.CHUTEPICKCONE
         } else if (!CommandValues.pickup && CommandValues.cube && CommandValues.middlePlace) {
             return CommandSelector.MIDPLACECUBE
         } else if (!CommandValues.pickup && !CommandValues.cube && CommandValues.middlePlace) {
@@ -323,6 +323,7 @@ class RobotContainer {
         POVButton(secondaryController, 0).onTrue(
             InstantCommand({
                 CommandValues.shelf = !CommandValues.shelf
+                CommandValues.ground = !CommandValues.ground
             })
         )
     }
