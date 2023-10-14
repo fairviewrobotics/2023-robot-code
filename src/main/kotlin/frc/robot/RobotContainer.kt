@@ -122,20 +122,20 @@ class RobotContainer {
 
     private fun Discovery() {
 
-        JoystickButton(primaryController, XboxController.Button.kLeftBumper.value).whileTrue(
+        JoystickButton(primaryController, XboxController.Button.kB.value).whileTrue(
             StandardDrive(swerveSubsystem,
-                { primaryController.leftY * DrivetrainConstants.drivingSpeedScalar / 2.0 },
-                { primaryController.leftX * DrivetrainConstants.drivingSpeedScalar / 2.0 },
-                { primaryController.rightX * DrivetrainConstants.rotationSpeedScalar / 2.0 },
+                { primaryController.leftY * DrivetrainConstants.drivingSpeedScalar },
+                { primaryController.leftX * DrivetrainConstants.drivingSpeedScalar },
+                { primaryController.rightX * DrivetrainConstants.rotationSpeedScalar },
                 true,
                 true
             )
         )
 
         swerveSubsystem.defaultCommand = StandardDrive(swerveSubsystem,
-            { primaryController.leftY * DrivetrainConstants.drivingSpeedScalar },
-            { primaryController.leftX * DrivetrainConstants.drivingSpeedScalar },
-            { primaryController.rightX * DrivetrainConstants.rotationSpeedScalar },
+            { primaryController.leftY * DrivetrainConstants.drivingSpeedScalar / 2.0 },
+            { primaryController.leftX * DrivetrainConstants.drivingSpeedScalar / 2.0 },
+            { primaryController.rightX * DrivetrainConstants.rotationSpeedScalar / 2.0 },
             true,
             true
         )
