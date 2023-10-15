@@ -37,7 +37,7 @@ class AutoTrajectories(val pnp: PickAndPlaceSubsystem, val swerveSubsystem: Swer
             "HighPlace" to AutoPlaceCubeHigh(pnp).withTimeout(4.0),
             "MidConeGetThere" to AutoPlaceConeMidGetThere(pnp).withTimeout(2.0),
             "MidConePlace" to AutoPlaceConeMidPlace(pnp).withTimeout(2.0),
-            "HighCone" to AutoPlaceConeHigh(pnp).withTimeout(4.0),
+            "HighCone" to AutoPlaceConeHigh(pnp).withTimeout(3.7),
             "Base2" to AutoBase2(pnp),
             "Base3" to AutoBase3(pnp),
             "Balance" to Balancer(swerveSubsystem),

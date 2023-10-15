@@ -161,8 +161,8 @@ fun Base(pnp: PickAndPlaceSubsystem): Command {
             ArmConstants.elevatorMinHeight, // elevator
             Math.toRadians(73.0), // elbow 60
             Math.toRadians(-10.0), // wrist -100
-            { if (!CommandValues.cube) 1.0 else 0.0 }, //in
-            { if (!CommandValues.cube) -1.2 else 0.0 } //in
+            { if (!CommandValues.cube) 0.9 else 0.0 }, //in
+            { if (!CommandValues.cube) -1.1 else 0.0 } //in
         ),
         SetPickAndPlacePosition(
             true,
@@ -170,8 +170,8 @@ fun Base(pnp: PickAndPlaceSubsystem): Command {
             ArmConstants.elevatorMinHeight, // elevator
             Math.toRadians(120.0), // elbow 98
             Math.toRadians(-20.0), // wrist -100
-            { if (!CommandValues.cube) 1.0 else 0.0 }, //in
-            { if (!CommandValues.cube) -1.2 else 0.0 } //in
+            { if (!CommandValues.cube) 0.9 else 0.0 }, //in 1.0
+            { if (!CommandValues.cube) -1.1 else 0.0 } //in -1.2
         )
     )
 }
@@ -254,8 +254,8 @@ fun MidPlaceCone(pnp: PickAndPlaceSubsystem, controller: XboxController): Comman
             0.37, // elevator
             Math.toRadians(60.0), // elbow
             Math.toRadians(-50.0), // wrist
-            { 5.0 },
-            { -6.0 }// intake
+            { 3.0 },
+            { -4.0 }// intake
         ),
 
         SetPickAndPlacePosition(
@@ -264,8 +264,8 @@ fun MidPlaceCone(pnp: PickAndPlaceSubsystem, controller: XboxController): Comman
             0.37, // elevator
             Math.toRadians(60.0), // elbow
             Math.toRadians(-50.0), // wrist
-            { if (controller.rightBumper) -6.5 else 5.0  },
-            { if (controller.rightBumper) 6.0 else -6.0  }// intake
+            { if (controller.rightBumper) -6.5 else 3.0  },
+            { if (controller.rightBumper) 6.0 else -4.0  }// intake
         )
     )
 }
@@ -278,8 +278,8 @@ fun HighPlaceCone(pnp: PickAndPlaceSubsystem, controller: XboxController): Comma
             0.82, // elevator
             Math.toRadians(75.0), // elbow
             Math.toRadians(-34.0), // wrist
-            { 4.0 },
-            { -5.0 }
+            { 3.0 },
+            { -4.0 }
         ),
         SetPickAndPlacePosition(
             false,
@@ -287,8 +287,8 @@ fun HighPlaceCone(pnp: PickAndPlaceSubsystem, controller: XboxController): Comma
             0.82, // elevator
             Math.toRadians(45.0), // elbow
             Math.toRadians(-33.0), // wrist
-            { 4.0 },
-            { -5.0 }
+            { 3.0 },
+            { -4.0 }
         ),
         SetPickAndPlacePosition(
             true,
@@ -296,8 +296,8 @@ fun HighPlaceCone(pnp: PickAndPlaceSubsystem, controller: XboxController): Comma
             0.82, // elevator
             Math.toRadians(45.0), // elbow
             Math.toRadians(-33.0), // wrist
-            { if (controller.rightBumper) -6.5 else 4.0  },
-            { if (controller.rightBumper) 6.0 else -5.0  }
+            { if (controller.rightBumper) -6.5 else 3.0  },
+            { if (controller.rightBumper) 6.0 else -4.0  }
         )
     )
 }
@@ -330,7 +330,7 @@ fun LowPickCube(pnp: PickAndPlaceSubsystem): Command {
             false,
             pnp,
             0.35, // elevator
-            Math.toRadians(-20.0), // elbow
+            Math.toRadians(-22.0), // elbow
             Math.toRadians(-10.0), // wrist
             { 3.0 },
             { -3.0 }// intake
@@ -381,7 +381,7 @@ fun ShelfPickCube(pnp: PickAndPlaceSubsystem): Command {
             pnp,
             0.45
             , // elevator
-            Math.toRadians(70.0), // elbow
+            Math.toRadians(69.5), // elbow
             Math.toRadians(-20.0), // wrist
             { 4.5 },
             { -4.5 }// intake
@@ -393,10 +393,10 @@ fun ShelfPickCone(pnp: PickAndPlaceSubsystem): Command {
         SetPickAndPlacePosition(
             true,
             pnp,
-            0.577
+            0.58
             , // elevator
             Math.toRadians(71.0), // elbow
-            Math.toRadians(-29.0), // wrist
+            Math.toRadians(-30.0), // wrist
             { 6.5 },
             { -3.5 }// intake
         )

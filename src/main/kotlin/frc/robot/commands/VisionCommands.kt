@@ -31,10 +31,9 @@ fun SetPipeline(pipeline: VisionConstants.Pipelines): Command {
 
 class RumbleCheck(val controller: XboxController, val check: () -> Boolean) : CommandBase() {
     override fun execute() {
-        controller.setRumble(RumbleType.kBothRumble, (if (check()) 1.0 else 0.0));
     }
 
-    override fun end(int2errupted: Boolean) {
+    override fun end(interrupted: Boolean) {
         controller.setRumble(RumbleType.kBothRumble, 0.0)
     }
 

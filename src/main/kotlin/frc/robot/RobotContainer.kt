@@ -5,6 +5,7 @@ package frc.robot
 
 import edu.wpi.first.networktables.BooleanEntry
 import edu.wpi.first.networktables.NetworkTableInstance
+import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.Joystick
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj2.command.button.JoystickButton
@@ -146,8 +147,6 @@ class RobotContainer {
 
         //PRIMARY CONTROLLER
         Trigger { primaryController.leftTriggerAxis > 0.2 }.whileTrue(
-
-
             SequentialCommandGroup(
                 InstantCommand({
                     CommandValues.pickup = false
@@ -163,6 +162,7 @@ class RobotContainer {
                 ),
 
                 ParallelCommandGroup(
+//                    RumbleCheck(primaryController) {true},
                     StandardDrive(swerveSubsystem,
                         { primaryController.leftY * DrivetrainConstants.drivingSpeedScalar / 2.0 },
                         { primaryController.leftX * DrivetrainConstants.drivingSpeedScalar / 2.0},
@@ -274,12 +274,12 @@ class RobotContainer {
         JoystickButton(secondaryController, XboxController.Button.kLeftBumper.value).whileTrue(
             VoltageArm(pickAndPlace, { -2.0 }, { 0.0 }, { 0.0 }, { 0.0 })
         )
-        Trigger {secondaryController.rightTriggerAxis > 0.2} .whileTrue(
-            VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { 0.0 }, { 4.0 })
-        )
-        JoystickButton(secondaryController, XboxController.Button.kRightBumper.value).whileTrue(
-            VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { 0.0 }, { -4.0 })
-        )
+//        Trigger {secondaryController.rightTriggerAxis > 0.2} .whileTrue(
+//            VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { 0.0 }, { 4.0 })
+//        )
+//        JoystickButton(secondaryController, XboxController.Button.kRightBumper.value).whileTrue(
+//            VoltageArm(pickAndPlace, { 0.0 }, { 0.0 }, { 0.0 }, { -4.0 })
+//        )
 
 //        JoystickButton(secondaryController, Axis.kLeftY.value ).whileTrue(
 //            VoltageArm(pickAndPlace, { 0.0 }, { secondaryController.leftY * -4.0 }, { 0.0 }, { 0.0 })
