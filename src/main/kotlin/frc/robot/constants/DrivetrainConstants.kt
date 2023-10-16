@@ -60,7 +60,7 @@ object DrivetrainConstants {
     const val frontLeftTurningPort = 6
     const val rearLeftTurningPort = 2
     const val frontRightTurningPort = 8
-    const val rearRightTurningPort = 4
+    const val rearRightTurningPort = 18
 
     const val gyroReversed = false // TUNED
     const val turningEncoderReversed = true

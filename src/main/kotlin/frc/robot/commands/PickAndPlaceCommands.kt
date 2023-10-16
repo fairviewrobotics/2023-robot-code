@@ -161,8 +161,8 @@ fun Base(pnp: PickAndPlaceSubsystem): Command {
             ArmConstants.elevatorMinHeight, // elevator
             Math.toRadians(73.0), // elbow 60
             Math.toRadians(-10.0), // wrist -100
-            { if (!CommandValues.cube) 0.9 else 0.0 }, //in
-            { if (!CommandValues.cube) -1.1 else 0.0 } //in
+            { if (!CommandValues.cube) 1.6 else 0.0 }, //in
+            { if (!CommandValues.cube) -1.8 else 0.0 } //in
         ),
         SetPickAndPlacePosition(
             true,
@@ -170,8 +170,8 @@ fun Base(pnp: PickAndPlaceSubsystem): Command {
             ArmConstants.elevatorMinHeight, // elevator
             Math.toRadians(120.0), // elbow 98
             Math.toRadians(-20.0), // wrist -100
-            { if (!CommandValues.cube) 0.9 else 0.0 }, //in 1.0
-            { if (!CommandValues.cube) -1.1 else 0.0 } //in -1.2
+            { if (!CommandValues.cube) 1.6 else 0.0 }, //in 1.0
+            { if (!CommandValues.cube) -1.8 else 0.0 } //in -1.2
         )
     )
 }
@@ -355,8 +355,8 @@ fun ChutePickCone(pnp: PickAndPlaceSubsystem): Command {
             , // elevator
             Math.toRadians(30.0), // elbow
             Math.toRadians(21.0), // wrist
-            { 3.5 },
-            { -3.5 }// intake
+            { 3.0 },
+            { -3.0 }// intake
         )
     )
 }
